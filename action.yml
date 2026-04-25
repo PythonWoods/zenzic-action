@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+name: "Zenzic Documentation Quality Gate"
+description: "Run Zenzic documentation checks and upload results to GitHub Code Scanning."
+author: "PythonWoods"
+
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  version:
+    description: "Zenzic version to use (e.g. '0.7.0'). Defaults to latest stable."
+    required: false
+    default: "latest"
+  format:
+    description: "Output format: 'text', 'json', or 'sarif'."
+    required: false
+    default: "sarif"
+  sarif-file:
+    description: "Path for the SARIF output file (used when format is 'sarif')."
+    required: false
+    default: "zenzic-results.sarif"
+  upload-sarif:
+    description: "Upload SARIF results to GitHub Code Scanning (requires format: sarif)."
+    required: false
+    default: "true"
+  strict:
+    description: "Exit non-zero on warnings as well as errors."
+    required: false
+    default: "false"
+  fail-on-error:
+    description: "Fail the workflow step if Zenzic finds errors."
+    required: false
+    default: "true"
+
+outputs:
+  sarif-file:
+    description: "Path to the generated SARIF file."
+    value: ${{ steps.run-zenzic.outputs.sarif-file }}
+  findings-count:
+    description: "Total number of findings reported."
+    value: ${{ steps.run-zenzic.outputs.findings-count }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@v8
+      with:
+        enable-cache: true
+
+    - name: Run Zenzic
+      id: run-zenzic
+      shell: bash
+      env:
+        ZENZIC_VERSION: ${{ inputs.version }}
+        ZENZIC_FORMAT: ${{ inputs.format }}
+        ZENZIC_SARIF_FILE: ${{ inputs.sarif-file }}
+        ZENZIC_STRICT: ${{ inputs.strict }}
+        ZENZIC_FAIL_ON_ERROR: ${{ inputs.fail-on-error }}
+      run: bash "${{ github.action_path }}/zenzic-action-wrapper.sh"
+
+    - name: Upload SARIF to GitHub Code Scanning
+      if: inputs.format == 'sarif' && inputs.upload-sarif == 'true' && always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif-file }}
+        category: zenzic-docs

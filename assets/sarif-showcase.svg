@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" width="780" height="400">
+  <defs>
+    <clipPath id="panel-clip">
+      <rect x="10" y="10" width="760" height="380" rx="8"/>
+    </clipPath>
+  </defs>
+
+  <!-- Outer background -->
+  <rect width="780" height="400" fill="#0d1117"/>
+
+  <!-- Main panel -->
+  <rect x="10" y="10" width="760" height="380" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+  <!-- PR annotation section background (clipped to panel shape) -->
+  <rect x="10" y="206" width="760" height="184" fill="#21262d" clip-path="url(#panel-clip)"/>
+
+  <!-- ── Header ────────────────────────────────────────────────────────────── -->
+  <text x="24" y="43" font-family="system-ui,-apple-system,sans-serif" font-size="15" font-weight="600" fill="#c9d1d9">Code scanning alerts</text>
+
+  <!-- alert count badge -->
+  <rect x="214" y="25" width="24" height="20" rx="10" fill="#30363d"/>
+  <text x="226" y="39" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#8b949e" text-anchor="middle">3</text>
+
+  <!-- tool label -->
+  <text x="750" y="43" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#8b949e" text-anchor="end">Tool: Zenzic</text>
+
+  <!-- header divider -->
+  <line x1="10" y1="62" x2="770" y2="62" stroke="#30363d" stroke-width="1"/>
+
+  <!-- ── Alert Row 1 — Z201 Critical ──────────────────────────────────────── -->
+  <rect x="24" y="75" width="68" height="22" rx="11" fill="#67060c"/>
+  <text x="58" y="90" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#ff7b72" text-anchor="middle">Critical</text>
+  <text x="102" y="90" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#8b949e">Z201</text>
+  <text x="144" y="90" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#c9d1d9">Credential pattern detected in documentation source</text>
+  <text x="750" y="90" font-family="ui-monospace,SFMono-Regular,monospace" font-size="11" fill="#8b949e" text-anchor="end">docs/config-example.md · 14</text>
+
+  <line x1="24" y1="110" x2="756" y2="110" stroke="#30363d" stroke-width="1"/>
+
+  <!-- ── Alert Row 2 — Z101 Error ─────────────────────────────────────────── -->
+  <rect x="24" y="123" width="52" height="22" rx="11" fill="#5c2c00"/>
+  <text x="50" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#ffa657" text-anchor="middle">Error</text>
+  <text x="86" y="138" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#8b949e">Z101</text>
+  <text x="128" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#c9d1d9">Broken documentation link — ./setup.md#prerequisites</text>
+  <text x="750" y="138" font-family="ui-monospace,SFMono-Regular,monospace" font-size="11" fill="#8b949e" text-anchor="end">docs/getting-started.md · 23</text>
+
+  <line x1="24" y1="158" x2="756" y2="158" stroke="#30363d" stroke-width="1"/>
+
+  <!-- ── Alert Row 3 — Z402 Warning ───────────────────────────────────────── -->
+  <rect x="24" y="171" width="68" height="22" rx="11" fill="#4d2d00"/>
+  <text x="58" y="186" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#e3b341" text-anchor="middle">Warning</text>
+  <text x="102" y="186" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#8b949e">Z402</text>
+  <text x="144" y="186" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#c9d1d9">Orphan page detected — no incoming links found</text>
+  <text x="750" y="186" font-family="ui-monospace,SFMono-Regular,monospace" font-size="11" fill="#8b949e" text-anchor="end">docs/legacy-api.md · 1</text>
+
+  <line x1="10" y1="206" x2="770" y2="206" stroke="#30363d" stroke-width="1"/>
+
+  <!-- ── PR Annotation ─────────────────────────────────────────────────────── -->
+  <text x="24" y="228" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#8b949e">PR annotation · docs/getting-started.md</text>
+
+  <!-- diff line 21 (context) -->
+  <rect x="10" y="234" width="760" height="22" fill="#21262d" clip-path="url(#panel-clip)"/>
+  <text x="34" y="249" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">21</text>
+  <text x="80" y="249" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">  See the [setup guide](./intro.md) to get started.</text>
+
+  <!-- diff line 22 (context) -->
+  <rect x="10" y="256" width="760" height="22" fill="#21262d" clip-path="url(#panel-clip)"/>
+  <text x="34" y="271" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">22</text>
+  <text x="80" y="271" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">  Ensure Python 3.11+ is installed first.</text>
+
+  <!-- diff line 23 (addition, annotated) -->
+  <rect x="10" y="278" width="760" height="22" fill="#1c2128" clip-path="url(#panel-clip)"/>
+  <text x="34" y="293" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">23</text>
+  <text x="58" y="293" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#3fb950">+</text>
+  <text x="80" y="293" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#3fb950">  Run `uvx zenzic check` then follow [this guide](./setup.md#prerequisites).</text>
+
+  <!-- annotation box -->
+  <rect x="24" y="308" width="732" height="50" rx="4" fill="#0d1117" stroke="#f85149" stroke-width="1"/>
+  <!-- left accent bar -->
+  <rect x="24" y="308" width="3" height="50" rx="1" fill="#f85149"/>
+  <!-- exclamation icon -->
+  <circle cx="42" cy="333" r="7" fill="#f85149"/>
+  <text x="42" y="338" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="white" text-anchor="middle">!</text>
+  <!-- annotation title -->
+  <text x="58" y="326" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#ff7b72">Zenzic · Z101 — Broken documentation link</text>
+  <!-- annotation detail -->
+  <text x="58" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#8b949e">Link target ./setup.md#prerequisites — section anchor not found in resolved file.</text>
+
+  <!-- branding pill -->
+  <rect x="652" y="368" width="108" height="20" rx="10" fill="#30363d"/>
+  <text x="706" y="382" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#8b949e" text-anchor="middle">zenzic/action</text>
+</svg>
