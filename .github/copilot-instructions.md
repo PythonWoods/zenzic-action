@@ -229,21 +229,21 @@ zenzic-action/
 
 ## [ACTIVE SPRINT] — Working Context
 
-### D073 — The Law of Evolutionary Curation (Current)
+### D074+D075 — Coverage Iron Gate + R19 Testimony (Current)
 
 **Version:** 1.0 · **Date:** 2026-04-25
 
-All three Obsidian Ledgers (core, doc, action) refactored from "historical diaries" to "operational
-manuals". [CHRONICLES] removed. [SPRINT LOG] replaced by [ACTIVE SPRINT] (2-sprint window). Law
-of Evolutionary Curation codified in [POLICIES] of all three ledgers. Schema updated. Step 1
-of [CLOSING PROTOCOL] updated with curation-aware guidance in all three ledgers.
+No action changes in this sprint. Core: 3 targeted tests for `_first_content_line()` multi-line
+comment paths push total coverage to 80.00%. Docs: R19 `:::warning` admonition added to
+`configuration-reference.mdx` (EN + IT). All v0.7.0 governance obligations fulfilled.
 
-### Last Closed — D067+D068+D071 — Obsidian Archive + Curation Law + Knowledge Purge
+### Last Closed — D073 — The Law of Evolutionary Curation
 
 **Version:** 1.0 · **Date:** 2026-04-25
 
-Core repo governance: `CHANGELOG.md` split — pre-release history archived. `RELEASE.md` condensed
-to 114 lines. Law of Executive Brevity codified in [POLICIES] of all three Obsidian Ledgers.
+All three Obsidian Ledgers refactored from "historical diaries" to "operational manuals".
+[CHRONICLES] empty stub removed. [SPRINT LOG] replaced by [ACTIVE SPRINT] (2-sprint window).
+Law of Evolutionary Curation codified in [POLICIES]. Schema updated across all three repos.
 
 ---
 

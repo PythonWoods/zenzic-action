@@ -12,7 +12,7 @@ inputs:
   version:
     description: "Zenzic version to use (e.g. '0.7.0'). Defaults to latest stable."
     required: false
-    default: "latest"
+    default: "0.7.0"
   format:
     description: "Output format: 'text', 'json', or 'sarif'."
     required: false
@@ -46,7 +46,7 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v8
       with:
         enable-cache: true
 
@@ -63,7 +63,7 @@ runs:
 
     - name: Upload SARIF to GitHub Code Scanning
       if: inputs.format == 'sarif' && inputs.upload-sarif == 'true' && always()
-      uses: github/codeql-action/upload-sarif@v3
+      uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: ${{ inputs.sarif-file }}
         category: zenzic-docs

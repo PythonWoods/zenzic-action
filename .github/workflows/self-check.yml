@@ -23,6 +23,7 @@ jobs:
       - name: Run Zenzic
         uses: ./
         with:
+          version: "0.7.0"
           format: sarif
           upload-sarif: "true"
           fail-on-error: "true"

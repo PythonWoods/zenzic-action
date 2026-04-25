@@ -73,13 +73,13 @@ jobs:
 > **Docs directory:** Zenzic reads its configuration from `zenzic.toml` at the repository root.
 > Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
 
-> **Stability:** `version: latest` is the default for quick evaluation. For production pipelines, pin to a specific release — e.g. `version: "0.7.0"` — so an upstream release never breaks your gate unexpectedly.
+> **Stability:** `version: "0.7.0"` is the default. For the latest features as they ship, you can set `version: latest`, but production pipelines should always pin to a specific release for deterministic, reproducible runs.
 
 ## Inputs
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `latest` | Zenzic version to install. Default `latest` is convenient for evaluation; **pin to a specific release (e.g. `0.7.0`) in production pipelines** for deterministic, reproducible runs. |
+| `version` | `0.7.0` | Zenzic version to install. Pinned to a specific release for deterministic, reproducible runs. Set `latest` for continuous evaluation of new features. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
@@ -117,9 +117,9 @@ No additional configuration needed — the action handles the upload via `github
 |:--|:--|:--|:--|
 | **GitHub-hosted runner** | `ubuntu-22.04` | `ubuntu-latest` | macOS and Windows runners are also supported |
 | **Self-hosted runner** | Any OS with `bash` ≥ 5 and `python3` ≥ 3.11 | — | `uv` is installed by the action; no pre-install needed |
-| **Node.js** | 24 | 24 | Required by `github/codeql-action/upload-sarif@v3` |
+| **Node.js** | 24 | 24 | Required by `github/codeql-action/upload-sarif@v4` |
 | **`astral-sh/setup-uv`** | v8 | v8 | Earlier versions lack full cross-platform cache support |
-| **`github/codeql-action`** | v3 | v3 | v2 reached end-of-life March 2024 |
+| **`github/codeql-action`** | v4 | v4 | v3 deprecated; v2 reached end-of-life March 2024 |
 | **`actions/checkout`** | v6 | v6 | Must run before this action |
 
 > **Self-hosted runners:** ensure `python3` (3.11+) and `bash` (5+) are available in `PATH`.
