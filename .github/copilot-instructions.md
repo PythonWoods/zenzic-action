@@ -1,3 +1,5 @@
+<!-- SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev> -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
 # ⚡ ZENZIC ACTION — Obsidian Ledger v1.0 / Zenzic v0.7.0
 
 > **Single Source of Truth for all agents and contributors to the zenzic-action repository.**
