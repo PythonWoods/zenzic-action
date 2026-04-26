@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# nox
+.nox/
+
+# Misc
+.DS_Store
