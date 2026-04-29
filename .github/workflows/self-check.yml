@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+
+name: Zenzic Self-Check
+
+on:
+  push:
+    branches: [main, "release/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write  # required for upload-sarif
+
+jobs:
+  zenzic:
+    name: Documentation Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run Zenzic
+        uses: ./
+        with:
+          version: "0.7.0"
+          format: sarif
+          upload-sarif: "true"
+          fail-on-error: "true"
