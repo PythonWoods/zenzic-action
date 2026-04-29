@@ -191,7 +191,7 @@ zenzic-action/
 | Component | Minimum | Recommended |
 |-----------|---------|-------------|
 | GitHub-hosted runner | `ubuntu-22.04` | `ubuntu-latest` |
-| `astral-sh/setup-uv` | v8 | latest |
+| `astral-sh/setup-uv` | v8.1.0 | latest |
 | `github/codeql-action/upload-sarif` | v3 | latest |
 | `actions/checkout` | v6 | latest |
 | Node.js (runner) | 24 | latest |
