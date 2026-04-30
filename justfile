@@ -22,6 +22,9 @@ reuse:
 check:
     uvx zenzic check all
 
+# Full verification gate (markdownlint + reuse + zenzic sentinel)
+verify: reuse check
+
 # Full CI-equivalent pipeline (delegates to nox)
 preflight:
     uv run nox -s preflight

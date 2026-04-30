@@ -122,6 +122,12 @@
 - **[INVARIANT] Definition of Done:** A sprint is not closed until README is current and the staleness audit is complete.
 - **[INVARIANT] Sovereignty:** This file is the single source of truth for agent behavior in this repository.
 
+### Trinity Mesh Synchronization (CEO-235/236)
+
+- **[INVARIANT]** The three public repositories (`zenzic`, `zenzic-doc`, `zenzic-action`) form the **Trinity Mesh**. Cross-repo governance changes must be documented in each affected repo's `ZENZIC_BRAIN.md` [ACTIVE SPRINT] within the same sprint.
+- **[RULE]** `just map-update` in the core repo (`zenzic/`) emits `[MESH STATUS]` with 🟢/🔴 per node. All three must be 🟢 before closing a sprint.
+- **[INVARIANT — Silent Mind Protocol]** `zenzic-brain` is the fourth repository and is **never** referenced in any public map, BRAIN section, or mesh detection script.
+
 ### The Law of Executive Brevity [MANDATORY] — D068
 
 - **[INVARIANT] Core repo `RELEASE.md` must never exceed 200 lines.**
@@ -276,31 +282,22 @@ zenzic-action/
 - **Why:** If Zenzic is killed by OOM or SIGKILL mid-run, the SARIF file is truncated. Uploading truncated JSON to Code Scanning silently produces a "0 findings" result — a false clean signal that masks real security issues.
 - **Implementation:** `python3 -c "import json, sys; json.load(open('${SARIF_FILE}'))"` — if this raises, emit `::warning` and skip upload.
 
----
-
+<!-- ZONE_B_START -->
 ## [ACTIVE SPRINT] — Working Context
 
-### D074+D075 — Coverage Iron Gate + R19 Testimony (Current)
+### D096 — Cross-Repo Governance (Current)
 
-**Version:** 1.0 · **Date:** 2026-04-25
+**Version:** 1.0 · **Sprint:** 2026-04-30
 
-No action changes in this sprint. Core: 3 targeted tests for `_first_content_line()` multi-line
-comment paths push total coverage to 80.00%. Docs: R19 `:::warning` admonition added to
-`configuration-reference.mdx` (EN + IT). All v0.7.0 governance obligations fulfilled.
+Cross-repo note: Zone A/B restructure applied to all 3 public BRAINs. Trinity Mesh policy added to [POLICIES]. No action code changes required.
 
-**Cross-repo note (CEO 056/058/060 — 2026-04-27):** zenzic-doc blog standardized to
-"🛡️ Saga X" naming scheme + Tutorial "Stop Broken Links in 60s" published. BUG-004
-(Frontmatter Supremacy) codified in zenzic-doc policies. No action code changes required.
+### Last Closed — CEO 117 — The Quartz Hardening Matrix
 
-### Last Closed — D073 — The Law of Evolutionary Curation
+**Version:** 1.0 · **Sprint:** 2026-04-29
 
-**Version:** 1.0 · **Date:** 2026-04-25
+`self-check.yml` extended to full OS matrix `[ubuntu-latest, macos-latest, windows-latest]` with `fail-fast: false`. Pinned version `"0.7.0"` preserved.
 
-All three Zenzic Ledgers refactored from "historical diaries" to "operational manuals".
-[CHRONICLES] empty stub removed. [SPRINT LOG] replaced by [ACTIVE SPRINT] (2-sprint window).
-Law of Evolutionary Curation codified in [POLICIES]. Schema updated across all three repos.
-
----
+<!-- ZONE_B_END -->
 
 ## [ARCHIVE LINK]
 
