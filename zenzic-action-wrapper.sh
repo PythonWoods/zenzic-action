@@ -38,6 +38,21 @@ ZENZIC_SARIF_FILE="${ZENZIC_SARIF_FILE:-zenzic-results.sarif}"
 ZENZIC_STRICT="${ZENZIC_STRICT:-false}"
 ZENZIC_FAIL_ON_ERROR="${ZENZIC_FAIL_ON_ERROR:-true}"
 
+# ── SARIF path sandbox guard (BUG-006 — Action SARIF Jailbreak) ────────────────
+# The sarif-file input is an output path. Any relative traversal (../../) or
+# absolute path (/) would allow a workflow to write outside the checkout
+# directory. This guard is the shell-level Blood Sentinel for the action layer.
+case "${ZENZIC_SARIF_FILE}" in
+  /*)
+    echo "::error title=Zenzic — SARIF Jailbreak::sarif-file must be a relative path inside the workspace. Absolute paths are forbidden. Got: '${ZENZIC_SARIF_FILE}'" >&2
+    exit 1
+    ;;
+  *../*|*/..|..)
+    echo "::error title=Zenzic — SARIF Jailbreak::sarif-file must not contain path traversal sequences ('..').  Got: '${ZENZIC_SARIF_FILE}'" >&2
+    exit 1
+    ;;
+esac
+
 # ── Package spec ──────────────────────────────────────────────────────────────
 # "latest" → bare `zenzic` so uvx resolves the most recent stable release.
 # Any other value is treated as an exact version pin: `zenzic==0.7.0`.

@@ -90,6 +90,7 @@
 
 - **[RULE]** Validate SARIF JSON before uploading to GitHub Code Scanning. A truncated SARIF file (caused by SIGKILL, OOM, or runner crash) must be detected and emitted as a `::warning` annotation — never uploaded silently as a false-clean result.
 - **[RULE]** If a security incident is detected (exit 2/3) but zero findings were parsed from SARIF (race condition or crash), force `findings-count=1`. Never report "0 findings" when Zenzic exited with a security code.
+- **[INVARIANT — BUG-006: Action SARIF Jailbreak]** The `sarif-file` input defines an output path. Inputs that define output paths are security vectors. The wrapper **must** validate the sandbox perimeter before any file redirection (`>`) occurs. Absolute paths (`/`) and path traversal sequences (`..`) are rejected unconditionally with a fatal `::error` annotation. **Lesson:** Never trust user-supplied path inputs without explicit boundary validation, even inside GitHub Actions isolation.
 
 ### Output-First Semantics
 

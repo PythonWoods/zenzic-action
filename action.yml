@@ -18,7 +18,7 @@ inputs:
     required: false
     default: "sarif"
   sarif-file:
-    description: "Path for the SARIF output file (used when format is 'sarif')."
+    description: "Relative path for the SARIF output file (used when format is 'sarif'). Must be a relative path inside the workspace — absolute paths and path traversal sequences ('..') are rejected by the wrapper."
     required: false
     default: "zenzic-results.sarif"
   upload-sarif:

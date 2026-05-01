@@ -81,7 +81,7 @@ jobs:
 |---|---|---|
 | `version` | `0.7.0` | Zenzic version to install. Pinned to a specific release for deterministic, reproducible runs. Set `latest` for continuous evaluation of new features. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
-| `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). |
+| `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. Absolute paths and `..` traversal sequences are rejected. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
 | `strict` | `false` | Treat warnings as errors. |
 | `fail-on-error` | `true` | Fail the workflow step on findings. |
