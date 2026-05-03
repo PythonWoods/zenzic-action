@@ -28,11 +28,18 @@ def reuse(session: nox.Session) -> None:
 @nox.session(venv_backend="none")
 def check(session: nox.Session) -> None:
     """Run the Zenzic Sentinel quality gate on action documentation."""
-    session.run("uvx", "zenzic", "check", "all", external=True)
+    session.run("uv", "run", "--project", "../zenzic", "zenzic", "check", "all", "--strict", external=True)
+
+
+@nox.session(venv_backend="none")
+def tests(session: nox.Session) -> None:
+    """Run action smoke tests and shell validation."""
+    session.run("bash", "-n", "zenzic-action-wrapper.sh", external=True)
+    session.run("uv", "run", "--project", "../zenzic", "zenzic", "check", "all", "--strict", external=True)
 
 
 @nox.session(venv_backend="none")
 def preflight(session: nox.Session) -> None:
     """Full CI-equivalent pipeline: reuse → check."""
     session.run("uvx", "reuse", "lint", external=True)
-    session.run("uvx", "zenzic", "check", "all", external=True)
+    session.run("uv", "run", "--project", "../zenzic", "zenzic", "check", "all", "--strict", external=True)

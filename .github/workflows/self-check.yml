@@ -14,22 +14,29 @@ permissions:
   security-events: write  # required for upload-sarif
 
 jobs:
-  # Composite action runs bash — validate across all three runner OSes
-  # (Windows uses Git Bash; macOS uses zsh-compatible bash shim).
-  zenzic:
-    name: Quality Gate / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
-      - name: Run Zenzic
-        uses: ./
+      - name: Checkout local zenzic (unreleased)
+        uses: actions/checkout@v6
         with:
-          version: "0.7.0"
-          format: sarif
-          upload-sarif: "true"
-          fail-on-error: "true"
+          repository: PythonWoods/zenzic
+          ref: release/v0.7.0
+          path: _zenzic_core
+
+      - name: Install just
+        uses: taiki-e/install-action@just
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Set up Python 3.12
+        run: uv python install 3.12
+
+      - name: Run unified verification
+        env:
+          ZENZIC_PROJECT_PATH: ./_zenzic_core
+        run: just verify

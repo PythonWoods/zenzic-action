@@ -14,6 +14,8 @@
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5"></a>
   <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+  <a href="https://zenzic.dev/developers/explanation/adr-vault"><img alt="4-Gates: Sentinel Seal" src="https://img.shields.io/badge/4--Gates-Sentinel%20Seal-10b981?style=flat-square"></a>
+  <a href="https://reuse.software/"><img alt="REUSE 3.x compliant" src="https://img.shields.io/badge/REUSE-3.x%20compliant-0d9488?style=flat-square"></a>
 </p>
 
 ---
@@ -133,6 +135,32 @@ No additional configuration needed — the action handles the upload via `github
 | **Documentation** | [zenzic.dev](https://zenzic.dev) | Configuration reference, rule catalogue, and how-to guides |
 | **Brand System** | [zenzic.dev/assets/brand/zenzic-brand-system.html](https://zenzic.dev/assets/brand/zenzic-brand-system.html) | Visual identity, badges, and SVG assets |
 | **zenzic-action** | [PythonWoods/zenzic-action](https://github.com/PythonWoods/zenzic-action) | This repository |
+
+---
+
+## 📖 Documentation Map — Quartz Promise
+
+The Zenzic documentation lives across **two separate Docusaurus instances** under
+[zenzic.dev](https://zenzic.dev) — the user area and the developer area never
+share a sidebar or a search index.
+
+```text
+zenzic.dev/
+├── docs/           → User Area    — install, configure, CI/CD, finding codes
+├── developers/     → Dev Area     — plugins, adapters, ADRs, tech debt ledger
+├── blog/           → Release notes & engineering post-mortems
+└── community/      → Brand kit, FAQs, governance
+```
+
+The split is enforced by [ADR 011: Cross-Instance Allowlist](https://zenzic.dev/developers/explanation/adr-cross-instance-allowlist) — every cross-boundary link is a documented contract, never a silent suppression.
+
+| You are a... | Start here |
+| :--- | :--- |
+| 👤 Action user (CI integrator) | [CI/CD Guide](https://zenzic.dev/docs/how-to/configure-ci-cd/) |
+| 🔧 Action contributor | [Developer Portal](https://zenzic.dev/developers/) · [ADR Vault](https://zenzic.dev/developers/explanation/adr-vault) |
+| 🛡️ Security reviewer | [Engineering Ledger](https://zenzic.dev/developers/explanation/engineering-ledger) · [SECURITY.md](SECURITY.md) |
+
+---
 
 ## License
 

@@ -3,6 +3,7 @@
 
 # just — developer workflow for zenzic-action.
 # Use `just --list` to see available commands.
+zenzic_project := env_var_or_default("ZENZIC_PROJECT_PATH", "../zenzic")
 
 # Bump the Zenzic version pinned as default in action.yml.
 # Usage:  just bump 0.7.1
@@ -20,14 +21,18 @@ reuse:
 
 # Run the Zenzic Sentinel quality gate on action documentation
 check:
-    uvx zenzic check all
+    uv run --project {{zenzic_project}} zenzic check all --strict
 
-# Full verification gate (markdownlint + reuse + zenzic sentinel)
-verify: reuse check
+# Test suite (action-level checks via nox)
+test:
+    uvx nox -s tests
 
 # Full CI-equivalent pipeline (delegates to nox)
 preflight:
-    uv run nox -s preflight
+    uvx pre-commit run --all-files
+
+# Full verification gate (4-Gates Standard)
+verify: check preflight test
 
 # Clean generated artefacts
 clean:
