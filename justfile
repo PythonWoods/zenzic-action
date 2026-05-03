@@ -10,11 +10,6 @@ zenzic_project := env_var_or_default("ZENZIC_PROJECT_PATH", "../zenzic")
 bump version:
     @bash scripts/bump-version.sh "{{version}}"
 
-# Update the [CODE MAP] in copilot-instructions.md from action.yml and the wrapper script.
-# Run after changing action.yml or zenzic-action-wrapper.sh.
-map-update:
-    uv run scripts/map_action.py
-
 # Check REUSE/SPDX licence compliance
 reuse:
     uvx reuse lint
