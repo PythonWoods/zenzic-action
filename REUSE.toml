@@ -1,18 +1,7 @@
 version = 1
 
-# ── Generated / build artefacts ───────────────────────────────────────────────
-
-[[annotations]]
-path = "**/__pycache__/**"
-SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = "__pycache__/**"
-SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
-SPDX-License-Identifier = "Apache-2.0"
-
-# ── Files without comment support ─────────────────────────────────────────────
+# ── JSON / SARIF files (no comment syntax) ────────────────────────────────────
+# All other source files carry SPDX headers inline.
 
 [[annotations]]
 path = "package.json"
@@ -20,48 +9,27 @@ SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
 SPDX-License-Identifier = "Apache-2.0"
 
 [[annotations]]
+path = "zenzic-results.sarif"
+SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
+SPDX-License-Identifier = "Apache-2.0"
+
+# ── Binary assets ─────────────────────────────────────────────────────────────
+
+[[annotations]]
 path = "assets/*.svg"
 SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
 SPDX-License-Identifier = "Apache-2.0"
 
-# ── Source ────────────────────────────────────────────────────────────────────
-
-[[annotations]]
-path = ["action.yml", "zenzic-action-wrapper.sh"]
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = "noxfile.py"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = "justfile"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
-SPDX-License-Identifier = "Apache-2.0"
-
-[[annotations]]
-path = "scripts/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
-SPDX-License-Identifier = "Apache-2.0"
-
-# ── Documentation ─────────────────────────────────────────────────────────────
+# ── Root Markdown prose ───────────────────────────────────────────────────────
 
 [[annotations]]
 path = "README.md"
-precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
 SPDX-License-Identifier = "Apache-2.0"
 
-# ── CI ────────────────────────────────────────────────────────────────────────
+# ── Extension-less files ──────────────────────────────────────────────────────
 
 [[annotations]]
-path = ".github/**"
-precedence = "aggregate"
+path = ["NOTICE", "LICENSE"]
 SPDX-FileCopyrightText = "2026 PythonWoods <dev@pythonwoods.dev>"
 SPDX-License-Identifier = "Apache-2.0"

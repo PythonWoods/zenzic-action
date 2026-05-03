@@ -11,3 +11,6 @@ __pycache__/
 # Misc
 .DS_Store
 .zenzic.dev.toml
+
+# EPOCH 4 — draft vault (git-ignored, local reference only)
+.draft/
