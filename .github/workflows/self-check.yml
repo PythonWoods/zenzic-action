@@ -20,13 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Checkout local zenzic (unreleased)
-        uses: actions/checkout@v6
-        with:
-          repository: PythonWoods/zenzic
-          ref: release/v0.7.0
-          path: _zenzic_core
-
       - name: Install just
         uses: taiki-e/install-action@just
 
@@ -37,6 +30,4 @@ jobs:
         run: uv python install 3.12
 
       - name: Run unified verification
-        env:
-          ZENZIC_PROJECT_PATH: ./_zenzic_core
         run: just verify

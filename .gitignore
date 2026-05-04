@@ -21,3 +21,10 @@ htmlcov/
 
 # EPOCH 4 — draft vault (git-ignored, local reference only)
 .draft/
+
+# --- Ephemeral Artifacts (Machine Silence) ---
+zenzic-results.sarif
+mutmut*
+.mutmut-cache/
+.pytest_cache/
+

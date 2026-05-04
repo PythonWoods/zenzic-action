@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
-# just — developer workflow for zenzic-action.
+# just — developer workflow for zenzic-action (Hardcoded Stable).
 # Use `just --list` to see available commands.
-zenzic_project := env_var_or_default("ZENZIC_PROJECT_PATH", "../zenzic")
 
 # Bump the Zenzic version pinned as default in action.yml.
 # Usage:  just bump 0.7.1
@@ -15,8 +14,9 @@ reuse:
     uvx reuse lint
 
 # Run the Zenzic Sentinel quality gate on action documentation
+# Uses the stable v0.7.0 release for maximum reliability.
 check:
-    uv run --project {{zenzic_project}} zenzic check all --strict
+    uvx zenzic@v0.7.0 check all --strict
 
 # Test suite (action-level checks via nox)
 test:
