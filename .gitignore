@@ -17,7 +17,7 @@ htmlcov/
 
 # Misc
 .DS_Store
-.zenzic.dev.toml
+.zenzic.local.toml
 
 # EPOCH 4 — draft vault (git-ignored, local reference only)
 .draft/
