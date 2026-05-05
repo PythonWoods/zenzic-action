@@ -15,8 +15,9 @@ reuse:
 
 # Run the Zenzic Sentinel quality gate on action documentation
 # Uses the stable v0.7.0 release for maximum reliability.
-check:
-    uvx zenzic@v0.7.0 check all --strict
+# Pass extra flags directly: just check --no-external
+check *args:
+    uvx zenzic@v0.7.0 check all --strict {{args}}
 
 # Test suite (action-level checks via nox)
 test:
