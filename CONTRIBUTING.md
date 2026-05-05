@@ -13,12 +13,22 @@ A differenza della documentazione, `zenzic-action` è vincolata alle release sta
 
 This action relies on the published Zenzic CLI on PyPI. It acts as a stable wrapper to distribute Zenzic inside GitHub Actions securely.
 
+## First-Time Setup
+
+Install the pre-commit hooks (run once after cloning):
+
+```bash
+uvx pre-commit install               # commit-stage: hygiene + zenzic self-check
+uvx pre-commit install -t pre-push   # pre-push: 🛡️ Final Guard runs `just verify`
+```
+
 ## Local Verification
 
 Use `just` to run the self-tests before opening a PR:
 
 ```bash
-just verify
+just lint      # fast pass: pre-commit hooks only
+just verify    # full gate: pre-commit + Zenzic check + integration tests
 ```
 
-This will run `pre-commit` checks and the Action's integration tests via Nox.
+Both must pass with zero errors before you open or update a PR.

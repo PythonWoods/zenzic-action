@@ -27,6 +27,10 @@ test:
 preflight:
     uvx pre-commit run --all-files
 
+# Fast linter pass: run all pre-commit hooks without the full test suite.
+lint:
+    uvx pre-commit run --all-files
+
 # Full verification gate (4-Gates Standard)
 verify: check preflight test
 
