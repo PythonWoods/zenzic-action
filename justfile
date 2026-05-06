@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
+set shell := ["bash", "-c"]
+
 # just — developer workflow for zenzic-action (Hardcoded Stable).
 # Use `just --list` to see available commands.
 
@@ -16,8 +18,9 @@ reuse:
 # Run the Zenzic Sentinel quality gate on action documentation
 # Uses the stable v0.7.0 release for maximum reliability.
 # Pass extra flags directly: just check --no-external
+# ZENZIC_EXTRA_ARGS (env, optional): injects extra flags at CI time (e.g. --exclude-url)
 check *args:
-    uvx zenzic@v0.7.0 check all --strict {{args}}
+    uvx zenzic@v0.7.0 check all --strict ${ZENZIC_EXTRA_ARGS:-} {{args}}
 
 # Test suite (action-level checks via nox)
 test:
