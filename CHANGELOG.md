@@ -47,3 +47,18 @@ cycle and pinned exclusively to released versions via `uvx zenzic@v0.7.0`.
   No branch parity. The Action is a sealed distribution artefact.
 - **Self-Check CI** (`self-check.yml`): Validates the Action's own documentation using
   the same stable Zenzic pin.
+
+#### Changed
+
+- **Matrix CI — Quartz Maturity**: `self-check.yml` now runs on `ubuntu-latest` and
+  `windows-latest` (`fail-fast: false`, `defaults: run: shell: bash`). Cross-platform
+  validation aligned with Core and Doc repos. `ZENZIC_EXTRA_ARGS` env block injected
+  with `--exclude-url` entries for known pre-launch transient URLs.
+- **Sovereign Override passthrough** (`zenzic-action-wrapper.sh`): `ZENZIC_EXTRA_ARGS`
+  is now captured into an `EXTRA_ARGS` bash array and passed to both the SARIF and
+  non-SARIF `uvx` invocations. Callers setting the 404 shield in their workflow env
+  have it transparently forwarded to the Zenzic CLI — no more silent bypass.
+- **`justfile` Bash-first**: `set shell := ["bash", "-c"]` added. `check *args` recipe
+  expanded with `${ZENZIC_EXTRA_ARGS:-}` for local parity with CI propagation.
+- **`.gitignore` hardening**: `.zenzic.dev.toml` added explicitly to prevent accidental
+  tracking. `.zenzic.local.toml` was already ignored. Local `.zenzic.dev.toml` purged.
