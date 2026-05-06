@@ -67,6 +67,12 @@ if [ "${ZENZIC_STRICT}" = "true" ]; then
   STRICT_FLAG="--strict"
 fi
 
+# ── 404 Shield passthrough (Sovereign Override) ───────────────────────────────
+# ZENZIC_EXTRA_ARGS is set by the caller's workflow (e.g. --exclude-url …).
+# word-split intentionally: each --exclude-url <url> pair must be separate args.
+# shellcheck disable=SC2206
+EXTRA_ARGS=(${ZENZIC_EXTRA_ARGS:-})
+
 EXIT_CODE=0
 FINDINGS=0
 
@@ -74,7 +80,7 @@ FINDINGS=0
 if [ "${ZENZIC_FORMAT}" = "sarif" ]; then
   # SARIF path: capture stdout to file; stderr streams to the step log.
   # `|| EXIT_CODE=$?` captures the exit code without triggering set -e.
-  uvx "${PKG}" check all --format sarif ${STRICT_FLAG} \
+  uvx "${PKG}" check all --format sarif ${STRICT_FLAG} "${EXTRA_ARGS[@]}" \
     > "${ZENZIC_SARIF_FILE}" \
     || EXIT_CODE=$?
 
@@ -106,7 +112,7 @@ PYEOF
 
 else
   # Non-SARIF: stream output directly to the step log; capture exit code.
-  uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" ${STRICT_FLAG} \
+  uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" ${STRICT_FLAG} "${EXTRA_ARGS[@]}" \
     || EXIT_CODE=$?
 
 fi
