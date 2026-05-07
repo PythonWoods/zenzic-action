@@ -28,4 +28,5 @@ zenzic-results.sarif
 mutmut*
 .mutmut-cache/
 .pytest_cache/
+.hypothesis/
 
