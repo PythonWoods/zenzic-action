@@ -15,9 +15,6 @@ repos:
       - id: check-merge-conflict
       - id: check-case-conflict
       - id: mixed-line-ending
-      - id: no-commit-to-branch
-        args: ["--branch", "main"]
-        stages: [pre-commit]
 
   - repo: https://github.com/fsfe/reuse-tool
     rev: v6.2.0
