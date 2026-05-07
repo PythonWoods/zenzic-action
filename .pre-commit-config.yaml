@@ -25,7 +25,7 @@ repos:
     hooks:
       - id: zenzic-check
         name: Zenzic Sentinel
-        entry: bash -c 'uv run --project "${ZENZIC_PROJECT_PATH:-../zenzic}" zenzic check all --strict'
+        entry: just check
         language: system
         pass_filenames: false
         always_run: true

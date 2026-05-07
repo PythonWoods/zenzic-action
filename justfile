@@ -26,6 +26,8 @@ check *args:
     GUARD=(
       --exclude-url "https://zenzic.dev/blog/"
       --exclude-url "https://zenzic.dev/docs/"
+      --exclude-url "https://zenzic.dev/developers/"
+      --exclude-url "https://zenzic.dev/it/developers/"
       --exclude-url "https://github.com/PythonWoods/zenzic/releases/tag/v0.7.0"
     )
     uvx zenzic@v0.7.0 check all --strict "${GUARD[@]}" {{args}}

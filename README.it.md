@@ -39,19 +39,25 @@ Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Co
 | Annotation PR | Finding inline sul diff, color-coded per severity |
 | Version pinning | Pin a una release esatta per gate CI deterministici e riproducibili |
 
-## Utilizzo
+## Quick Start
 
-```yaml
+La configurazione minimale — zero setup Python, SARIF su Code Scanning in un solo step:
+
+```yaml title=".github/workflows/docs.yml"
+- uses: actions/checkout@v6
+
 - name: Run Zenzic Documentation Quality Gate
   uses: PythonWoods/zenzic-action@v1
   with:
+    version: "0.7.0"
     format: sarif
     upload-sarif: "true"
+  permissions:
+    contents: read
+    security-events: write
 ```
 
-Aggiungi `permissions: security-events: write` al job per far riuscire l'upload SARIF.
-
-Esempio completo:
+Metti un file `zenzic.toml` nella root del repository e l'action lo trova automaticamente — nessun input `config-file` richiesto.
 
 ```yaml
 jobs:
@@ -74,10 +80,44 @@ jobs:
           fail-on-error: "true"
 ```
 
-> **Directory docs:** Zenzic legge la sua configurazione da `zenzic.toml` nella root del repository.
+> **Setup Zero-Config:** L'action scopre automaticamente la configurazione Zenzic — nessun input `config-file` richiesto. La ricerca avviene in ordine di priorità: prima `zenzic.toml` nella root del repository, poi `.github/zenzic.toml` come fallback. Questo garantisce comportamento identico tra `zenzic check all` in locale e in CI. Per usare un file specifico, imposta `config-file: path/to/zenzic.toml`.
 > Esegui `zenzic init` una volta per fare scaffolding di un config se le tue docs sono fuori dalla cartella `docs/` di default.
 
 > **Stabilità:** `version: "0.7.0"` è il default. Per le ultime feature appena rilasciate, puoi impostare `version: latest`, ma le pipeline di produzione dovrebbero sempre fare pin a una release specifica per esecuzioni deterministiche e riproducibili.
+
+## Configuration Discovery
+
+L'action è **zero-config per default**. Ad ogni esecuzione effettua una ricerca Root-First per la configurazione Zenzic:
+
+| Priorità | Posizione | Quando viene usata |
+|:---:|---|---|
+| 1 | Input esplicito `config-file` | Sempre onorato per primo se fornito |
+| 2 | `zenzic.toml` nella root del repository | Auto-scoperto quando non c'è override esplicito |
+| 3 | `.github/zenzic.toml` | Fallback quando il file in root è assente |
+| — | *(nessun file trovato)* | Zenzic usa i suoi default predefiniti |
+
+**Contratto di Intenzione Sovrana.** Se fornisci `config-file: path/to/custom.toml` ma il file non esiste, l'action **non ricade** sull'auto-discovery. Ricevi un'annotation `::warning` (o un `::error` fatale con `strict: true`). Il fallthrough silenzioso sarebbe inganno operativo.
+
+## Override Sovrano — Esclusioni URL Temporanee
+
+Alcuni link della documentazione puntano a pagine temporaneamente non disponibili in CI (deploy staging, post del blog pubblicati contemporaneamente al rilascio). La variabile d'ambiente `ZENZIC_EXTRA_ARGS` permette di passare flag aggiuntivi direttamente alla CLI Zenzic senza modificare gli input dell'action:
+
+```yaml
+- name: Run Zenzic
+  uses: PythonWoods/zenzic-action@v1
+  with:
+    version: "0.7.0"
+    format: sarif
+    upload-sarif: "true"
+  env:
+    ZENZIC_EXTRA_ARGS: >-
+      --exclude-url https://example.com/blog/new-post
+      --exclude-url https://staging.example.com
+```
+
+Ogni valore `--exclude-url` diventa un argomento separato. I pattern URL che contengono `*` o `?` sono sicuri — il wrapper disabilita l'espansione glob prima di costruire l'array di argomenti, quindi nessuna espansione su filesystem avviene.
+
+> **Scope:** `ZENZIC_EXTRA_ARGS` è solo per esclusioni transitorie. Le regole permanenti (es. escludere sempre una sezione docs, configurare i livelli di severity) appartengono a `zenzic.toml` in modo che le esecuzioni locali e CI condividano la stessa policy.
 
 ## Inputs
 
@@ -89,6 +129,7 @@ jobs:
 | `upload-sarif` | `true` | Carica SARIF su GitHub Code Scanning. |
 | `strict` | `false` | Tratta i warning come errori. |
 | `fail-on-error` | `true` | Fa fallire lo step del workflow sui finding. |
+| `config-file` | *(auto)* | Path opzionale a un file di configurazione Zenzic. Se omesso, l'action auto-scopre: prima `zenzic.toml` nella root del repository, poi `.github/zenzic.toml`. Path assoluti e sequenze di traversal `..` sono rifiutati. |
 
 ## Outputs
 
@@ -161,6 +202,17 @@ La separazione è imposta da [ADR 011: Cross-Instance Allowlist](https://zenzic.
 | 👤 Utente dell'action (integrator CI) | [Guida CI/CD](https://zenzic.dev/it/docs/how-to/configure-ci-cd/) |
 | 🔧 Contributor dell'action | [Portale Sviluppatori](https://zenzic.dev/it/developers/) · [ADR Vault](https://zenzic.dev/it/developers/explanation/adr-vault) |
 | 🛡️ Security reviewer | [Engineering Ledger](https://zenzic.dev/it/developers/explanation/engineering-ledger) · [SECURITY.md](SECURITY.md) |
+
+---
+
+## Deep Dive — Architettura di Sicurezza
+
+Per una descrizione completa di come il wrapper applica la sicurezza, gestisce i codici di uscita e
+effettua la configuration discovery, consulta la documentazione ufficiale:
+
+> **[GitHub Action Internals — zenzic.dev](https://zenzic.dev/it/docs/explanation/github-action-internals)**
+>
+> Copre: Blood Sentinel Protocol · Contratto Exit Code · cascata Root-First Sentinel · Contratto di Intenzione Sovrana · guardia integrità SARIF.
 
 ---
 
