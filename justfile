@@ -17,10 +17,18 @@ reuse:
 
 # Run the Zenzic Sentinel quality gate on action documentation
 # Uses the stable v0.7.0 release for maximum reliability.
+# ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
 # Pass extra flags directly: just check --no-external
-# ZENZIC_EXTRA_ARGS (env, optional): injects extra flags at CI time (e.g. --exclude-url)
 check *args:
-    uvx zenzic@v0.7.0 check all --strict ${ZENZIC_EXTRA_ARGS:-} {{args}}
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Pre-Launch Guard — remove after GA deploy when all URLs resolve
+    GUARD=(
+      --exclude-url "https://zenzic.dev/blog/"
+      --exclude-url "https://zenzic.dev/docs/"
+      --exclude-url "https://github.com/PythonWoods/zenzic/releases/tag/v0.7.0"
+    )
+    uvx zenzic@v0.7.0 check all --strict "${GUARD[@]}" {{args}}
 
 # Test suite (action-level checks via nox)
 test:

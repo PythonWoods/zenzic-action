@@ -24,12 +24,8 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      # ZENZIC_EXTRA_ARGS: runtime 404 shield — propagated to just check via wrapper
-      ZENZIC_EXTRA_ARGS: >-
-        --exclude-url https://zenzic.dev/blog/
-        --exclude-url https://zenzic.dev/docs/
-        --exclude-url https://github.com/PythonWoods/zenzic/releases/tag/v0.7.0
+    # ZRT-010 — Sovereign Parity: Pre-Launch Guard lives in justfile.
+    # Local and CI run identical 'just check' invocations.
     steps:
       - uses: actions/checkout@v6
 
