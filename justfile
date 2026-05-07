@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
-# just — developer workflow for zenzic-action.
+set shell := ["bash", "-c"]
+
+# just — developer workflow for zenzic-action (Hardcoded Stable).
 # Use `just --list` to see available commands.
 
 # Bump the Zenzic version pinned as default in action.yml.
@@ -9,22 +11,37 @@
 bump version:
     @bash scripts/bump-version.sh "{{version}}"
 
-# Update the [CODE MAP] in copilot-instructions.md from action.yml and the wrapper script.
-# Run after changing action.yml or zenzic-action-wrapper.sh.
-map-update:
-    uv run scripts/map_action.py
-
 # Check REUSE/SPDX licence compliance
 reuse:
     uvx reuse lint
 
 # Run the Zenzic Sentinel quality gate on action documentation
-check:
-    uvx zenzic check all
+# Uses the stable v0.7.0 release for maximum reliability.
+# ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
+# Pass extra flags directly: just check --no-external
+check *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Permanent exclusion: contributor-covenant.org is a flaky third-party URL.
+    GUARD=(
+      --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
+    )
+    uvx zenzic@v0.7.0 check all --strict "${GUARD[@]}" {{args}}
+
+# Test suite (action-level checks via nox)
+test:
+    uvx nox -s tests
 
 # Full CI-equivalent pipeline (delegates to nox)
 preflight:
-    uv run nox -s preflight
+    uvx pre-commit run --all-files
+
+# Fast linter pass: run all pre-commit hooks without the full test suite.
+lint:
+    uvx pre-commit run --all-files
+
+# Full verification gate (4-Gates Standard)
+verify: check preflight test
 
 # Clean generated artefacts
 clean:

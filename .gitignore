@@ -8,5 +8,24 @@ __pycache__/
 # nox
 .nox/
 
+# Coverage artefacts (Determinism Invariant — never tracked)
+coverage.json
+coverage.xml
+htmlcov/
+.coverage
+.coverage.*
+
 # Misc
 .DS_Store
+.zenzic.local.toml
+.zenzic.dev.toml
+
+# EPOCH 4 — draft vault (git-ignored, local reference only)
+.draft/
+
+# --- Ephemeral Artifacts (Machine Silence) ---
+zenzic-results.sarif
+mutmut*
+.mutmut-cache/
+.pytest_cache/
+.hypothesis/

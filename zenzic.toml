@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
+# SPDX-License-Identifier: Apache-2.0
+# zenzic.toml — Standalone configuration for the zenzic-action repository.
+#
+# "Prose-only Maintenance" config: scans root-level Markdown files
+# (README, CONTRIBUTING, CHANGELOG, SECURITY, RELEASE, etc.).
+# The action has no docs/ tree — docs_dir = "." is the correct perimeter.
+#
+# 🌿  ZERO-CONFIG NOTE (v0.7.0):
+#   * Universal build / cache dirs and toolchain files are excluded by
+#     SYSTEM_EXCLUDED_DIRS / SYSTEM_EXCLUDED_FILE_NAMES — no repetition needed.
+
+docs_dir = "."
+
+# Repo-specific directories that are not documentation.
+excluded_dirs = [
+    "assets",
+    "scripts",
+    "LICENSES",
+]
+
+# CHANGELOG*: example snippets trigger false positives.
+# *.sh: shell scripts are infrastructure, not documentation (asset scanner).
+excluded_file_patterns = ["CHANGELOG*.md"]
+excluded_build_artifacts = ["CHANGELOG*.md", "*.sh"]
+
+excluded_external_urls = [
+    # GitHub repo URLs return 429 (rate-limited) in CI.
+    "https://github.com/PythonWoods/zenzic-action",
+    "https://github.com/PythonWoods/zenzic",
+]
+
+placeholder_patterns = []
+snippet_min_lines = 1
+placeholder_max_words = 50
+
+[build_context]
+engine = "standalone"
+
+[[custom_rules]]
+id       = "ZZ-NOCLICKHERE"
+pattern  = "(?i)\\bclick here\\b|\\bclicca qui\\b"
+message  = "Avoid generic link text. Use a meaningful description for accessibility."
+severity = "error"
+
+[project_metadata]
+release_name = "Quartz"
+obsolete_names = ["Obsidian", "Ossidiana"]

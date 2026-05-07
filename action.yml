@@ -18,7 +18,7 @@ inputs:
     required: false
     default: "sarif"
   sarif-file:
-    description: "Path for the SARIF output file (used when format is 'sarif')."
+    description: "Relative path for the SARIF output file (used when format is 'sarif'). Must be a relative path inside the workspace — absolute paths and path traversal sequences ('..') are rejected by the wrapper."
     required: false
     default: "zenzic-results.sarif"
   upload-sarif:
@@ -33,6 +33,10 @@ inputs:
     description: "Fail the workflow step if Zenzic finds errors."
     required: false
     default: "true"
+  config-file:
+    description: "Optional path to a Zenzic configuration file inside the workspace. If not provided, the action automatically searches for 'zenzic.toml' in the repository root, then '.github/zenzic.toml' (Root-First Sentinel). Absolute paths and path traversal sequences ('..') are rejected."
+    required: false
+    default: ""
 
 outputs:
   sarif-file:
@@ -59,6 +63,7 @@ runs:
         ZENZIC_SARIF_FILE: ${{ inputs.sarif-file }}
         ZENZIC_STRICT: ${{ inputs.strict }}
         ZENZIC_FAIL_ON_ERROR: ${{ inputs.fail-on-error }}
+        ZENZIC_CONFIG_FILE: ${{ inputs.config-file }}
       run: bash "${{ github.action_path }}/zenzic-action-wrapper.sh"
 
     - name: Upload SARIF to GitHub Code Scanning
