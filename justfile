@@ -22,18 +22,10 @@ reuse:
 check *args:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Pre-Launch Guard — remove after GA deploy when all URLs resolve
+    # Permanent exclusion: contributor-covenant.org is a flaky third-party URL.
     GUARD=(
-      --exclude-url "https://zenzic.dev/blog/"
-      --exclude-url "https://zenzic.dev/docs/"
-      --exclude-url "https://zenzic.dev/developers/"
-      --exclude-url "https://zenzic.dev/it/developers/"
-      --exclude-url "https://github.com/PythonWoods/zenzic/releases/tag/v0.7.0"
       --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
     )
-    if [[ ${#GUARD[@]} -gt 0 ]]; then
-      echo -e "\033[33m[QUARTZ WARNING] Pre-Launch Guard active: skipping internal/future URLs. DO NOT release with these guards active.\033[0m" >&2
-    fi
     uvx zenzic@v0.7.0 check all --strict "${GUARD[@]}" {{args}}
 
 # Test suite (action-level checks via nox)
