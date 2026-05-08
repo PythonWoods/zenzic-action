@@ -1,0 +1,55 @@
+[tool.bumpversion]
+current_version = "1.0.0"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+
+[[tool.bumpversion.files]]
+filename = "action.yml"
+search = 'default: "{current_version}"'
+replace = 'default: "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = '"{current_version}"'
+replace = '"{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = "v{current_version}"
+replace = "v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "RELEASE.md"
+search = "v{current_version}"
+replace = "v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "RELEASE.it.md"
+search = "v{current_version}"
+replace = "v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.md"
+search = "v{current_version}"
+replace = "v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "justfile"
+search = "zenzic@v{current_version}"
+replace = "zenzic@v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "noxfile.py"
+search = "zenzic@v{current_version}"
+replace = "zenzic@v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "zenzic.toml"
+search = "v{current_version}"
+replace = "v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "package.json"
+search = '"name": "zenzic-action",\n  "version": "\\d+\\.\\d+\\.\\d+",'
+replace = '"name": "zenzic-action",\n  "version": "{new_version}",'
+regex = true
