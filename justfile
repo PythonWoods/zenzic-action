@@ -59,9 +59,18 @@ pin-core version:
     git commit -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a release bump without modifying any files
-# Usage: just release-dry patch|minor|major
-release-dry part:
-    uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --allow-dirty --verbose
+# Usage: just release-dry patch|minor|major [--short]
+release-dry part *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    _short=false
+    for _arg in {{args}}; do [[ "$_arg" == "--short" ]] && _short=true; done
+    if $_short; then
+        uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --allow-dirty --verbose 2>&1 \
+            | grep -E 'current version|New version will be|Dry run'
+    else
+        uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --allow-dirty --verbose
+    fi
 
 # Simulate a Zenzic Core pin realignment without modifying files
 # Usage: just core-align-dry 0.7.1
@@ -127,7 +136,7 @@ release-contracts:
     grep -qE '^core-version:' justfile
     grep -qE '^pin-core version:' justfile
     grep -qE '^release part:' justfile
-    grep -qE '^release-dry part:' justfile
+    grep -qE '^release-dry part' justfile
     grep -q -- '--dry-run --allow-dirty --verbose' justfile
     grep -q 'x-zenzic-core-pin' action.yml
     if sed -n '/^release part:/,/^[^[:space:]].*:/p' justfile | tail -n +2 | grep -q -- '--allow-dirty'; then
