@@ -6,10 +6,26 @@ set shell := ["bash", "-c"]
 # just — developer workflow for zenzic-action (Hardcoded Stable).
 # Use `just --list` to see available commands.
 
-# Bump the Zenzic version pinned as default in action.yml.
-# Usage:  just bump 0.7.1
-bump version:
-    @bash scripts/bump-version.sh "{{version}}"
+# Release orchestration: explicit, transparent, and lockfile-first.
+release part:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{ part }}" in
+        patch|minor|major) ;;
+        *) echo "Invalid part '{{ part }}'. Use patch|minor|major"; exit 2 ;;
+    esac
+    uvx --from "bump-my-version==1.2.6" bump-my-version bump {{ part }}
+    if [ -f package-lock.json ]; then
+        npm ci
+    fi
+    version="$(uvx --from "bump-my-version==1.2.6" bump-my-version show current_version)"
+    if git rev-parse "v${version}" >/dev/null 2>&1; then
+        echo "Tag v${version} already exists. Aborting."
+        exit 3
+    fi
+    git add -u
+    git commit -m "release: bump version to ${version}"
+    git tag -a "v${version}" -m "Release v${version}"
 
 # Check REUSE/SPDX licence compliance
 reuse:
