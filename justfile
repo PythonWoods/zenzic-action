@@ -27,6 +27,15 @@ release part:
     git commit -m "release: bump version to ${version}"
     git tag -a "v${version}" -m "Release v${version}"
 
+# Show the current project version
+version:
+    @uvx --from "bump-my-version==1.2.6" bump-my-version show current_version
+
+# Simulate a release bump without modifying any files
+# Usage: just release-dry patch|minor|major
+release-dry part:
+    uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --verbose
+
 # Check REUSE/SPDX licence compliance
 reuse:
     uvx reuse lint
