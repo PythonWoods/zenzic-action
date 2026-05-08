@@ -27,13 +27,18 @@ release part:
     git commit -m "release: bump version to ${version}"
     git tag -a "v${version}" -m "Release v${version}"
 
-# Show the current project version
+# Show the current action version
 version:
     @uvx --from "bump-my-version==1.2.6" bump-my-version show current_version
 
 # Show the pinned Zenzic Core version used by this action
 core-version:
     @perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml
+
+# Show both the action version and the pinned Zenzic Core version
+versions:
+    @echo "action:      $(uvx --from "bump-my-version==1.2.6" bump-my-version show current_version)"
+    @echo "zenzic-core: $(perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml)"
 
 # Realign the Zenzic Core pin in action.yml using the anchored marker
 # Usage: just pin-core 0.7.1
