@@ -32,16 +32,19 @@ check *args:
 test:
     uvx nox -s tests
 
-# Full CI-equivalent pipeline (delegates to nox)
-preflight:
-    uvx pre-commit run --all-files
-
 # Fast linter pass: run all pre-commit hooks without the full test suite.
 lint:
     uvx pre-commit run --all-files
 
 # Full verification gate (4-Gates Standard)
-verify: check preflight test
+verify: _check-hooks check test
+
+_check-hooks:
+    #!/usr/bin/env bash
+    if [ ! -f .git/hooks/pre-push ]; then
+        echo "⚠️  WARNING: Pre-push hook not installed — commits are unprotected before push."
+        echo "👉 Run: pre-commit install -t pre-push"
+    fi
 
 # Clean generated artefacts
 clean:

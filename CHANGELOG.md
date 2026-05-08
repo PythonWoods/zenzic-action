@@ -11,7 +11,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **`_check-hooks` DX guard:** Added hidden `_check-hooks` recipe as first dependency of
+  `just verify`. Emits a warning if the pre-push Final Guard hook (`pre-commit install
+  -t pre-push`) is not installed locally, without blocking the verification run.
+
 ### Changed
+
+- **`verify` recipe — `preflight` removed:** `verify` now runs `_check-hooks check test`.
+  The obsolete `preflight` recipe (redundant alias for `uvx pre-commit run --all-files`)
+  has been deleted from the justfile.
 
 - **Infrastructure alignment checkpoint:** No code changes in this repository
   (shell-based composite action, `venv_backend="none"` throughout). This entry
