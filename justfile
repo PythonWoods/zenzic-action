@@ -34,7 +34,7 @@ version:
 # Simulate a release bump without modifying any files
 # Usage: just release-dry patch|minor|major
 release-dry part:
-    uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --verbose
+    uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --allow-dirty --verbose
 
 # Check REUSE/SPDX licence compliance
 reuse:
