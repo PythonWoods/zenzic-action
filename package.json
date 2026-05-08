@@ -1,6 +1,6 @@
 {
   "name": "zenzic-action",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Official GitHub Action for Zenzic — Documentation Quality Gate",
   "license": "Apache-2.0",

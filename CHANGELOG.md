@@ -41,7 +41,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [1.0.0] — 2026-05-07 — Quartz Edition (Stable)
+## [1.0.1] — 2026-05-07 — Quartz Edition (Stable)
 
 > The official GitHub Action for [Zenzic](https://github.com/PythonWoods/zenzic),
 > the deterministic documentation quality gate.
