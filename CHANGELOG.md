@@ -9,6 +9,17 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- **Infrastructure alignment checkpoint:** No code changes in this repository
+  (shell-based composite action, `venv_backend="none"` throughout). This entry
+  tracks alignment with the Zenzic Core v0.7.1 and Structum v0.1.1 infrastructure
+  release (Boundary Testing matrix fix across the ecosystem).
+
+---
+
 ## [1.0.0] — 2026-05-07 — Quartz Edition (Stable)
 
 > The official GitHub Action for [Zenzic](https://github.com/PythonWoods/zenzic),
