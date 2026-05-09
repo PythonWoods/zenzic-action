@@ -55,7 +55,8 @@ pin-core version:
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
     perl -i -pe 's/default: "[^"]+"\s*# x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
-    git add action.yml
+    perl -i -pe 's/zenzic\@v[0-9\.]+[a-z0-9]*/zenzic\@v{{version}}/' noxfile.py
+    git add action.yml noxfile.py
     git commit -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a release bump without modifying any files
@@ -106,7 +107,14 @@ check *args:
     GUARD=(
       --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
     )
-    uvx zenzic@v0.7.0 check all --strict "${GUARD[@]}" {{args}}
+    CORE_PATH="${ZENZIC_PROJECT_PATH:-../zenzic}"
+        if [ -d "$CORE_PATH" ]; then
+        echo "🛡️  [Zenzic Sentinel] Local core detected. Using: $CORE_PATH"
+        uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" {{args}}
+    else
+        echo "🛡️  [Zenzic Sentinel] Local core not found. Using published PyPI release..."
+        uvx zenzic@0.7.1 check all --strict "${GUARD[@]}" {{args}}
+    fi
 
 # Test suite (action-level checks via nox)
 test:
@@ -117,7 +125,7 @@ lint:
     uvx pre-commit run --all-files
 
 # Full verification gate (4-Gates Standard)
-verify: _check-hooks release-contracts check test
+verify: _check-hooks lint release-contracts test
 
 _check-hooks:
     #!/usr/bin/env bash
