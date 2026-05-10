@@ -1,8 +1,8 @@
 <!-- SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev> -->
 <!-- SPDX-License-Identifier: Apache-2.0 -->
-# 💎 Zenzic v0.7.0 — L'Era del Quarzo (Quartz Maturity)
+# 💎 Zenzic v0.7.0 — L'Era del Quartz (Quartz Maturity)
 
-Questa release segna la nascita del Sistema di Conoscenza Sovrano. Dopo l'Epurazione del Quarzo, Zenzic abbandona definitivamente ogni residuo sperimentale per diventare un'infrastruttura deterministica di grado industriale.
+Questa release segna la nascita del Sistema di Conoscenza Sovrano. Dopo l'Epurazione del Quartz, Zenzic abbandona definitivamente ogni residuo sperimentale per diventare un'infrastruttura deterministica di grado industriale.
 
 ## 🏛️ I Pilastri della v0.7.0
 
