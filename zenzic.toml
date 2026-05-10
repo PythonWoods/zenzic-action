@@ -44,5 +44,5 @@ message  = "Avoid generic link text. Use a meaningful description for accessibil
 severity = "error"
 
 [project_metadata]
-release_name = "Quartz"
-obsolete_names = ["Obsidian", "Ossidiana"]
+release_name = "Basalt"
+obsolete_names = ["Obsidian"]
