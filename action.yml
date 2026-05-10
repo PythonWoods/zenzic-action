@@ -10,7 +10,7 @@ branding:
 
 inputs:
   version:
-    description: "Zenzic version to use (e.g. '0.7.0'). Defaults to latest stable."
+    description: "Zenzic version to use (e.g. '0.7.1'). Defaults to latest stable."
     required: false
     default: "0.7.1" # x-zenzic-core-pin
   format:

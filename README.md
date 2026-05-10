@@ -49,7 +49,7 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
 - name: Run Zenzic Documentation Quality Gate
   uses: PythonWoods/zenzic-action@v1
   with:
-    version: "0.7.0"
+    version: "0.7.1"
     format: sarif
     upload-sarif: "true"
   permissions:
@@ -73,7 +73,7 @@ jobs:
       - name: Run Zenzic
         uses: PythonWoods/zenzic-action@v1
         with:
-          version: "0.7.0"       # pin to a stable release
+          version: "0.7.1"       # pin to a stable release
           format: sarif           # emit SARIF for Code Scanning
           upload-sarif: "true"    # post results to the Security tab
           strict: "false"
@@ -83,7 +83,7 @@ jobs:
 > **Zero-Config Setup:** The action auto-discovers your Zenzic configuration automatically — no `config-file` input required. It searches in priority order: `zenzic.toml` in the repository root first, then `.github/zenzic.toml` as a fallback. This gives you identical behaviour between `zenzic check all` locally and in CI. To pin a specific file, set `config-file: path/to/zenzic.toml`.
 > Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
 
-> **Stability:** `version: "0.7.0"` is the default. For the latest features as they ship, you can set `version: latest`, but production pipelines should always pin to a specific release for deterministic, reproducible runs.
+> **Stability:** `version: "0.7.1"` is the default. For the latest features as they ship, you can set `version: latest`, but production pipelines should always pin to a specific release for deterministic, reproducible runs. The default will be moved to `0.8.0` as soon as that release is published to the package registry.
 
 ## Configuration Discovery
 
@@ -106,7 +106,7 @@ Some documentation links point to pages that are temporarily unavailable in CI (
 - name: Run Zenzic
   uses: PythonWoods/zenzic-action@v1
   with:
-    version: "0.7.0"
+    version: "0.7.1"
     format: sarif
     upload-sarif: "true"
   env:
@@ -123,7 +123,7 @@ Each `--exclude-url` value becomes a separate argument. URL patterns that contai
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `0.7.0` | Zenzic version to install. Pinned to a specific release for deterministic, reproducible runs. Set `latest` for continuous evaluation of new features. |
+| `version` | `0.7.1` | Zenzic version to install. Pinned to a specific release for deterministic, reproducible runs. Set `latest` for continuous evaluation of new features. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. Absolute paths and `..` traversal sequences are rejected. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |

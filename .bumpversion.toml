@@ -15,3 +15,28 @@ replace = "## [{new_version}]"
 filename = "package.json"
 search = '"version": "{current_version}"'
 replace = '"version": "{new_version}"'
+
+# Core pin bump is coordinated separately (0.7.1 -> 0.8.0), but must be covered.
+[[tool.bumpversion.files]]
+filename = "action.yml"
+search = 'default:\s*"0\.7\.1"'
+replace = 'default: "0.8.0"'
+regex = true
+
+[[tool.bumpversion.files]]
+filename = "noxfile.py"
+search = 'zenzic@v0\.7\.1'
+replace = 'zenzic@v0.8.0'
+regex = true
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = 'version:\s*"0\.7\.1"'
+replace = 'version: "0.8.0"'
+regex = true
+
+[[tool.bumpversion.files]]
+filename = "README.it.md"
+search = 'version:\s*"0\.7\.1"'
+replace = 'version: "0.8.0"'
+regex = true
