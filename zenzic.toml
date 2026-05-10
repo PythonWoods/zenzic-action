@@ -6,6 +6,9 @@
 # (README, CONTRIBUTING, CHANGELOG, SECURITY, RELEASE, etc.).
 # The action has no docs/ tree — docs_dir = "." is the correct perimeter.
 #
+# 🏛️ LOCAL SOVEREIGNTY (Basalt): keep machine-specific overrides and private
+# secrets in `.zenzic.local.toml` only. Shared `zenzic.toml` remains CI policy.
+#
 # 🌿  ZERO-CONFIG NOTE (v0.7.0):
 #   * Universal build / cache dirs and toolchain files are excluded by
 #     SYSTEM_EXCLUDED_DIRS / SYSTEM_EXCLUDED_FILE_NAMES — no repetition needed.
