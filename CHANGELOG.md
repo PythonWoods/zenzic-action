@@ -11,34 +11,11 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
-
-- **Release contract recipes standardized:** `just version`, `just core-version`,
-  `just versions`, `just release-dry`, and `just release-contracts` are now the
-  canonical workflow for action/core pin governance.
-- **Core pin independence preserved via comment anchor strategy:**
-  `just pin-core <version>` updates only the core pin marker in `action.yml`.
-- **Local DX guard `_check-hooks`:** warns when pre-push Final Guard is not
-  installed, without blocking verification.
-
-### Changed
-
-- **Verification pipeline simplified:** `verify` now runs `_check-hooks check test`
-  and removes obsolete `preflight` duplication.
-- **Action governance aligned with ecosystem release hardening:** changelog and
-  recipe contracts now mirror Basalt governance structure.
-
-### Fixed
-
-- **Unreleased release notes normalized:** unified section ordering and wording
-  for deterministic cross-repo release diffs.
-
 ### Security
 
-- **Action security posture aligned with core invariants:** release notes now
-  track non-suppressible security exits and strict forwarding of extra security
-  flags through the wrapper contract.
-
+- **Action security posture aligned with core invariants:** non-suppressible
+  exit codes (2, 3) and strict forwarding of security flags through the wrapper
+  contract are now explicitly tracked in release notes.
 ---
 
 ## [1.0.1] — 2026-05-07 — Quartz Edition (Stable)
