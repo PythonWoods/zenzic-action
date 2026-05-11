@@ -11,34 +11,6 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
-
-- **DX Release Recipes (Sprint DX):** All four ecosystem repositories now include:
-  - `just version` — prints current action version from bump-my-version
-  - `just core-version` — prints pinned Zenzic Core version (from Comment Anchor in action.yml)
-  - `just versions` — prints both action and core versions side-by-side
-  - `just release-dry <part>` — full verbose dry-run (shows file diffs)
-  - `just release-dry <part> --short` — compact preview (3 essential lines only)
-  - `just release-contracts` — validates justfile and action.yml architectural contracts, wired into `verify`
-- **Comment Anchor Strategy — Core Pin Independence:** Zenzic Core version pin in `action.yml`
-  (input `default:`) is marked with `# x-zenzic-core-pin` anchor. `just pin-core <version>`
-  uses perl to update only this line, decoupling core pin from action version bumping via
-  bump-my-version. Supports independent core patches without action version changes.
-- **`_check-hooks` DX guard:** Added hidden `_check-hooks` recipe as first dependency of
-  `just verify`. Emits a warning if the pre-push Final Guard hook (`pre-commit install
-  -t pre-push`) is not installed locally, without blocking the verification run.
-
-### Changed
-
-- **`verify` recipe — `preflight` removed:** `verify` now runs `_check-hooks check test`.
-  The obsolete `preflight` recipe (redundant alias for `uvx pre-commit run --all-files`)
-  has been deleted from the justfile.
-
-- **Infrastructure alignment checkpoint:** No code changes in this repository
-  (shell-based composite action, `venv_backend="none"` throughout). This entry
-  tracks alignment with the Zenzic Core v0.7.1 and Structum v0.1.1 infrastructure
-  release (Boundary Testing matrix fix across the ecosystem).
-
 ---
 
 ## [1.0.1] — 2026-05-07 — Quartz Edition (Stable)
