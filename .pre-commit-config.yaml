@@ -24,7 +24,7 @@ repos:
   - repo: local
     hooks:
       - id: zenzic-check
-        name: Zenzic Sentinel
+        name: 🔍 Zenzic Sentinel (action audit)
         entry: just check
         language: system
         pass_filenames: false
@@ -36,7 +36,7 @@ repos:
   - repo: local
     hooks:
       - id: just-verify
-        name: 🛡️ Action Final Guard (just verify)
+        name: 🛡️ Zenzic-Action Final Guard (just verify)
         entry: just verify
         language: system
         stages: [pre-push]
