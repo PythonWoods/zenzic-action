@@ -10,7 +10,7 @@ SPDX-License-Identifier: Apache-2.0
 This policy covers **zenzic-action** — the official GitHub Action that runs
 `zenzic check all` as a CI gate and uploads findings to GitHub Code Scanning via SARIF.
 
-For vulnerabilities in the **Zenzic engine** (Python, Shield scanner, path-traversal
+For vulnerabilities in the **Zenzic engine** (Python, credential scanner, path-traversal
 protection), see the [core security policy](https://github.com/PythonWoods/zenzic/blob/main/SECURITY.md).
 
 ---
@@ -36,7 +36,7 @@ We will acknowledge your report within **72 hours** and aim to release a patch w
 
 | Area | Description |
 |------|-------------|
-| **Exit code suppression** | Any method that prevents exit code `2` (Shield) or `3` (Blood Sentinel) from propagating — even via `fail-on-error: false` or any other input |
+| **Exit code suppression** | Any method that prevents exit code `2` (credential scanner) or `3` (path traversal guard) from propagating — even via `fail-on-error: false` or any other input |
 | **SARIF integrity bypass** | A condition under which a truncated or empty SARIF file is uploaded as a false-clean result |
 | **Wrapper script injection** | A crafted action input that causes arbitrary shell code execution inside `zenzic-action-wrapper.sh` |
 | **Secret exposure via outputs** | A scenario where credentials appear in `$GITHUB_OUTPUT` or workflow logs from the wrapper script |

@@ -14,7 +14,7 @@
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5"></a>
   <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
-  <a href="https://zenzic.dev/developers/explanation/adr-vault"><img alt="4-Gates: Sentinel Seal" src="https://img.shields.io/badge/4--Gates-Sentinel%20Seal-10b981?style=flat-square"></a>
+  <a href="https://zenzic.dev/developers/explanation/adr-vault"><img alt="4-Gates: Zenzic Audit Badge" src="https://img.shields.io/badge/4--Gates-Zenzic%20Audit%20Badge-10b981?style=flat-square"></a>
   <a href="https://reuse.software/"><img alt="REUSE 3.x compliant" src="https://img.shields.io/badge/REUSE-3.x%20compliant-0d9488?style=flat-square"></a>
 </p>
 
@@ -211,7 +211,7 @@ For a complete description of how the wrapper enforces security, handles exit co
 
 > **[GitHub Action Internals — zenzic.dev](https://zenzic.dev/docs/explanation/github-action-internals)**
 >
-> Covers: Blood Sentinel Protocol · Exit Code Contract · Root-First Sentinel cascade · Sovereign Intent Contract · SARIF integrity guard.
+> Covers: Path Traversal Guard Protocol · Exit Code Contract · Root-First Zenzic cascade · Sovereign Intent Contract · SARIF integrity guard.
 
 ---
 

@@ -26,7 +26,7 @@ satisfy all that apply.
 
 ### 1. Exit Code Contract
 
-- [ ] Exit codes 2 (findings) and 3 (Blood Sentinel) are **never suppressible** via any new
+- [ ] Exit codes 2 (findings) and 3 (path traversal guard) are **never suppressible** via any new
   input or flag — the action must propagate them to the runner unconditionally.
 - [ ] `continue-on-error` is **not** set to `true` in any updated workflow example.
 

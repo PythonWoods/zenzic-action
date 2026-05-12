@@ -1,35 +1,40 @@
 <!-- SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev> -->
 <!-- SPDX-License-Identifier: Apache-2.0 -->
-# 💎 Zenzic v0.7.0 — The Quartz Era (Quartz Maturity)
+# Release Procedure — zenzic-action
 
-This release marks the birth of the Sovereign Knowledge System. Following the Quartz Purgation, Zenzic definitively abandons all experimental residues to become a deterministic, industrial-grade infrastructure.
+This file describes the release process for the `zenzic-action` GitHub Action.
 
-## 🏛️ The Pillars of v0.7.0
+## Release Checklist
 
-- **Deterministic Integrity**: Complete absence of any probabilistic dependency or logic. Zenzic now operates exclusively on structural facts and certain invariants.
-- **Sentinel Seal**: A 4-stage validation system (4-Gates Standard) ensuring absolute quality before every push.
-- **Cross-Repo Governance**: Implementation of the Branch Parity Rule for perfect synchronization between code and documentation.
-- **Machine Silence**: Optimization of analysis flows for native CI/CD integration via the SARIF 2.1.0 standard.
+1. **Update core pin** — set `default: "<new-version>"` in `action.yml` (the `# x-zenzic-core-pin` marker).
+2. **Bump action version** — run `just bump <version>` (e.g. `just bump 1.1.0`).
+   This updates `package.json`, `CHANGELOG.md`, and the pin references atomically.
+3. **Update CHANGELOG.md** — move `[Unreleased]` items to the new version section.
+4. **Run `just verify`** — must pass with zero errors.
+5. **Push + tag** — `git push && git push --tags`.
+6. **Move the floating tag** — move `v1` to point to the new tag:
+   ```bash
+   git tag -f v1 <new-tag>
+   git push origin v1 --force
+   ```
+7. **Create GitHub Release** — from the new tag; attach release notes from `CHANGELOG.md`.
 
-## ⚠️ Evolution Note (Breaking Changes)
+## Version Scheme
 
-v0.7.0 is Year Zero. Previous versions are officially deprecated as they do not follow the current Diátaxis architecture. Every reference to old brands or legacy architectures has been removed to make way for a lean ecosystem focused on source purity.
+`zenzic-action` uses semver (`MAJOR.MINOR.PATCH`):
 
-## 🚀 Towards the Future
+- **PATCH**: wrapper script fixes, documentation, CI changes.
+- **MINOR**: new action inputs/outputs, core pin update (backward compatible).
+- **MAJOR**: breaking changes to action inputs or output schema.
 
-With this release, Zenzic is no longer just a tool, but a trust platform for documentation engineering.
+## Core Pin Policy
 
----
-**PythonWoods** <dev@pythonwoods.dev>
-*Release Date: 2026-05-07*
+The `version` input default in `action.yml` always pins to the latest stable Zenzic core
+release. Pin updates are coordinated with the core release cycle — never auto-update.
 
----
+## Supported Versions
 
-## ⚡ Zenzic Action: The Stable Bastion
-
-This GitHub Action serves as the secure gateway for running Zenzic in CI/CD pipelines.
-
-### 🔍 Technical Features
-- **Stable Pinning**: The Action always invokes `uvx zenzic@v0.7.0`, ensuring production is never broken by experimental code.
-- **Sentinel Seal**: Validates documentation by uploading results in SARIF 2.1.0 format for native visibility in the GitHub Security tab.
-- **Zero-Brain Policy**: Total isolation from local paths; operates exclusively on released and certified binaries.
+| Action version | Support status |
+|---|---|
+| `v1` (current) | ✅ All fixes |
+| `< v1` | ❌ End of life |

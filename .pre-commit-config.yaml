@@ -24,7 +24,7 @@ repos:
   - repo: local
     hooks:
       - id: zenzic-check
-        name: 🔍 Zenzic Sentinel (action audit)
+        name:  🔍 Zenzic Quality Gate (action audit)
         entry: just check
         language: system
         pass_filenames: false

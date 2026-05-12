@@ -7,7 +7,7 @@ No Python/Node build pipeline — the Action is a shell-based composite action.
 
 Quick reference:
     nox -s reuse       — REUSE/SPDX licence compliance
-    nox -s check       — Run Zenzic Sentinel on action documentation
+    nox -s check       — Run Zenzic quality gate on action documentation
     nox -s preflight   — Full CI-equivalent pipeline (reuse + check)
 """
 
@@ -27,7 +27,7 @@ def reuse(session: nox.Session) -> None:
 
 @nox.session(venv_backend="none")
 def check(session: nox.Session) -> None:
-    """Run the Zenzic Sentinel quality gate on action documentation (stable pin)."""
+    """Run the Zenzic quality gate on action documentation (stable pin)."""
     session.run("uvx", "zenzic@v0.7.1", "check", "all", "--strict", external=True)
 
 

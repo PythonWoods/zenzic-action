@@ -54,7 +54,7 @@ body:
       description: Please confirm your proposal respects all that apply.
       options:
         - label: >
-            **Exit code contract** — exit codes 2 (findings) and 3 (Blood Sentinel) remain
+            **Exit code contract** — exit codes 2 (findings) and 3 (path traversal guard) remain
             non-suppressible; no new input can override them.
         - label: >
             **Shell composability** — any new shell logic uses POSIX-compatible syntax.

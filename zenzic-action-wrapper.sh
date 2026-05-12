@@ -13,8 +13,8 @@
 #   4. Enforce the Zenzic Exit Code Contract with coherent UX:
 #        0  — clean (all checks passed)
 #        1  — documentation findings (broken links, orphan pages, dead refs, etc.)
-#        2  — SECURITY: credential detected — Shield / Z201 — NEVER suppressed
-#        3  — SECURITY: system path traversal — Blood Sentinel / Z202-203 — NEVER suppressed
+#        2  — SECURITY: credential detected — credential scanner / Z201 — NEVER suppressed
+#        3  — SECURITY: system path traversal — path traversal guard / Z202-203 — NEVER suppressed
 #
 #      For exit codes 2 and 3: if no findings were parsed from the SARIF file
 #      (because the breach was detected before scanning completed), findings-count
@@ -44,7 +44,7 @@ ZENZIC_CONFIG_FILE="${ZENZIC_CONFIG_FILE:-}"
 # ── SARIF path sandbox guard (BUG-006 — Action SARIF Jailbreak) ────────────────
 # The sarif-file input is an output path. Any relative traversal (../../) or
 # absolute path (/) would allow a workflow to write outside the checkout
-# directory. This guard is the shell-level Blood Sentinel for the action layer.
+# directory. This guard is the shell-level path traversal enforcer for the action layer.
 case "${ZENZIC_SARIF_FILE}" in
   /*)
     echo "::error title=Zenzic — SARIF Jailbreak::sarif-file must be a relative path inside the workspace. Absolute paths are forbidden. Got: '${ZENZIC_SARIF_FILE}'" >&2
@@ -70,7 +70,7 @@ if [ "${ZENZIC_STRICT}" = "true" ]; then
   STRICT_FLAG="--strict"
 fi
 
-# ── Config file cascade (The Root-First Sentinel) ────────────────────────────
+# ── Config file cascade (Root-First discovery) ──────────────────────────────
 # Discovery order (highest → lowest priority):
 #   1. Explicit override  — ZENZIC_CONFIG_FILE set by the caller (config-file input)
 #   2. Standard root      — zenzic.toml in the workspace root
@@ -126,7 +126,7 @@ if [ -n "${CANDIDATE_CONFIG}" ]; then
   CONFIG_ARGS=(--config "${CANDIDATE_CONFIG}")
 fi
 
-# ── 404 Shield passthrough (Sovereign Override) ───────────────────────────────
+# ── Extra args passthrough (Sovereign Override) ──────────────────────────────
 # ZENZIC_EXTRA_ARGS is set by the caller's workflow (e.g. --exclude-url …).
 # Word-split intentionally: each --exclude-url <url> pair must become separate
 # argv elements.  set -f disables glob expansion so that wildcards or '?'
@@ -192,14 +192,14 @@ fi
 if [ "${EXIT_CODE}" -eq 2 ]; then
   [ "${FINDINGS}" -eq 0 ] && FINDINGS=1
   echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
-  echo "::error title=Zenzic Shield — Z201::Credential pattern detected. Scan aborted at breach point — findings-count=${FINDINGS} (security incident). Exit 2 is non-suppressible per the Obsidian Exit Code Contract." >&2
+  echo "::error title=Zenzic Credential Scanner — Z201::Credential pattern detected. Scan aborted at breach point — findings-count=${FINDINGS} (security incident). Exit 2 is non-suppressible per the Obsidian Exit Code Contract." >&2
   exit 2
 fi
 
 if [ "${EXIT_CODE}" -eq 3 ]; then
   [ "${FINDINGS}" -eq 0 ] && FINDINGS=1
   echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
-  echo "::error title=Zenzic Blood Sentinel — Z202/Z203::System path traversal detected. Scan aborted at breach point — findings-count=${FINDINGS} (security incident). Exit 3 is non-suppressible per the Obsidian Exit Code Contract." >&2
+  echo "::error title=Zenzic Path Traversal Guard — Z202/Z203::System path traversal detected. Scan aborted at breach point — findings-count=${FINDINGS} (security incident). Exit 3 is non-suppressible per the Obsidian Exit Code Contract." >&2
   exit 3
 fi
 

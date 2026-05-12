@@ -96,7 +96,7 @@ core-align core_version:
 reuse:
     uvx reuse lint
 
-# Run the Zenzic Sentinel quality gate on action documentation
+# Run the Zenzic quality gate on action documentation
 # Uses the stable v0.7.0 release for maximum reliability.
 # ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
 # Pass extra flags directly: just check --no-external
@@ -109,10 +109,10 @@ check *args:
     )
     CORE_PATH="${ZENZIC_PROJECT_PATH:-../zenzic}"
         if [ -d "$CORE_PATH" ]; then
-        echo "🛡️  [Zenzic Sentinel] Local core detected. Using: $CORE_PATH"
+        echo "🛡️  [Zenzic] Local core detected. Using: $CORE_PATH"
         uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" {{args}}
     else
-        echo "🛡️  [Zenzic Sentinel] Local core not found. Using published PyPI release..."
+        echo "🛡️  [Zenzic] Local core not found. Using published PyPI release..."
         uvx zenzic@0.7.1 check all --strict "${GUARD[@]}" {{args}}
     fi
 
