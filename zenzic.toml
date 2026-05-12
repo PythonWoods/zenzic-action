@@ -49,3 +49,16 @@ severity = "error"
 [project_metadata]
 release_name = "Basalt"
 obsolete_names = ["Obsidian"]
+
+[governance]
+# Permanent vocabulary guardian: Z601 BRAND_OBSOLESCENCE fires if theatrical
+# brand terms reappear in documentation source. CHANGELOG*.md excluded.
+brand_obsolescence = [
+    "Sentinel",
+    "Blood Sentinel",
+    "Shield",
+    "Epoch",
+    "Forge",
+    "Red Team",
+    "Operation",
+]

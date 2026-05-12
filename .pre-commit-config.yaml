@@ -30,7 +30,7 @@ repos:
         pass_filenames: false
         always_run: true
 
-  # Pre-push Final Guard (4-Gates Standard, EPOCH 4 / v0.7.0)
+  # Pre-push Final Guard (4-Gates Standard, v0.4.x / v0.7.0)
   # Single entry-point: locale ≡ remote. Same `just verify` runs in GHA.
   # Install with: uvx pre-commit install -t pre-push
   - repo: local

@@ -2,39 +2,52 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 # Release Procedure — zenzic-action
 
-This file describes the release process for the `zenzic-action` GitHub Action.
+## Release Metadata
+
+| Field   | Value      |
+| :------ | :--------- |
+| Version | v1.0.1     |
+| Date    | 2026-05-12 |
+| Status  | Stable     |
 
 ## Release Checklist
 
-1. **Update core pin** — set `default: "<new-version>"` in `action.yml` (the `# x-zenzic-core-pin` marker).
-2. **Bump action version** — run `just bump <version>` (e.g. `just bump 1.1.0`).
-   This updates `package.json`, `CHANGELOG.md`, and the pin references atomically.
-3. **Update CHANGELOG.md** — move `[Unreleased]` items to the new version section.
-4. **Run `just verify`** — must pass with zero errors.
-5. **Push + tag** — `git push && git push --tags`.
-6. **Move the floating tag** — move `v1` to point to the new tag:
-   ```bash
-   git tag -f v1 <new-tag>
-   git push origin v1 --force
-   ```
-7. **Create GitHub Release** — from the new tag; attach release notes from `CHANGELOG.md`.
+Before tagging, every item must be green:
+
+- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version
+- [ ] `package.json` version bumped
+- [ ] `CHANGELOG.md` — `[Unreleased]` section moved to the new version heading
+- [ ] `just verify` — exits 0
+- [ ] `zenzic check .` — zero findings
+
+## Bump & Publish
+
+```bash
+# Bumps package.json, CHANGELOG.md, and action.yml pin atomically:
+just bump <version>    # e.g. just bump 1.1.0
+
+git push && git push --tags
+
+# Move the floating v1 tag to the new release:
+git tag -f v1 <new-tag>
+git push origin v1 --force
+```
+
+Distribution target: **GitHub Actions Marketplace** — `uses: PythonWoods/zenzic-action@v1`.
 
 ## Version Scheme
 
-`zenzic-action` uses semver (`MAJOR.MINOR.PATCH`):
-
-- **PATCH**: wrapper script fixes, documentation, CI changes.
-- **MINOR**: new action inputs/outputs, core pin update (backward compatible).
-- **MAJOR**: breaking changes to action inputs or output schema.
+| Increment | Trigger                                      |
+| :-------- | :------------------------------------------- |
+| PATCH     | Wrapper script fixes, documentation, CI      |
+| MINOR     | New inputs/outputs, core pin update          |
+| MAJOR     | Breaking changes to inputs or output schema  |
 
 ## Core Pin Policy
 
-The `version` input default in `action.yml` always pins to the latest stable Zenzic core
-release. Pin updates are coordinated with the core release cycle — never auto-update.
+`action.yml` always pins to the latest stable Zenzic core release.
+Pin updates are coordinated with the core release cycle — never auto-update.
 
-## Supported Versions
+## Changelog Reference
 
-| Action version | Support status |
-|---|---|
-| `v1` (current) | ✅ All fixes |
-| `< v1` | ❌ End of life |
+For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md).
