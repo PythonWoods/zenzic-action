@@ -22,6 +22,12 @@ excluded_dirs = [
     "LICENSES",
 ]
 
+# Non-documentation repository files kept at root.
+excluded_file_patterns = [
+    ".zenzic.local.toml.example",
+    "zenzic-action-wrapper.sh",
+]
+
 # ADR-039.1: *.sh is now in SYSTEM_EXCLUDED_FILE_PATTERNS — no user-level exclusions needed.
 # ADR-039.2: CHANGELOG*.md and RELEASE*.md are clean prose — scanned without exclusion.
 
