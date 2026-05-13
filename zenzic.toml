@@ -6,7 +6,7 @@
 # (README, CONTRIBUTING, CHANGELOG, SECURITY, RELEASE, etc.).
 # The action has no docs/ tree — docs_dir = "." is the correct perimeter.
 #
-# 🏛️ LOCAL SOVEREIGNTY (Basalt): keep machine-specific overrides and private
+# 🏛️ LOCAL SOVEREIGNTY: keep machine-specific overrides and private
 # secrets in `.zenzic.local.toml` only. Shared `zenzic.toml` remains CI policy.
 #
 # 🌿  ZERO-CONFIG NOTE (v0.7.0):
@@ -22,10 +22,8 @@ excluded_dirs = [
     "LICENSES",
 ]
 
-# CHANGELOG*: example snippets trigger false positives.
-# *.sh: shell scripts are infrastructure, not documentation (asset scanner).
-excluded_file_patterns = ["CHANGELOG*.md"]
-excluded_build_artifacts = ["CHANGELOG*.md", "*.sh"]
+# ADR-039.1: *.sh is now in SYSTEM_EXCLUDED_FILE_PATTERNS — no user-level exclusions needed.
+# ADR-039.2: CHANGELOG*.md and RELEASE*.md are clean prose — scanned without exclusion.
 
 excluded_external_urls = [
     # GitHub repo URLs return 429 (rate-limited) in CI.
@@ -48,9 +46,21 @@ severity = "error"
 
 [project_metadata]
 release_name = "Basalt"
-obsolete_names = ["Obsidian"]
 
 [governance]
+# Suppression CAP: hard build failure when total suppressions exceed this value.
+# Each suppression within the cap costs 1 pt; beyond the cap, 2 pt each.
+# Cost formula: min(n,30)×1 pt + max(0,n-30)×2 pt.
+# Run 'zenzic explain ZXXX' to see the exact penalty for any rule.
+suppression_cap = 30
+suppression_cap_fail_hard = true
+
+# Per-file suppression map: silence a rule for specific file globs.
+# WARNING: Every entry increases your Technical Debt Score (see formula above).
+# Use 'zenzic check --audit' to see what would be flagged without suppressions.
+# [governance.per_file_ignores]
+# "docs/legacy/**" = ["Z601"]   # intentional brand refs → -1 pt
+
 # Permanent vocabulary guardian: Z601 BRAND_OBSOLESCENCE fires if theatrical
 # brand terms reappear in documentation source. CHANGELOG*.md excluded.
 brand_obsolescence = [
@@ -61,4 +71,12 @@ brand_obsolescence = [
     "Forge",
     "Red Team",
     "Operation",
+    "Quartz",
+    "Obsidian",
+    "ObsidianUI",
+    "Safe Harbor",
+    "Porto Sicuro",
+    "Basalt",
+    "Chronicles",
+    "Siege",
 ]

@@ -34,7 +34,15 @@ inputs:
     required: false
     default: "true"
   config-file:
-    description: "Optional path to a Zenzic configuration file inside the workspace. If not provided, the action automatically searches for 'zenzic.toml' in the repository root, then '.github/zenzic.toml' (Root-First Sentinel). Absolute paths and path traversal sequences ('..') are rejected."
+    description: "Optional path to a Zenzic configuration file inside the workspace. If not provided, the action automatically searches for 'zenzic.toml' in the repository root, then '.github/zenzic.toml' (root-first auto-discovery). Absolute paths and path traversal sequences ('..') are rejected."
+    required: false
+    default: ""
+  audit:
+    description: "Run in sovereign audit mode: all inline zenzic:ignore comments and per_file_ignores entries are bypassed. Reveals the true (unfiltered) state of the documentation. Recommended for nightly builds and security review workflows."
+    required: false
+    default: "false"
+  diff-base:
+    description: "Path to a JSON report file to use as the baseline for 'zenzic diff' comparison instead of the saved .zenzic-score.json snapshot. Use an artifact from the main branch to block PRs that increase technical debt."
     required: false
     default: ""
 
@@ -45,6 +53,12 @@ outputs:
   findings-count:
     description: "Total number of findings reported."
     value: ${{ steps.run-zenzic.outputs.findings-count }}
+  score:
+    description: "Documentation Quality Score (0-100). Empty when format is not json or sarif."
+    value: ${{ steps.run-zenzic.outputs.score }}
+  suppression-debt-pts:
+    description: "Technical Debt points deducted from the score due to active suppressions. 0 when no suppressions are active."
+    value: ${{ steps.run-zenzic.outputs.suppression-debt-pts }}
 
 runs:
   using: "composite"
@@ -64,6 +78,8 @@ runs:
         ZENZIC_STRICT: ${{ inputs.strict }}
         ZENZIC_FAIL_ON_ERROR: ${{ inputs.fail-on-error }}
         ZENZIC_CONFIG_FILE: ${{ inputs.config-file }}
+        ZENZIC_AUDIT: ${{ inputs.audit }}
+        ZENZIC_DIFF_BASE: ${{ inputs.diff-base }}
       run: bash "${{ github.action_path }}/zenzic-action-wrapper.sh"
 
     - name: Upload SARIF to GitHub Code Scanning

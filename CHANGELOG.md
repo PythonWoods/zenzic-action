@@ -18,15 +18,15 @@ Versions follow [Semantic Versioning](https://semver.org/).
   contract are now explicitly tracked in release notes.
 ---
 
-## [1.0.1] — 2026-05-07 — Quartz Edition (Stable)
+## [1.0.1] — 2026-05-07 — Stable Release
 
 > The official GitHub Action for [Zenzic](https://github.com/PythonWoods/zenzic),
 > the deterministic documentation quality gate.
 
-### 💎 Quartz Era (Initial Stable Release)
+### 🛡️ v0.7.x Stable (Initial Stable Release)
 
 This release establishes zenzic-action as a **stable, self-contained distribution
-channel** for the Zenzic Sentinel. The Action is decoupled from the core development
+channel** for the Zenzic Action. The Action is decoupled from the core development
 cycle and pinned exclusively to released versions via `uvx zenzic@v0.7.0`.
 
 #### Added
@@ -59,13 +59,13 @@ cycle and pinned exclusively to released versions via `uvx zenzic@v0.7.0`.
 
 #### Changed
 
-- **Matrix CI — Quartz Maturity**: `self-check.yml` now runs on `ubuntu-latest` and
+- **Matrix CI — Cross-Platform Validation**: `self-check.yml` now runs on `ubuntu-latest` and
   `windows-latest` (`fail-fast: false`, `defaults: run: shell: bash`). Cross-platform
   validation aligned with Core and Doc repos. `ZENZIC_EXTRA_ARGS` env block injected
   with `--exclude-url` entries for known pre-launch transient URLs.
 - **Sovereign Override passthrough** (`zenzic-action-wrapper.sh`): `ZENZIC_EXTRA_ARGS`
   is now captured into an `EXTRA_ARGS` bash array and passed to both the SARIF and
-  non-SARIF `uvx` invocations. Callers setting the 404 shield in their workflow env
+  non-SARIF `uvx` invocations. Callers setting the 404 exclusion in their workflow env
   have it transparently forwarded to the Zenzic CLI — no more silent bypass.
 - **`justfile` Bash-first**: `set shell := ["bash", "-c"]` added. `check *args` recipe
   expanded with `${ZENZIC_EXTRA_ARGS:-}` for local parity with CI propagation.

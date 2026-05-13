@@ -35,6 +35,8 @@ Run Zenzic checks in CI and surface results directly in GitHub Code Scanning, Pu
 | Zero-setup install | `uvx zenzic` — no Python toolchain required on the runner |
 | SARIF output | Findings feed directly into GitHub Code Scanning |
 | Exit Code Contract | Security incidents (exit 2/3) are never suppressed by `fail-on-error` |
+| Exit 4 Quality Gate | Score regression vs baseline fails the PR (Zenzic Quality Gate) |
+| Sovereign Audit mode | `audit: "true"` bypasses all suppressions — surfaces the true documentation state |
 | SARIF integrity check | Validates JSON before upload; emits `::warning` if truncated by SIGKILL |
 | PR annotations | Inline findings on the diff, colour-coded by severity |
 | Version pinning | Pin to an exact release for deterministic, reproducible CI gates |
@@ -123,13 +125,15 @@ Each `--exclude-url` value becomes a separate argument. URL patterns that contai
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `0.7.1` | Zenzic version to install. Pinned to a specific release for deterministic, reproducible runs. Set `latest` for continuous evaluation of new features. |
+| `version` | `0.8.0` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
-| `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. Absolute paths and `..` traversal sequences are rejected. |
+| `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
 | `strict` | `false` | Treat warnings as errors. |
 | `fail-on-error` | `true` | Fail the workflow step on findings. |
-| `config-file` | *(auto)* | Optional path to a Zenzic configuration file. If omitted, the action auto-discovers: `zenzic.toml` in the repository root first, then `.github/zenzic.toml`. Absolute paths and `..` traversal sequences are rejected. |
+| `config-file` | *(auto)* | Optional path to a config file. Auto-discovers `zenzic.toml` → `.github/zenzic.toml` when omitted. |
+| `audit` | `false` | Sovereign audit mode: bypass all `zenzic:ignore` comments and `per_file_ignores`. Reveals the true unfiltered documentation state. Recommended for nightly builds and security review workflows. |
+| `diff-base` | *(snapshot)* | Path to a JSON baseline file for `zenzic diff`. Use an artifact from the `main` branch to block PRs that increase technical debt. Falls back to `.zenzic-score.json` when omitted. |
 
 ## Outputs
 
@@ -137,8 +141,137 @@ Each `--exclude-url` value becomes a separate argument. URL patterns that contai
 |---|---|
 | `sarif-file` | Path to the generated SARIF file. |
 | `findings-count` | Total number of findings. |
+| `score` | Documentation Quality Score (0–100). Available when `format: json` or when `diff-base` is set. |
+| `suppression-debt-pts` | Technical Debt points deducted from the score due to active suppressions. `0` when no suppressions are active. |
 
-## SARIF & GitHub Code Scanning
+## Exit Codes
+
+| Code | Meaning | Suppressible? |
+|:---:|---|:---:|
+| `0` | All checks passed | — |
+| `1` | Documentation findings | Yes (`fail-on-error: "false"`) |
+| **`2`** | **Credential detected (Z201)** | **Never** |
+| **`3`** | **Path traversal detected (Z202/Z203)** | **Never** |
+| **`4`** | **Quality regression vs baseline** | Yes (`fail-on-error: "false"`) |
+
+Exit 4 is emitted by the Zenzic Quality Gate when `zenzic diff` detects a score drop vs the baseline. Use it to block PRs that increase technical debt.
+
+---
+
+## Advanced Governance: Scoring & Debt {#governance}
+
+### The Zenzic Quality Gate — Block PRs on Regression
+
+This is the recommended setup for teams that want to enforce documentation quality as a hard PR gate. The flow:
+
+1. On `main`: Zenzic scans, scores, and saves the baseline snapshot as a CI artifact.
+2. On every PR: Zenzic scans the PR branch, compares against the `main` baseline, and blocks the merge if the score dropped or if suppression debt exceeded the cap.
+
+```yaml title=".github/workflows/zenzic-quality-gate.yml"
+name: Zenzic Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Step 1 — Run on main and save the baseline artifact
+  baseline:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run Zenzic and save baseline
+        uses: PythonWoods/zenzic-action@v1
+        with:
+          version: "0.8.0"
+          format: json        # json format triggers score snapshot save
+          upload-sarif: "false"
+
+      - name: Upload baseline artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zenzic-baseline
+          path: .zenzic-score.json
+          retention-days: 90
+
+  # Step 2 — Run on PRs, compare against main baseline
+  quality-gate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download main baseline
+        uses: actions/download-artifact@v4
+        with:
+          name: zenzic-baseline
+          path: .zenzic-baseline/
+        continue-on-error: true  # first PR has no baseline yet
+
+      - name: Run Zenzic — Quality Gate
+        uses: PythonWoods/zenzic-action@v1
+        with:
+          version: "0.8.0"
+          format: sarif
+          upload-sarif: "true"
+          diff-base: ".zenzic-baseline/.zenzic-score.json"  # compare vs main
+        id: zenzic
+
+      - name: Report score
+        if: always()
+        run: |
+          echo "Score: ${{ steps.zenzic.outputs.score }}"
+          echo "Suppression debt: ${{ steps.zenzic.outputs.suppression-debt-pts }} pts"
+          echo "Findings: ${{ steps.zenzic.outputs.findings-count }}"
+```
+
+> **What happens on regression?** The action emits exit code 4 and a `::error` annotation: `"Documentation quality score dropped vs baseline. The Zenzic Quality Gate blocked this PR."` The PR check fails. No score-reducing merge enters `main`.
+
+---
+
+### Sovereign Audit — Nightly Build Without Suppressions
+
+Run a weekly audit that bypasses all active `zenzic:ignore` suppressions to surface the true documentation state:
+
+```yaml title=".github/workflows/zenzic-audit.yml"
+name: Zenzic Sovereign Audit
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"  # every Monday at 03:00 UTC
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run sovereign audit (suppressions bypassed)
+        uses: PythonWoods/zenzic-action@v1
+        with:
+          version: "0.8.0"
+          format: sarif
+          upload-sarif: "true"
+          audit: "true"          # bypass all zenzic:ignore and per_file_ignores
+          fail-on-error: "false" # audit is observational, not blocking
+```
+
+The audit result appears in the **Security → Code Scanning** tab. Every suppressed finding is visible. Review them weekly to ensure suppressed debt remains intentional.
+
+---
 
 When `format: sarif` and `upload-sarif: true`, Zenzic findings appear:
 
@@ -181,7 +314,7 @@ No additional configuration needed — the action handles the upload via `github
 
 ---
 
-## 📖 Documentation Map — Quartz Promise
+## 📖 Documentation Map — The Integrity Promise
 
 The Zenzic documentation lives across **two separate Docusaurus instances** under
 [zenzic.dev](https://zenzic.dev) — the user area and the developer area never

@@ -181,7 +181,7 @@ Nessuna configurazione aggiuntiva necessaria — l'action gestisce l'upload tram
 
 ---
 
-## 📖 Mappa della Documentazione — La Promessa di Quartz
+## 📖 Mappa della Documentazione — La Promessa di Integrità
 
 La documentazione di Zenzic vive in **due istanze Docusaurus separate** sotto
 [zenzic.dev](https://zenzic.dev) — l'area utente e l'area sviluppatori non
