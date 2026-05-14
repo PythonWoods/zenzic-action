@@ -2,14 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # zenzic.toml — Standalone configuration for the zenzic-action repository.
 #
-# "Prose-only Maintenance" config: scans root-level Markdown files
-# (README, CONTRIBUTING, CHANGELOG, SECURITY, RELEASE, etc.).
+# "Prose-only Maintenance" config: scans root-level Markdown files.
 # The action has no docs/ tree — docs_dir = "." is the correct perimeter.
 #
 # 🏛️ LOCAL SOVEREIGNTY: keep machine-specific overrides and private
 # secrets in `.zenzic.local.toml` only. Shared `zenzic.toml` remains CI policy.
 #
-# 🌿  ZERO-CONFIG NOTE (v0.7.0):
+# 🌿  ZERO-CONFIG NOTE:
 #   * Universal build / cache dirs and toolchain files are excluded by
 #     SYSTEM_EXCLUDED_DIRS / SYSTEM_EXCLUDED_FILE_NAMES — no repetition needed.
 
@@ -22,14 +21,7 @@ excluded_dirs = [
     "LICENSES",
 ]
 
-# Non-documentation repository files kept at root.
-excluded_file_patterns = [
-    ".zenzic.local.toml.example",
-    "zenzic-action-wrapper.sh",
-]
-
-# ADR-039.1: *.sh is now in SYSTEM_EXCLUDED_FILE_PATTERNS — no user-level exclusions needed.
-# ADR-039.2: CHANGELOG*.md and RELEASE*.md are clean prose — scanned without exclusion.
+# ADR-039.1: .zenzic.local.toml.example and *.sh are excluded by Core system guards.
 
 excluded_external_urls = [
     # GitHub repo URLs return 429 (rate-limited) in CI.
@@ -38,8 +30,6 @@ excluded_external_urls = [
 ]
 
 placeholder_patterns = []
-snippet_min_lines = 1
-placeholder_max_words = 50
 
 [build_context]
 engine = "standalone"
@@ -54,10 +44,6 @@ severity = "error"
 release_name = "Basalt"
 
 [governance]
-# Suppression CAP: hard build failure when total suppressions exceed this value.
-# Each suppression within the cap costs 1 pt; beyond the cap, 2 pt each.
-# Cost formula: min(n,30)×1 pt + max(0,n-30)×2 pt.
-# Run 'zenzic explain ZXXX' to see the exact penalty for any rule.
 suppression_cap = 30
 suppression_cap_fail_hard = true
 
@@ -70,6 +56,7 @@ suppression_cap_fail_hard = true
 # Permanent vocabulary guardian: Z601 BRAND_OBSOLESCENCE fires if theatrical
 # brand terms reappear in documentation source. CHANGELOG*.md excluded.
 brand_obsolescence = [
+    "Vanilla",
     "Sentinel",
     "Blood Sentinel",
     "Shield",

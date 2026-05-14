@@ -83,7 +83,7 @@ jobs:
 > **Setup Zero-Config:** L'action scopre automaticamente la configurazione Zenzic — nessun input `config-file` richiesto. La ricerca avviene in ordine di priorità: prima `zenzic.toml` nella root del repository, poi `.github/zenzic.toml` come fallback. Questo garantisce comportamento identico tra `zenzic check all` in locale e in CI. Per usare un file specifico, imposta `config-file: path/to/zenzic.toml`.
 > Esegui `zenzic init` una volta per fare scaffolding di un config se le tue docs sono fuori dalla cartella `docs/` di default.
 
-> **Stabilità:** `version: "0.7.1"` è il default. Per le ultime feature appena rilasciate, puoi impostare `version: latest`, ma le pipeline di produzione dovrebbero sempre fare pin a una release specifica per esecuzioni deterministiche e riproducibili. Il default verrà portato a `0.8.0` non appena la release sarà pubblicata sul package registry.
+> **Stabilità:** `version: "0.7.1"` è oggi il pin pubblicato di default. Per le ultime feature appena rilasciate, puoi impostare `version: latest`, ma le pipeline di produzione dovrebbero sempre fare pin a una release specifica per esecuzioni deterministiche e riproducibili. **TODO(post-pypi-0.8.0):** aggiorna subito tutti i pin/esempi a `0.8.0` dopo la pubblicazione.
 
 ## Configuration Discovery
 

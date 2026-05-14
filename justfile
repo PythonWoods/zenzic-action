@@ -97,7 +97,8 @@ reuse:
     uvx reuse lint
 
 # Run the Zenzic quality gate on action documentation
-# Uses the stable v0.7.0 release for maximum reliability.
+# Uses the stable published v0.7.1 release for maximum reliability.
+# TODO(post-pypi-0.8.0): bump fallback pin in check/nox/action docs to v0.8.0.
 # ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
 # Pass extra flags directly: just check --no-external
 check *args:
@@ -108,7 +109,7 @@ check *args:
       --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
     )
     CORE_PATH="${ZENZIC_PROJECT_PATH:-../zenzic}"
-        if [ -d "$CORE_PATH" ]; then
+    if [ -d "$CORE_PATH" ]; then
         echo "🛡️  [Zenzic] Local core detected. Using: $CORE_PATH"
         uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" {{args}}
     else
@@ -125,7 +126,7 @@ lint:
     uvx pre-commit run --all-files
 
 # Full verification gate (4-Gates Standard)
-verify: _check-hooks lint release-contracts test
+verify: _check-hooks lint release-contracts test check
 
 _check-hooks:
     #!/usr/bin/env bash

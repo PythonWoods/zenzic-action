@@ -10,7 +10,7 @@ branding:
 
 inputs:
   version:
-    description: "Zenzic version to use (e.g. '0.7.1'). Defaults to latest stable."
+    description: "Zenzic version to use (e.g. '0.7.1'). Defaults to latest stable. TODO(post-pypi-0.8.0): bump default and examples to 0.8.0 immediately after release publication."
     required: false
     default: "0.7.1" # x-zenzic-core-pin
   format:

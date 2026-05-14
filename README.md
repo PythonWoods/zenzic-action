@@ -85,7 +85,7 @@ jobs:
 > **Zero-Config Setup:** The action auto-discovers your Zenzic configuration automatically — no `config-file` input required. It searches in priority order: `zenzic.toml` in the repository root first, then `.github/zenzic.toml` as a fallback. This gives you identical behaviour between `zenzic check all` locally and in CI. To pin a specific file, set `config-file: path/to/zenzic.toml`.
 > Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
 
-> **Stability:** `version: "0.7.1"` is the default. For the latest features as they ship, you can set `version: latest`, but production pipelines should always pin to a specific release for deterministic, reproducible runs. The default will be moved to `0.8.0` as soon as that release is published to the package registry.
+> **Stability:** `version: "0.7.1"` is the default published pin today. For the latest features as they ship, you can set `version: latest`, but production pipelines should always pin to a specific release for deterministic, reproducible runs. **TODO(post-pypi-0.8.0):** bump all pinned examples/defaults to `0.8.0` immediately after publication.
 
 ## Configuration Discovery
 
@@ -125,7 +125,7 @@ Each `--exclude-url` value becomes a separate argument. URL patterns that contai
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `0.8.0` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
+| `version` | `0.7.1` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
@@ -189,7 +189,7 @@ jobs:
       - name: Run Zenzic and save baseline
         uses: PythonWoods/zenzic-action@v1
         with:
-          version: "0.8.0"
+          version: "0.7.1"
           format: json        # json format triggers score snapshot save
           upload-sarif: "false"
 
@@ -220,7 +220,7 @@ jobs:
       - name: Run Zenzic — Quality Gate
         uses: PythonWoods/zenzic-action@v1
         with:
-          version: "0.8.0"
+          version: "0.7.1"
           format: sarif
           upload-sarif: "true"
           diff-base: ".zenzic-baseline/.zenzic-score.json"  # compare vs main
@@ -262,7 +262,7 @@ jobs:
       - name: Run sovereign audit (suppressions bypassed)
         uses: PythonWoods/zenzic-action@v1
         with:
-          version: "0.8.0"
+          version: "0.7.1"
           format: sarif
           upload-sarif: "true"
           audit: "true"          # bypass all zenzic:ignore and per_file_ignores
