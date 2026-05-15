@@ -323,7 +323,7 @@ share a sidebar or a search index.
 ```text
 zenzic.dev/
 ├── docs/           → User Area    — install, configure, CI/CD, finding codes
-├── developers/     → Dev Area     — plugins, adapters, ADRs, tech debt ledger
+├── developers/     → Dev Area     — rule extensions, adapters, ADRs, tech debt ledger
 ├── blog/           → Release notes & engineering post-mortems
 └── community/      → Brand kit, FAQs, governance
 ```

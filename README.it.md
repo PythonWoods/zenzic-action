@@ -190,7 +190,7 @@ condividono mai una sidebar o un indice di ricerca.
 ```text
 zenzic.dev/
 ├── docs/           → Area Utente   — installazione, configurazione, CI/CD, codici
-├── developers/     → Area Dev      — plugin, adapter, ADR, ledger del debito tecnico
+├── developers/     → Area Dev      — estensioni di regole, adapter, ADR, ledger del debito tecnico
 ├── blog/           → Note di rilascio e post-mortem ingegneristici
 └── community/      → Brand kit, FAQ, governance
 ```
