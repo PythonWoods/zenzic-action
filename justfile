@@ -3,7 +3,7 @@
 
 set shell := ["bash", "-c"]
 
-# just — developer workflow for zenzic-action (Hardcoded Stable).
+# just — developer workflow for zenzic-action.
 # Use `just --list` to see available commands.
 
 # Release orchestration: explicit, transparent, and lockfile-first.
@@ -98,7 +98,7 @@ reuse:
 
 # Run the Zenzic quality gate on action documentation
 # Uses the stable published v0.7.1 release for maximum reliability.
-# TODO(post-pypi-0.8.0): bump fallback pin in check/nox/action docs to v0.8.0.
+# TODO: bump the fallback pin in check/nox/action docs after the next core release.
 # ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
 # Pass extra flags directly: just check --no-external
 check *args:

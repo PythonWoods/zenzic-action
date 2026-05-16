@@ -24,7 +24,7 @@ nox.options.sessions = ["reuse", "check"]
 def _run_zenzic_check(session: nox.Session) -> None:
     """Run Zenzic check using local core when available, else stable published pin.
 
-    TODO(post-pypi-0.8.0): bump fallback from v0.7.1 to v0.8.0.
+    TODO: bump the fallback from the current published release to the next core release.
     """
     core_path = Path(session.env.get("ZENZIC_PROJECT_PATH", "../zenzic"))
     if core_path.is_dir():
