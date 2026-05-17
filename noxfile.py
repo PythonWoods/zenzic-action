@@ -2,8 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Nox automation for zenzic-action — the official GitHub Action.
 
-Sessions use external tools (uvx) for REUSE compliance and Zenzic self-checks.
-No Python/Node build pipeline — the Action is a shell-based composite action.
+Sovereign verification model (shared across zenzic family repositories):
+    - Explicit override: ZENZIC_CORE_PATH
+    - CI topology: ./_zenzic_core
+    - Dev topology: ../zenzic
+    - Fail-closed policy: PyPI fallback is prohibited for repository gates
 
 Quick reference:
     nox -s reuse       — REUSE/SPDX licence compliance
@@ -11,6 +14,7 @@ Quick reference:
     nox -s preflight   — Full CI-equivalent pipeline (reuse + check)
 """
 
+import os
 from pathlib import Path
 
 import nox
@@ -21,28 +25,75 @@ nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = ["reuse", "check"]
 
 
-def _run_zenzic_check(session: nox.Session) -> None:
-    """Run Zenzic check using local core when available, else stable published pin.
+def _normalize_candidate(root: Path, raw_path: str) -> Path:
+    """Resolve candidate paths relative to repository root when needed."""
+    candidate = Path(raw_path).expanduser()
+    if not candidate.is_absolute():
+        candidate = (root / candidate).resolve()
+    else:
+        candidate = candidate.resolve()
+    return candidate
 
-    TODO: bump the fallback from the current published release to the next core release.
-    """
-    core_path = Path(session.env.get("ZENZIC_PROJECT_PATH", "../zenzic"))
-    if core_path.is_dir():
-        session.log(f"Using local core project: {core_path}")
-        session.run(
-            "uv",
-            "run",
-            "--project",
-            str(core_path),
-            "zenzic",
-            "check",
-            "all",
-            "--strict",
-            external=True,
-        )
-        return
-    session.log("Local core project not found; using published zenzic@v0.7.1")
-    session.run("uvx", "zenzic@v0.7.1", "check", "all", "--strict", external=True)
+
+def _display_path(root: Path, path: Path) -> str:
+    """Render stable display path for session logs."""
+    try:
+        return str(path.relative_to(root))
+    except ValueError:
+        return str(path)
+
+
+def _resolve_core_path(root: Path, session: nox.Session) -> Path:
+    """Resolve local Zenzic core path using sovereign precedence and fail-closed policy."""
+    candidates: list[tuple[str, str]] = []
+
+    env_override = os.environ.get("ZENZIC_CORE_PATH")
+    if env_override:
+        candidates.append(("ZENZIC_CORE_PATH", env_override))
+
+    candidates.extend(
+        [
+            ("_zenzic_core", "_zenzic_core"),
+            ("../zenzic", "../zenzic"),
+        ]
+    )
+
+    checked: list[str] = []
+    for label, raw in candidates:
+        candidate = _normalize_candidate(root, raw)
+        checked.append(f"{label} -> {_display_path(root, candidate)}")
+        if (candidate / "src" / "zenzic").is_dir():
+            session.log(
+                f"[Zenzic] Local core found at '{_display_path(root, candidate)}' "
+                "— using local source metadata."
+            )
+            return candidate
+
+    session.error(
+        "[Zenzic] Core repository not found in sovereign search order.\n"
+        "Required precedence: ZENZIC_CORE_PATH -> ./_zenzic_core -> ../zenzic\n"
+        "Each candidate must contain src/zenzic.\n"
+        f"Checked: {checked}\n"
+        "Fail-closed policy active: PyPI fallback is prohibited."
+    )
+    raise RuntimeError("unreachable")
+
+
+def _run_zenzic_check(session: nox.Session) -> None:
+    """Run Zenzic check using shared sovereign path resolution (fail-closed)."""
+    root = Path(__file__).parent
+    core_path = _resolve_core_path(root, session)
+    session.run(
+        "uv",
+        "run",
+        "--project",
+        str(core_path),
+        "zenzic",
+        "check",
+        "all",
+        "--strict",
+        external=True,
+    )
 
 
 @nox.session(venv_backend="none")

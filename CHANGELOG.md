@@ -52,10 +52,11 @@ cycle and pinned exclusively to released versions via `uvx zenzic@v0.7.0`.
 
 - **Stable Pin Policy**: The Action invokes `uvx zenzic@v0.7.0` — never unreleased
   code. This guarantees that downstream users always run against tested, tagged binaries.
-- **Zero Dynamic Coupling**: No checkout of the core repository. No `ZENZIC_PROJECT_PATH`.
-  No branch parity. The Action is a sealed distribution artefact.
+- **Repository Gate Parity (current model)**: Runtime distribution remains sealed and
+  pin-based for downstream users, while the repository self-check CI now resolves
+  branch parity against core and checks out `_zenzic_core` before verification.
 - **Self-Check CI** (`self-check.yml`): Validates the Action's own documentation using
-  the same stable Zenzic pin.
+  the same sovereign local-core contract used by family repositories.
 
 #### Changed
 

@@ -55,8 +55,7 @@ pin-core version:
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
     perl -i -pe 's/default: "[^"]+"\s*# x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
-    perl -i -pe 's/zenzic\@v[0-9\.]+[a-z0-9]*/zenzic\@v{{version}}/' noxfile.py
-    git add action.yml noxfile.py
+    git add action.yml
     git commit -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a release bump without modifying any files
@@ -96,9 +95,12 @@ core-align core_version:
 reuse:
     uvx reuse lint
 
-# Run the Zenzic quality gate on action documentation
-# Uses the stable published v0.7.1 release for maximum reliability.
-# TODO: bump the fallback pin in check/nox/action docs after the next core release.
+# Run the Zenzic quality gate on action documentation.
+# Shared sovereign model (family repos):
+#   1) explicit override via ZENZIC_CORE_PATH
+#   2) CI topology at ./_zenzic_core
+#   3) sibling dev topology at ../zenzic
+# Fail-closed policy is mandatory: PyPI fallback is prohibited.
 # ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
 # Pass extra flags directly: just check --no-external
 check *args:
@@ -108,14 +110,41 @@ check *args:
     GUARD=(
       --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
     )
-    CORE_PATH="${ZENZIC_PROJECT_PATH:-../zenzic}"
-    if [ -d "$CORE_PATH" ]; then
-        echo "🛡️  [Zenzic] Local core detected. Using: $CORE_PATH"
-        uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" {{args}}
-    else
-        echo "🛡️  [Zenzic] Local core not found. Using published PyPI release..."
-        uvx zenzic@0.7.1 check all --strict "${GUARD[@]}" {{args}}
+    CORE_PATH=""
+    CHECKED=()
+
+    if [[ -n "${ZENZIC_CORE_PATH:-}" ]]; then
+        CHECKED+=("ZENZIC_CORE_PATH -> ${ZENZIC_CORE_PATH}")
+        if [[ -d "${ZENZIC_CORE_PATH}/src/zenzic" ]]; then
+            CORE_PATH="${ZENZIC_CORE_PATH}"
+        fi
     fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("_zenzic_core -> _zenzic_core")
+        if [[ -d "_zenzic_core/src/zenzic" ]]; then
+            CORE_PATH="_zenzic_core"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("../zenzic -> ../zenzic")
+        if [[ -d "../zenzic/src/zenzic" ]]; then
+            CORE_PATH="../zenzic"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        echo "❌ [Zenzic] Core repository not found in sovereign search order." >&2
+        echo "Required precedence: ZENZIC_CORE_PATH -> ./_zenzic_core -> ../zenzic" >&2
+        echo "Each candidate must contain src/zenzic." >&2
+        echo "Checked: ${CHECKED[*]}" >&2
+        echo "Fail-closed policy active: PyPI fallback is prohibited." >&2
+        exit 2
+    fi
+
+    echo "🛡️  [Zenzic] Local core detected. Using: $CORE_PATH"
+    uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" ${ZENZIC_EXTRA_ARGS:-} {{args}}
 
 # Test suite (action-level checks via nox)
 test:
@@ -156,9 +185,28 @@ release-contracts:
     grep -qE '^release part:' justfile
     grep -qE '^release-dry part' justfile
     grep -q -- '--dry-run --allow-dirty --verbose' justfile
+    grep -q 'ZENZIC_CORE_PATH' justfile
+    grep -q '_zenzic_core' justfile
+    grep -q '../zenzic' justfile
+    grep -q 'Fail-closed policy active: PyPI fallback is prohibited.' justfile
     grep -q 'x-zenzic-core-pin' action.yml
+    grep -q 'Determine Zenzic Core Branch (Parity or Fallback)' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_TICKET' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_REASON' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_APPROVER' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_EXPIRES_ON' .github/workflows/self-check.yml
+    grep -q 'path: _zenzic_core' .github/workflows/self-check.yml
     if sed -n '/^release part:/,/^[^[:space:]].*:/p' justfile | tail -n +2 | grep -q -- '--allow-dirty'; then
         echo "release-contracts failed: release part must not use --allow-dirty"
+        exit 1
+    fi
+    if grep -qE 'uvx[[:space:]]+"?zenzic@' justfile noxfile.py; then
+        echo "release-contracts failed: PyPI fallback command is prohibited in repository quality gates"
+        exit 1
+    fi
+    if grep -q 'published zenzic@' noxfile.py; then
+        echo "release-contracts failed: PyPI fallback is prohibited in repository quality gates"
         exit 1
     fi
 

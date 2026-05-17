@@ -21,12 +21,9 @@ excluded_dirs = [
     "LICENSES",
 ]
 
-# Compatibility shim for zenzic<=0.7.1: these infrastructure files can surface as
-# Z903 (unused assets) when docs_dir='.'. Keep them excluded at config level.
-excluded_assets = [
-    ".zenzic.local.toml.example",
-    "zenzic-action-wrapper.sh",
-]
+# No repository-local excluded_assets workaround is kept here.
+# Shared family policy uses fail-closed local-core verification in nox/just/CI,
+# and core-level SYSTEM_EXCLUDED_FILE_NAMES covers infrastructure files.
 
 excluded_external_urls = [
     # GitHub repo URLs return 429 (rate-limited) in CI.
@@ -61,20 +58,10 @@ suppression_cap_fail_hard = true
 # Permanent vocabulary guardian: Z601 BRAND_OBSOLESCENCE fires if theatrical
 # brand terms reappear in documentation source. CHANGELOG*.md excluded.
 brand_obsolescence = [
-    "Vanilla",
     "Sentinel",
-    "Blood Sentinel",
     "Shield",
-    "Epoch",
-    "Forge",
-    "Red Team",
-    "Operation",
+    "Blood",
+    "Basalt",
     "Quartz",
     "Obsidian",
-    "ObsidianUI",
-    "Safe Harbor",
-    "Porto Sicuro",
-    "Basalt",
-    "Chronicles",
-    "Siege",
 ]
