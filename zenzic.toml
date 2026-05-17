@@ -21,7 +21,12 @@ excluded_dirs = [
     "LICENSES",
 ]
 
-# ADR-039.1: .zenzic.local.toml.example and *.sh are excluded by Core system guards.
+# Compatibility shim for zenzic<=0.7.1: these infrastructure files can surface as
+# Z903 (unused assets) when docs_dir='.'. Keep them excluded at config level.
+excluded_assets = [
+    ".zenzic.local.toml.example",
+    "zenzic-action-wrapper.sh",
+]
 
 excluded_external_urls = [
     # GitHub repo URLs return 429 (rate-limited) in CI.
