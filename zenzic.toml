@@ -19,6 +19,7 @@ excluded_dirs = [
     "assets",
     "scripts",
     "LICENSES",
+    "_zenzic_core",  # CI checkout of sibling core repo — not action documentation
 ]
 
 # No repository-local excluded_assets workaround is kept here.
