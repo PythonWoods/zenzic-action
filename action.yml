@@ -64,7 +64,7 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v8.1.0
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       with:
         enable-cache: true
 
@@ -84,7 +84,7 @@ runs:
 
     - name: Upload SARIF to GitHub Code Scanning
       if: inputs.format == 'sarif' && inputs.upload-sarif == 'true' && always()
-      uses: github/codeql-action/upload-sarif@v4
+      uses: github/codeql-action/upload-sarif@7c1e4cf0b20d7c1872b26569c00ba908797a59bf # v4
       with:
         sarif_file: ${{ inputs.sarif-file }}
         category: zenzic-docs
