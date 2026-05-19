@@ -11,6 +11,14 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **ADR-037 compliance:** `release_name` in `zenzic.toml` updated from geological
+  codename `"Basalt"` to version string `"v1.1.0"` — aligns with brand_obsolescence
+  policy that forbids geological terms in committed configuration.
+- **ADR-089 compliance:** GitHub Actions pinned to SHA-40 (`actions/checkout`,
+  `github/codeql-action/upload-sarif`, `astral-sh/setup-uv`).
+
 ### Security
 
 - **Action security posture aligned with core invariants:** non-suppressible
