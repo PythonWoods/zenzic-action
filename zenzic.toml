@@ -43,7 +43,7 @@ message  = "Avoid generic link text. Use a meaningful description for accessibil
 severity = "error"
 
 [project_metadata]
-release_name = "Basalt"
+release_name = "v1.1.0"
 
 [governance]
 suppression_cap = 30
