@@ -24,6 +24,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Action security posture aligned with core invariants:** non-suppressible
   exit codes (2, 3) and strict forwarding of security flags through the wrapper
   contract are now explicitly tracked in release notes.
+- **Governance hardening (inherited from Core):** `[governance].brand_obsolescence` in `.zenzic.local.toml` now uses additive merge semantics. Local overrides can extend but never remove globally-configured brand protection terms.
 ---
 
 ## [1.0.1] — 2026-05-07 — Stable Release
