@@ -30,12 +30,6 @@ replace = 'default: "0.8.0"'
 regex = true
 
 [[tool.bumpversion.files]]
-filename = "noxfile.py"
-search = 'zenzic@v0\.7\.1'
-replace = 'zenzic@v0.8.0'
-regex = true
-
-[[tool.bumpversion.files]]
 filename = "README.md"
 search = 'version:\s*"0\.7\.1"'
 replace = 'version: "0.8.0"'
