@@ -7,7 +7,7 @@ default_stages: [pre-commit]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b  # v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -21,7 +21,7 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v6.2.0
+    rev: 9fabf9eb815a57aac116b435e8346c200cdb8604  # v6.2.0
     hooks:
       - id: reuse
 

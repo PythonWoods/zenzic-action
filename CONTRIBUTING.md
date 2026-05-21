@@ -52,3 +52,32 @@ just verify    # full gate: pre-commit + Zenzic check + integration tests
 ```
 
 Both must pass with zero errors before you open or update a PR.
+
+## Maintainer Only: Workflow Hardening
+
+### Immutable Pre-Commit Hooks (ADR-089)
+
+All `rev:` keys in `.pre-commit-config.yaml` must point to a **40-char commit
+hash**, never to a semantic tag (`v1.2.3`). Git tags are mutable: an upstream
+maintainer (or an attacker) can move a tag silently, poisoning the local
+Gate 2 without any diff in this repository.
+
+This is an **internal CI policy for the zenzic-action project**, not a public
+Zenzic linter rule. Enforcement: `just check-pinning` (dependency of
+`just verify`); violations raise `[ADR-089] FATAL` at pre-push.
+
+The local exposure window is smaller than the GHA one because `pre-commit`
+freezes hook repos in `~/.cache/pre-commit/` until the user runs `autoupdate`
+or `clean`; GitHub Actions instead re-resolves the ref on every run. Pinning
+is still mandatory locally for new-clone safety and parity with the remote
+ADR-089 enforcement.
+
+**Updating pinned hooks.** Never run plain `pre-commit autoupdate` — it
+rewrites SHAs back to mutable tags. Always use:
+
+```bash
+uvx pre-commit autoupdate --freeze
+```
+
+This preserves the `# vX.Y.Z` annotation comment. Commit the diff and
+re-verify with `just check-pinning`.
