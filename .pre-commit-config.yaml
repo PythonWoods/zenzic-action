@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
+# Segregate stage execution: linters run at commit-time only.
+# The just-verify Final Guard runs at push-time only (stages: [pre-push]).
+default_stages: [pre-commit]
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
