@@ -24,10 +24,6 @@ Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Co
 
 **Contratto exit code.** Il wrapper propagates i codici di uscita di Zenzic senza rimappatura. Exit 1 (qualità) obbedisce a `fail-on-error`. Exit 2 (credenziale) ed exit 3 (path traversal) terminano il job indipendentemente da `fail-on-error: false` o `--exit-zero` — i finding di sicurezza non vengono mai soppressi al boundary di enforcement.
 
-<p align="center">
-  <img alt="GitHub Code Scanning showing Zenzic findings" src="assets/sarif-showcase.svg" width="780">
-</p>
-
 ## Funzionalità Principali
 
 | Funzionalità | Descrizione |
@@ -35,10 +31,11 @@ Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Co
 | Install zero-setup | `uvx zenzic` — nessuna toolchain Python richiesta sul runner |
 | Output SARIF | I finding alimentano direttamente GitHub Code Scanning |
 | Contratto Exit Code | Gli incidenti di sicurezza (exit 2/3) non vengono mai soppressi da `fail-on-error` |
+| Modalità Sovereign Audit | `audit: "true"` bypassa tutte le soppressioni — rivela il vero stato della documentazione |
 | Check integrità SARIF | Valida il JSON prima dell'upload; emette `::warning` se troncato da SIGKILL |
 | Annotation PR | Finding inline sul diff, color-coded per severity |
 | Version pinning | Pin a una release esatta per gate CI deterministici e riproducibili |
-| **Prosa pulita** (v0.8.0) | `[governance.directory_policies]` in `zenzic.toml` concede esenzioni zero-debt a pattern di percorso — i post storici del blog restano puliti senza consumare il suppression cap |
+| **Prosa pulita** (v0.8.0) | `[governance.directory_policies]` in `zenzic.toml` concede esenzioni zero-debt a pattern di percorso |
 
 ## Quick Start
 
@@ -58,79 +55,25 @@ La configurazione minimale — zero setup Python, SARIF su Code Scanning in un s
     security-events: write
 ```
 
-Metti un file `zenzic.toml` nella root del repository e l'action lo trova automaticamente — nessun input `config-file` richiesto.
+Metti un file `zenzic.toml` nella root del repository e l'action lo trova automaticamente — nessun input `config-file` richiesto. Esegui `zenzic init` una volta per fare scaffolding della configurazione se le tue docs sono fuori dalla cartella `docs/` di default.
 
-```yaml
-jobs:
-  docs:
-    name: Documentation Quality
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@v6
+Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scoring del Quality Gate, audit notturno), consulta la [documentazione di Zenzic Action](https://zenzic.dev/it/docs/reference/zenzic-action).
 
-      - name: Run Zenzic
-        uses: PythonWoods/zenzic-action@v1
-        with:
-          version: "0.7.1"       # pin a una release stabile
-          format: sarif           # emetti SARIF per Code Scanning
-          upload-sarif: "true"    # invia i risultati al tab Security
-          strict: "false"
-          fail-on-error: "true"
-```
-
-> **Setup Zero-Config:** L'action scopre automaticamente la configurazione Zenzic — nessun input `config-file` richiesto. La ricerca avviene in ordine di priorità: prima `zenzic.toml` nella root del repository, poi `.github/zenzic.toml` come fallback. Questo garantisce comportamento identico tra `zenzic check all` in locale e in CI. Per usare un file specifico, imposta `config-file: path/to/zenzic.toml`.
-> Esegui `zenzic init` una volta per fare scaffolding di un config se le tue docs sono fuori dalla cartella `docs/` di default.
-
-> **Stabilità:** `version: "0.7.1"` è oggi il pin pubblicato di default. Per le ultime feature appena rilasciate, puoi impostare `version: latest`, ma le pipeline di produzione dovrebbero sempre fare pin a una release specifica per esecuzioni deterministiche e riproducibili. **TODO(post-pypi-0.8.0):** aggiorna subito tutti i pin/esempi a `0.8.0` dopo la pubblicazione.
-
-## Configuration Discovery
-
-L'action è **zero-config per default**. Ad ogni esecuzione effettua una ricerca Root-First per la configurazione Zenzic:
-
-| Priorità | Posizione | Quando viene usata |
-|:---:|---|---|
-| 1 | Input esplicito `config-file` | Sempre onorato per primo se fornito |
-| 2 | `zenzic.toml` nella root del repository | Auto-scoperto quando non c'è override esplicito |
-| 3 | `.github/zenzic.toml` | Fallback quando il file in root è assente |
-| — | *(nessun file trovato)* | Zenzic usa i suoi default predefiniti |
-
-**Contratto di Intenzione Sovrana.** Se fornisci `config-file: path/to/custom.toml` ma il file non esiste, l'action **non ricade** sull'auto-discovery. Ricevi un'annotation `::warning` (o un `::error` fatale con `strict: true`). Il fallthrough silenzioso sarebbe inganno operativo.
-
-## Override Sovrano — Esclusioni URL Temporanee
-
-Alcuni link della documentazione puntano a pagine temporaneamente non disponibili in CI (deploy staging, post del blog pubblicati contemporaneamente al rilascio). La variabile d'ambiente `ZENZIC_EXTRA_ARGS` permette di passare flag aggiuntivi direttamente alla CLI Zenzic senza modificare gli input dell'action:
-
-```yaml
-- name: Run Zenzic
-  uses: PythonWoods/zenzic-action@v1
-  with:
-    version: "0.7.1"
-    format: sarif
-    upload-sarif: "true"
-  env:
-    ZENZIC_EXTRA_ARGS: >-
-      --exclude-url https://example.com/blog/new-post
-      --exclude-url https://staging.example.com
-```
-
-Ogni valore `--exclude-url` diventa un argomento separato. I pattern URL che contengono `*` o `?` sono sicuri — il wrapper disabilita l'espansione glob prima di costruire l'array di argomenti, quindi nessuna espansione su filesystem avviene.
-
-> **Scope:** `ZENZIC_EXTRA_ARGS` è solo per esclusioni transitorie. Le regole permanenti (es. escludere sempre una sezione docs, configurare i livelli di severity) appartengono a `zenzic.toml` in modo che le esecuzioni locali e CI condividano la stessa policy.
+---
 
 ## Inputs
 
 | Input | Default | Descrizione |
 |---|---|---|
-| `version` | `0.7.1` | Versione di Zenzic da installare. Pin a una release specifica per esecuzioni deterministiche. Imposta `latest` per valutazione continua di nuove feature. |
+| `version` | `0.7.1` | Versione di Zenzic da installare. Pin a una release specifica per esecuzioni deterministiche. Imposta `latest` per valutazione continua. |
 | `format` | `sarif` | Formato di output: `text`, `json`, o `sarif`. |
-| `sarif-file` | `zenzic-results.sarif` | Path di output SARIF (quando `format: sarif`). Deve essere un path **relativo** dentro il workspace. Path assoluti e sequenze di traversal `..` sono rifiutati. |
+| `sarif-file` | `zenzic-results.sarif` | Path di output SARIF (quando `format: sarif`). Deve essere un path **relativo** dentro il workspace. |
 | `upload-sarif` | `true` | Carica SARIF su GitHub Code Scanning. |
 | `strict` | `false` | Tratta i warning come errori. |
 | `fail-on-error` | `true` | Fa fallire lo step del workflow sui finding. |
-| `config-file` | *(auto)* | Path opzionale a un file di configurazione Zenzic. Se omesso, l'action auto-scopre: prima `zenzic.toml` nella root del repository, poi `.github/zenzic.toml`. Path assoluti e sequenze di traversal `..` sono rifiutati. |
+| `config-file` | *(auto)* | Path opzionale a un file di configurazione. Auto-scopre `zenzic.toml` → `.github/zenzic.toml` se omesso. |
+| `audit` | `false` | Modalità sovereign audit: bypassa tutti i `zenzic:ignore` e `per_file_ignores`. Raccomandato per build notturne e workflow di security review. |
+| `diff-base` | *(snapshot)* | Path a un file di baseline JSON per `zenzic diff`. Usa un artifact dal branch `main` per bloccare PR che aumentano il debito tecnico. |
 
 ## Outputs
 
@@ -138,84 +81,25 @@ Ogni valore `--exclude-url` diventa un argomento separato. I pattern URL che con
 |---|---|
 | `sarif-file` | Path al file SARIF generato. |
 | `findings-count` | Numero totale di finding. |
+| `score` | Documentation Quality Score (0–100). Disponibile con `format: json` o quando `diff-base` è impostato. |
+| `suppression-debt-pts` | Punti di Debito Tecnico detratti dal punteggio per soppressioni attive. `0` quando non ci sono soppressioni. |
 
-## SARIF & GitHub Code Scanning
+## Codici di Uscita
 
-Quando `format: sarif` e `upload-sarif: true`, i finding di Zenzic appaiono:
-
-- Nel tab **Security → Code Scanning** del repository.
-- Come **annotation inline** sui diff delle Pull Request.
-- Color-coded per severity: errori in rosso, warning in giallo, finding di sicurezza con punteggio in stile CVSS (`9.5` per leak di credenziali, `9.0` per incidenti di path-traversal).
-
-Nessuna configurazione aggiuntiva necessaria — l'action gestisce l'upload tramite `github/codeql-action/upload-sarif`.
-
-## Come funziona
-
-1. Installa `uv` con cache abilitata.
-2. Esegue `uvx "zenzic==<version>"` (o `uvx zenzic` per latest) — un'unica invocazione isolata, nessuno step di pre-install.
-3. Scrive il report SARIF su `sarif-file` (solo stdout; stderr fluisce sul log dello step).
-4. Valida l'integrità JSON SARIF — emette un'annotation `::warning` se il file è troncato (es. per SIGKILL).
-5. Carica tramite `github/codeql-action/upload-sarif`.
-
-## Ambienti Supportati
-
-| Componente | Minimo | Raccomandato | Note |
-|:--|:--|:--|:--|
-| **Runner GitHub-hosted** | `ubuntu-22.04` | `ubuntu-latest` | Anche i runner macOS e Windows sono supportati |
-| **Runner self-hosted** | Qualsiasi OS con `bash` ≥ 5 e `python3` ≥ 3.11 | — | `uv` viene installato dall'action; nessun pre-install richiesto |
-| **Node.js** | 24 | 24 | Richiesto da `github/codeql-action/upload-sarif@v4` |
-| **`astral-sh/setup-uv`** | v8 | v8 | Le versioni precedenti non hanno il supporto cache cross-platform completo |
-| **`github/codeql-action`** | v4 | v4 | v3 deprecato; v2 end-of-life a marzo 2024 |
-| **`actions/checkout`** | v6 | v6 | Deve essere eseguito prima di questa action |
-
-> **Runner self-hosted:** assicurati che `python3` (3.11+) e `bash` (5+) siano disponibili nel `PATH`.
-> `uv` viene installato dall'action tramite `astral-sh/setup-uv` — nessuna toolchain Python pre-installata necessaria.
-
-## Ecosistema
-
-| Componente | Repository / URL | Descrizione |
-|---|---|---|
-| **Zenzic CLI** | [PythonWoods/zenzic](https://github.com/PythonWoods/zenzic) | Linter core — installa con `pip install zenzic` o esegui via `uvx zenzic` |
-| **Documentazione** | [zenzic.dev](https://zenzic.dev) | Reference di configurazione, catalogo regole e how-to |
-| **Brand System** | [zenzic.dev/assets/brand/zenzic-brand-system.html](https://zenzic.dev/assets/brand/zenzic-brand-system.html) | Identità visiva, badge e asset SVG |
-| **zenzic-action** | [PythonWoods/zenzic-action](https://github.com/PythonWoods/zenzic-action) | Questo repository |
+| Codice | Significato | Sopprimibile? |
+|:---:|---|:---:|
+| `0` | Tutti i check superati | — |
+| `1` | Finding di documentazione | Sì (`fail-on-error: "false"`) |
+| **`2`** | **Credenziale rilevata (Z201)** | **Mai** |
+| **`3`** | **Path traversal rilevato (Z202/Z203)** | **Mai** |
 
 ---
 
-## 📖 Mappa della Documentazione — La Promessa di Integrità
+Per la governance avanzata (Scoring & Debt, Sovereign Audit, Quality Gate PR blocking), consulta la
+[documentazione di Zenzic Action](https://zenzic.dev/it/docs/reference/zenzic-action).
 
-La documentazione di Zenzic vive in **due istanze Docusaurus separate** sotto
-[zenzic.dev](https://zenzic.dev) — l'area utente e l'area sviluppatori non
-condividono mai una sidebar o un indice di ricerca.
-
-```text
-zenzic.dev/
-├── docs/           → Area Utente   — installazione, configurazione, CI/CD, codici
-├── developers/     → Area Dev      — estensioni di regole, adapter, ADR, ledger del debito tecnico
-├── blog/           → Note di rilascio e post-mortem ingegneristici
-└── community/      → Brand kit, FAQ, governance
-```
-
-La separazione è imposta da [ADR 011: Cross-Instance Allowlist](https://zenzic.dev/it/developers/explanation/adr-cross-instance-allowlist) — ogni link che attraversa il confine è un contratto documentato, mai una soppressione silenziosa.
-
-| Sei un... | Inizia da qui |
-| :--- | :--- |
-| 👤 Utente dell'action (integrator CI) | [Guida CI/CD](https://zenzic.dev/it/docs/how-to/configure-ci-cd/) |
-| 🔧 Contributor dell'action | [Portale Sviluppatori](https://zenzic.dev/it/developers/) · [ADR Vault](https://zenzic.dev/it/developers/explanation/adr-vault) |
-| 🛡️ Security reviewer | [Engineering Ledger](https://zenzic.dev/it/developers/explanation/engineering-ledger) · [SECURITY.md](SECURITY.md) |
-
----
-
-## Deep Dive — Architettura di Sicurezza
-
-Per una descrizione completa di come il wrapper applica la sicurezza, gestisce i codici di uscita e
-effettua la configuration discovery, consulta la documentazione ufficiale:
-
-> **[GitHub Action Internals — zenzic.dev](https://zenzic.dev/it/docs/explanation/github-action-internals)**
->
-> Copre: Path Traversal Guard Protocol · Contratto Exit Code · cascata Root-First Zenzic · Contratto di Intenzione Sovrana · guardia integrità SARIF.
-
----
+Per gli internals dell'architettura di sicurezza (contratto exit code, Root-First discovery, guardia integrità SARIF),
+consulta l'[Engineering Ledger](https://zenzic.dev/it/developers/explanation/engineering-ledger).
 
 ## Licenza
 

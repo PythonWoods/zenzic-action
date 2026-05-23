@@ -43,11 +43,6 @@ Distribution target: **GitHub Actions Marketplace** — `uses: PythonWoods/zenzi
 | MINOR     | New inputs/outputs, core pin update          |
 | MAJOR     | Breaking changes to inputs or output schema  |
 
-## Core Pin Policy
-
-`action.yml` always pins to the latest stable Zenzic core release.
-Pin updates are coordinated with the core release cycle — never auto-update.
-
 ## Changelog Reference
 
 For a detailed list of changes, see [CHANGELOG.md](./CHANGELOG.md).
