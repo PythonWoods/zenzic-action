@@ -35,7 +35,6 @@ Run Zenzic checks in CI and surface results directly in GitHub Code Scanning, Pu
 | Zero-setup install | `uvx zenzic` — no Python toolchain required on the runner |
 | SARIF output | Findings feed directly into GitHub Code Scanning |
 | Exit Code Contract | Security incidents (exit 2/3) are never suppressed by `fail-on-error` |
-| Exit 4 Quality Gate | Score regression vs baseline fails the PR (Zenzic Quality Gate) |
 | Sovereign Audit mode | `audit: "true"` bypasses all suppressions — surfaces the true documentation state |
 | SARIF integrity check | Validates JSON before upload; emits `::warning` if truncated by SIGKILL |
 | PR annotations | Inline findings on the diff, colour-coded by severity |
@@ -153,9 +152,6 @@ Each `--exclude-url` value becomes a separate argument. URL patterns that contai
 | `1` | Documentation findings | Yes (`fail-on-error: "false"`) |
 | **`2`** | **Credential detected (Z201)** | **Never** |
 | **`3`** | **Path traversal detected (Z202/Z203)** | **Never** |
-| **`4`** | **Quality regression vs baseline** | Yes (`fail-on-error: "false"`) |
-
-Exit 4 is emitted by the Zenzic Quality Gate when `zenzic diff` detects a score drop vs the baseline. Use it to block PRs that increase technical debt.
 
 ---
 
@@ -235,7 +231,7 @@ jobs:
           echo "Findings: ${{ steps.zenzic.outputs.findings-count }}"
 ```
 
-> **What happens on regression?** The action emits exit code 4 and a `::error` annotation: `"Documentation quality score dropped vs baseline. The Zenzic Quality Gate blocked this PR."` The PR check fails. No score-reducing merge enters `main`.
+> **What happens on regression?** The action emits a `::error` annotation: `"Documentation quality score dropped vs baseline. The Zenzic Quality Gate blocked this PR."` The PR check fails. No score-reducing merge enters `main`.
 
 ---
 
