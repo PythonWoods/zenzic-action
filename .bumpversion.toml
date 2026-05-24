@@ -22,21 +22,10 @@ search = '(?m)^(\| Date\s+\|\s+)\d{{4}}-\d{{2}}-\d{{2}}(\s*\|)$'
 replace = '| Date    | {now:%Y-%m-%d} |'
 regex = true
 
-# Core pin bump is coordinated separately (0.7.1 -> 0.8.0), but must be covered.
-[[tool.bumpversion.files]]
-filename = "action.yml"
-search = 'default:\s*"0\.7\.1"'
-replace = 'default: "0.8.0"'
-regex = true
-
-[[tool.bumpversion.files]]
-filename = "README.md"
-search = 'version:\s*"0\.7\.1"'
-replace = 'version: "0.8.0"'
-regex = true
-
-[[tool.bumpversion.files]]
-filename = "README.it.md"
-search = 'version:\s*"0\.7\.1"'
-replace = 'version: "0.8.0"'
-regex = true
+# ---------------------------------------------------------------------------
+# Core pin — state tracking only.
+# Actual updates are performed by `just pin-core <version>`.
+# bump-my-version does NOT manage these files; they are listed here for discoverability.
+# ---------------------------------------------------------------------------
+[tool.bumpversion.custom_variables.core_version]
+current = "0.7.1"

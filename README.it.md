@@ -35,7 +35,7 @@ Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Co
 | Check integrità SARIF | Valida il JSON prima dell'upload; emette `::warning` se troncato da SIGKILL |
 | Annotation PR | Finding inline sul diff, color-coded per severity |
 | Version pinning | Pin a una release esatta per gate CI deterministici e riproducibili |
-| **Prosa pulita** (v0.8.0) | `[governance.directory_policies]` in `zenzic.toml` concede esenzioni zero-debt a pattern di percorso |
+| **Prosa pulita** | `[governance.directory_policies]` in `zenzic.toml` concede esenzioni zero-debt a pattern di percorso |
 
 ## Quick Start
 

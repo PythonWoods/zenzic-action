@@ -35,7 +35,7 @@ Run Zenzic checks in CI and surface results directly in GitHub Code Scanning, Pu
 | SARIF integrity check | Validates JSON before upload; emits `::warning` if truncated by SIGKILL |
 | PR annotations | Inline findings on the diff, colour-coded by severity |
 | Version pinning | Pin to an exact release for deterministic, reproducible CI gates |
-| **Clean prose** (v0.8.0) | `[governance.directory_policies]` in `zenzic.toml` grants zero-debt exemptions to path patterns |
+| **Clean prose** | `[governance.directory_policies]` in `zenzic.toml` grants zero-debt exemptions to path patterns |
 
 ## Quick Start
 

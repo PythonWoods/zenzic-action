@@ -41,7 +41,7 @@ versions:
     @echo "zenzic-core: $(perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml)"
 
 # Realign the Zenzic Core pin in action.yml using the anchored marker
-# Usage: just pin-core 0.7.1
+# Usage: just pin-core <version>
 pin-core version:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -54,8 +54,14 @@ pin-core version:
         exit 3
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
+    # Update action.yml default (anchored marker)
     perl -i -pe 's/default: "[^"]+"\s*# x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
-    git add action.yml
+    # Update YAML examples and input-table defaults in README files
+    perl -i -pe 's/    version: "[0-9]+\.[0-9]+\.[0-9]+"/    version: "{{version}}"/' README.md README.it.md
+    perl -i -pe 's/(\| `version` \| `)[0-9]+\.[0-9]+\.[0-9]+(`)/\1{{version}}\2/' README.md README.it.md
+    # Update core_version state tracker in .bumpversion.toml
+    perl -i -pe 's/^(current = ")[0-9]+\.[0-9]+\.[0-9]+("$)/\1{{version}}\2/' .bumpversion.toml
+    git add action.yml README.md README.it.md .bumpversion.toml
     git commit -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a release bump without modifying any files
@@ -73,7 +79,7 @@ release-dry part *args:
     fi
 
 # Simulate a Zenzic Core pin realignment without modifying files
-# Usage: just core-align-dry 0.7.1
+# Usage: just core-align-dry <version>
 core-align-dry core_version:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -87,7 +93,7 @@ core-align-dry core_version:
     echo "Would update anchored line in action.yml"
 
 # Realign action files to a specific released Zenzic Core version
-# Usage: just core-align 0.7.1
+# Usage: just core-align <version>
 core-align core_version:
     just pin-core {{core_version}}
 
