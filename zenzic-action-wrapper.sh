@@ -30,7 +30,7 @@
 #   ZENZIC_STRICT        "true" → pass --strict flag (warnings become errors)
 #   ZENZIC_FAIL_ON_ERROR "true" → propagate exit 1 to the workflow step
 #   ZENZIC_CONFIG_FILE   Explicit config path (optional). If empty, auto-discovers
-#                        zenzic.toml (root) → .github/zenzic.toml (fallback).
+#                        .zenzic.toml (root) → .github/.zenzic.toml (fallback).
 #   ZENZIC_AUDIT         "true" → pass --audit flag (bypasses all suppressions)
 #   ZENZIC_DIFF_BASE     Path to a JSON baseline file for zenzic diff comparison.
 
@@ -105,8 +105,8 @@ fi
 # ── Config file cascade (Root-First discovery) ──────────────────────────────
 # Discovery order (highest → lowest priority):
 #   1. Explicit override  — ZENZIC_CONFIG_FILE set by the caller (config-file input)
-#   2. Standard root      — zenzic.toml in the workspace root
-#   3. Hidden fallback    — .github/zenzic.toml
+#   2. Standard root      — .zenzic.toml in the workspace root
+#   3. Hidden fallback    — .github/.zenzic.toml
 #
 # The Sandbox Guard (path traversal / absolute path rejection) applies ONLY to
 # explicit overrides: auto-discovered paths are hardcoded in this script and
@@ -148,10 +148,10 @@ if [ -n "${ZENZIC_CONFIG_FILE}" ]; then
     fi
     # CANDIDATE_CONFIG remains ""; CONFIG_ARGS stays empty.
   fi
-elif [ -f "zenzic.toml" ]; then
-  CANDIDATE_CONFIG="zenzic.toml"
-elif [ -f ".github/zenzic.toml" ]; then
-  CANDIDATE_CONFIG=".github/zenzic.toml"
+elif [ -f ".zenzic.toml" ]; then
+  CANDIDATE_CONFIG=".zenzic.toml"
+elif [ -f ".github/.zenzic.toml" ]; then
+  CANDIDATE_CONFIG=".github/.zenzic.toml"
 fi
 
 if [ -n "${CANDIDATE_CONFIG}" ]; then

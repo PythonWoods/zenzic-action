@@ -35,7 +35,7 @@ Run Zenzic checks in CI and surface results directly in GitHub Code Scanning, Pu
 | SARIF integrity check | Validates JSON before upload; emits `::warning` if truncated by SIGKILL |
 | PR annotations | Inline findings on the diff, colour-coded by severity |
 | Version pinning | Pin to an exact release for deterministic, reproducible CI gates |
-| **Clean prose** | `[governance.directory_policies]` in `zenzic.toml` grants zero-debt exemptions to path patterns |
+| **Clean prose** | `[governance.directory_policies]` in `.zenzic.toml` grants zero-debt exemptions to path patterns |
 
 ## Quick Start
 
@@ -55,7 +55,7 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
     security-events: write
 ```
 
-Place a `zenzic.toml` at the root of your repository and the action picks it up automatically — no `config-file` input required. Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
+Place a `.zenzic.toml` at the root of your repository and the action picks it up automatically — no `config-file` input required. Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
 
 For advanced configuration (Configuration Discovery, Sovereign Override, Quality Gate scoring, nightly audit), see the [Zenzic Action docs](https://zenzic.dev/docs/reference/zenzic-action).
 
@@ -71,7 +71,7 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
 | `strict` | `false` | Treat warnings as errors. |
 | `fail-on-error` | `true` | Fail the workflow step on findings. |
-| `config-file` | *(auto)* | Optional path to a config file. Auto-discovers `zenzic.toml` → `.github/zenzic.toml` when omitted. |
+| `config-file` | *(auto)* | Optional path to a config file. Auto-discovers `.zenzic.toml` → `.github/.zenzic.toml` when omitted. |
 | `audit` | `false` | Sovereign audit mode: bypass all `zenzic:ignore` comments and `per_file_ignores`. Reveals the true unfiltered documentation state. Recommended for nightly builds and security review workflows. |
 | `diff-base` | *(snapshot)* | Path to a JSON baseline file for `zenzic diff`. Use an artifact from the `main` branch to block PRs that increase technical debt. Falls back to `.zenzic-score.json` when omitted. |
 

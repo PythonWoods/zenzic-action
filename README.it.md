@@ -35,7 +35,7 @@ Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Co
 | Check integrità SARIF | Valida il JSON prima dell'upload; emette `::warning` se troncato da SIGKILL |
 | Annotation PR | Finding inline sul diff, color-coded per severity |
 | Version pinning | Pin a una release esatta per gate CI deterministici e riproducibili |
-| **Prosa pulita** | `[governance.directory_policies]` in `zenzic.toml` concede esenzioni zero-debt a pattern di percorso |
+| **Prosa pulita** | `[governance.directory_policies]` in `.zenzic.toml` concede esenzioni zero-debt a pattern di percorso |
 
 ## Quick Start
 
@@ -55,7 +55,7 @@ La configurazione minimale — zero setup Python, SARIF su Code Scanning in un s
     security-events: write
 ```
 
-Metti un file `zenzic.toml` nella root del repository e l'action lo trova automaticamente — nessun input `config-file` richiesto. Esegui `zenzic init` una volta per fare scaffolding della configurazione se le tue docs sono fuori dalla cartella `docs/` di default.
+Metti un file `.zenzic.toml` nella root del repository e l'action lo trova automaticamente — nessun input `config-file` richiesto. Esegui `zenzic init` una volta per fare scaffolding della configurazione se le tue docs sono fuori dalla cartella `docs/` di default.
 
 Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scoring del Quality Gate, audit notturno), consulta la [documentazione di Zenzic Action](https://zenzic.dev/it/docs/reference/zenzic-action).
 
@@ -71,7 +71,7 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 | `upload-sarif` | `true` | Carica SARIF su GitHub Code Scanning. |
 | `strict` | `false` | Tratta i warning come errori. |
 | `fail-on-error` | `true` | Fa fallire lo step del workflow sui finding. |
-| `config-file` | *(auto)* | Path opzionale a un file di configurazione. Auto-scopre `zenzic.toml` → `.github/zenzic.toml` se omesso. |
+| `config-file` | *(auto)* | Path opzionale a un file di configurazione. Auto-scopre `.zenzic.toml` → `.github/.zenzic.toml` se omesso. |
 | `audit` | `false` | Modalità sovereign audit: bypassa tutti i `zenzic:ignore` e `per_file_ignores`. Raccomandato per build notturne e workflow di security review. |
 | `diff-base` | *(snapshot)* | Path a un file di baseline JSON per `zenzic diff`. Usa un artifact dal branch `main` per bloccare PR che aumentano il debito tecnico. |
 

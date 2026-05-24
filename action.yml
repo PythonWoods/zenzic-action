@@ -34,7 +34,7 @@ inputs:
     required: false
     default: "true"
   config-file:
-    description: "Optional path to a Zenzic configuration file inside the workspace. If not provided, the action automatically searches for 'zenzic.toml' in the repository root, then '.github/zenzic.toml' (root-first auto-discovery). Absolute paths and path traversal sequences ('..') are rejected."
+    description: "Optional path to a Zenzic configuration file inside the workspace. If not provided, the action automatically searches for '.zenzic.toml' in the repository root, then '.github/.zenzic.toml' (root-first auto-discovery). Absolute paths and path traversal sequences ('..') are rejected."
     required: false
     default: ""
   audit:
