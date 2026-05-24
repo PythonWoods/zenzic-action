@@ -58,9 +58,9 @@ pin-core version:
     perl -i -pe 's/default: "[^"]+"\s*# x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
     # Update YAML examples and input-table defaults in README files
     perl -i -pe 's/    version: "[0-9]+\.[0-9]+\.[0-9]+"/    version: "{{version}}"/' README.md README.it.md
-    perl -i -pe 's/(\| `version` \| `)[0-9]+\.[0-9]+\.[0-9]+(`)/\1{{version}}\2/' README.md README.it.md
+    perl -i -pe 's/(\| `version` \| `)[0-9]+\.[0-9]+\.[0-9]+(`)/${1}{{version}}${2}/' README.md README.it.md
     # Update core_version state tracker in .bumpversion.toml
-    perl -i -pe 's/^(current = ")[0-9]+\.[0-9]+\.[0-9]+("$)/\1{{version}}\2/' .bumpversion.toml
+    perl -i -pe 's/^(current = ")[0-9]+\.[0-9]+\.[0-9]+("$)/${1}{{version}}${2}/' .bumpversion.toml
     git add action.yml README.md README.it.md .bumpversion.toml
     git commit -m "chore(deps): pin zenzic core to {{version}}"
 
