@@ -205,10 +205,41 @@ PYEOF
     FINDINGS="${FINDINGS:-0}"
   fi
 
+  # ── Suppression CAP detection ─────────────────────────────────────────────
+  # When suppression_cap_fail_hard triggers, zenzic outputs a dedicated SARIF
+  # with exactly one result (ruleId: SUPPRESSION_CAP_EXCEEDED) instead of the
+  # normal findings SARIF. Parse it here — no second invocation of zenzic.
+  CAP_EXCEEDED="false"
+  CAP_TOTAL=""
+  CAP_LIMIT=""
+  if [ "${EXIT_CODE}" -eq 1 ] && [ "${FINDINGS}" -eq 1 ]; then
+    _cap_result=$(python3 -c "
+import json, os, sys
+try:
+    with open(os.environ['ZENZIC_SARIF_FILE']) as f:
+        data = json.load(f)
+    results = data['runs'][0]['results']
+    if results and results[0].get('ruleId') == 'SUPPRESSION_CAP_EXCEEDED':
+        g = results[0].get('properties', {}).get('governance', {})
+        sys.stdout.write('true ' + str(g.get('active_suppressions', '?')) + ' ' + str(g.get('configured_global_cap', '?')))
+    else:
+        sys.stdout.write('false')
+except Exception:
+    sys.stdout.write('false')
+" 2>/dev/null || echo "false")
+    read -r CAP_EXCEEDED CAP_TOTAL CAP_LIMIT <<< "${_cap_result}"
+    CAP_EXCEEDED="${CAP_EXCEEDED:-false}"
+  fi
+
 else
   # Non-SARIF: stream output directly to the step log; capture exit code.
   uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" "${CONFIG_ARGS[@]}" ${STRICT_FLAG} ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
     || EXIT_CODE=$?
+
+  # CAP detection is SARIF-only; always false for non-SARIF formats.
+  CAP_EXCEEDED="false"
+  CAP_TOTAL=""
+  CAP_LIMIT=""
 
 fi
 
@@ -250,7 +281,22 @@ except Exception:
       echo "score=${SCORE}" >> "${GITHUB_OUTPUT}"
       echo "suppression-debt-pts=${DEBT_PTS}" >> "${GITHUB_OUTPUT}"
       echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
+      echo "cap-exceeded=false" >> "${GITHUB_OUTPUT}"
       echo "::error title=Zenzic Quality Regression — Exit 4::Documentation quality score dropped vs baseline. The Zenzic Quality Gate blocked this PR. Check 'zenzic diff' output for details." >&2
+      cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+## ❌ Zenzic — Quality Regression (Exit 4)
+
+The documentation quality score dropped below the baseline. This PR is blocked by the Zenzic Quality Gate.
+
+| | |
+|---|---|
+MDEOF
+      printf '| **Score** | %s |\n' "${SCORE:-n/a}" >> "${GITHUB_STEP_SUMMARY}"
+      printf '| **Suppression debt** | %s pts |\n' "${DEBT_PTS}" >> "${GITHUB_STEP_SUMMARY}"
+      cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+| **Action** | Review `zenzic diff` output in the step log |
+| **Playbook** | https://zenzic.dev/developers/how-to/release-governance-protocol |
+MDEOF
       exit 4
     fi
   fi
@@ -270,7 +316,24 @@ if [ "${EXIT_CODE}" -eq 2 ]; then
   echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
   echo "score=${SCORE}" >> "${GITHUB_OUTPUT}"
   echo "suppression-debt-pts=${DEBT_PTS}" >> "${GITHUB_OUTPUT}"
-  echo "::error title=Zenzic Credential Scanner — Z201::Credential pattern detected. Scan aborted at breach point — findings-count=${FINDINGS} (security incident). Exit 2 is non-suppressible per the Zenzic Exit Code Contract." >&2
+  echo "cap-exceeded=false" >> "${GITHUB_OUTPUT}"
+  echo "::error title=Zenzic Security Breach — Z201 (Exit 2)::Credential pattern or hardcoded secret detected. findings-count=${FINDINGS}. Exit 2 is non-suppressible per the Zenzic Exit Code Contract." >&2
+  cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+## ❌ Zenzic — Security Breach (Exit 2)
+
+A **credential pattern or hardcoded secret** was detected in the documentation. The build has been terminated.
+
+Exit 2 is **non-suppressible** — `fail-on-error: false` has no effect.
+
+| | |
+|---|---|
+MDEOF
+  printf '| **Findings** | %s |\n' "${FINDINGS}" >> "${GITHUB_STEP_SUMMARY}"
+  cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+| **Rule** | Z201 — Credential Scanner |
+| **Action** | Remove the secret and rotate it immediately |
+| **Reference** | https://zenzic.dev/docs/reference/finding-codes |
+MDEOF
   exit 2
 fi
 
@@ -279,7 +342,24 @@ if [ "${EXIT_CODE}" -eq 3 ]; then
   echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
   echo "score=${SCORE}" >> "${GITHUB_OUTPUT}"
   echo "suppression-debt-pts=${DEBT_PTS}" >> "${GITHUB_OUTPUT}"
-  echo "::error title=Zenzic Path Traversal Guard — Z202/Z203::System path traversal detected. Scan aborted at breach point — findings-count=${FINDINGS} (security incident). Exit 3 is non-suppressible per the Zenzic Exit Code Contract." >&2
+  echo "cap-exceeded=false" >> "${GITHUB_OUTPUT}"
+  echo "::error title=Zenzic Boundary Breach — Z202/Z203 (Exit 3)::Path traversal or filesystem boundary violation detected. findings-count=${FINDINGS}. Exit 3 is non-suppressible per the Zenzic Exit Code Contract." >&2
+  cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+## ❌ Zenzic — Boundary Breach (Exit 3)
+
+A **path traversal or filesystem boundary violation** was detected. The scan was terminated immediately.
+
+Exit 3 is **non-suppressible** — `fail-on-error: false` has no effect.
+
+| | |
+|---|---|
+MDEOF
+  printf '| **Findings** | %s |\n' "${FINDINGS}" >> "${GITHUB_STEP_SUMMARY}"
+  cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+| **Rules** | Z202/Z203 — Path Traversal Guard |
+| **Action** | Remove the offending path reference |
+| **Reference** | https://zenzic.dev/docs/reference/finding-codes |
+MDEOF
   exit 3
 fi
 
@@ -287,6 +367,42 @@ fi
 echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
 echo "score=${SCORE}" >> "${GITHUB_OUTPUT}"
 echo "suppression-debt-pts=${DEBT_PTS}" >> "${GITHUB_OUTPUT}"
+echo "cap-exceeded=${CAP_EXCEEDED:-false}" >> "${GITHUB_OUTPUT}"
+
+# ── Job Summary for exit 1 ────────────────────────────────────────────────────
+if [ "${EXIT_CODE}" -eq 1 ]; then
+  if [ "${CAP_EXCEEDED}" = "true" ]; then
+    echo "::error title=Zenzic — Suppression CAP Exceeded (Exit 1)::Build blocked: Suppression CAP exceeded (${CAP_TOTAL}/${CAP_LIMIT}). Remediation: https://zenzic.dev/developers/how-to/release-governance-protocol" >&2
+    cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+## ❌ Zenzic — Suppression CAP Exceeded (Exit 1)
+
+The suppression debt limit has been reached. The build is blocked until suppressions are reduced below the CAP.
+
+| | |
+|---|---|
+MDEOF
+    printf '| **Active suppressions** | %s |\n' "${CAP_TOTAL}" >> "${GITHUB_STEP_SUMMARY}"
+    printf '| **Configured CAP** | %s |\n' "${CAP_LIMIT}" >> "${GITHUB_STEP_SUMMARY}"
+    cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+| **Remediation** | Reduce `zenzic:ignore` comments or raise `suppression_cap` in `.zenzic.toml` |
+| **Playbook** | https://zenzic.dev/developers/how-to/release-governance-protocol |
+MDEOF
+  else
+    cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+## ❌ Zenzic — Documentation Findings (Exit 1)
+
+Documentation quality checks failed. Review the findings in the step log or the Code Scanning tab.
+
+| | |
+|---|---|
+MDEOF
+    printf '| **Findings** | %s |\n' "${FINDINGS}" >> "${GITHUB_STEP_SUMMARY}"
+    printf '| **Score** | %s |\n' "${SCORE:-n/a}" >> "${GITHUB_STEP_SUMMARY}"
+    cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
+| **Reference** | https://zenzic.dev/docs/reference/finding-codes |
+MDEOF
+  fi
+fi
 
 # Exit code 1 (documentation findings) respects the caller's fail-on-error policy.
 if [ "${ZENZIC_FAIL_ON_ERROR}" = "true" ] && [ "${EXIT_CODE}" -ne 0 ]; then

@@ -45,6 +45,10 @@ inputs:
     description: "Path to a JSON report file to use as the baseline for 'zenzic diff' comparison instead of the saved .zenzic-score.json snapshot. Use an artifact from the main branch to block PRs that increase technical debt."
     required: false
     default: ""
+  guard-scan:
+    description: "Run 'zenzic guard scan' as a Defense-in-Depth step before the main quality gate. Detects hardcoded credentials and forbidden patterns committed without pre-commit hooks. Failure is always fatal — not governed by fail-on-error."
+    required: false
+    default: "false"
 
 outputs:
   sarif-file:
@@ -59,6 +63,9 @@ outputs:
   suppression-debt-pts:
     description: "Technical Debt points deducted from the score due to active suppressions. 0 when no suppressions are active."
     value: ${{ steps.run-zenzic.outputs.suppression-debt-pts }}
+  cap-exceeded:
+    description: "'true' when the suppression CAP was exceeded and blocked the build; 'false' otherwise."
+    value: ${{ steps.run-zenzic.outputs.cap-exceeded }}
 
 runs:
   using: "composite"
@@ -67,6 +74,16 @@ runs:
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       with:
         enable-cache: true
+
+    - name: Run Zenzic Secret Guard
+      if: inputs.guard-scan == 'true'
+      shell: bash
+      env:
+        ZENZIC_VERSION: ${{ inputs.version }}
+      run: |
+        PKG="zenzic"
+        [[ "${ZENZIC_VERSION}" != "latest" ]] && PKG="zenzic==${ZENZIC_VERSION}"
+        uvx "${PKG}" guard scan
 
     - name: Run Zenzic
       id: run-zenzic

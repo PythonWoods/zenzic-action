@@ -11,6 +11,25 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **`guard-scan` input:** New composite step that runs `zenzic guard scan` before the
+  main quality gate. Detects hardcoded credentials and forbidden patterns in repos where
+  developers bypassed pre-commit hooks (`--no-verify`). Failure is always fatal —
+  not governed by `fail-on-error` — consistent with the Exit 2/3 security contract.
+- **`cap-exceeded` output:** Boolean string (`"true"`/`"false"`) indicating whether the
+  build was blocked by a Suppression CAP violation. Available to downstream steps for
+  conditional PR annotations and dashboard automation.
+- **Sovereign Job Summary (all critical exit codes):** The wrapper now writes a
+  structured Markdown table to `$GITHUB_STEP_SUMMARY` for every non-zero exit. The
+  summary is anchored to exit codes, not internal codenames, making it resilient to
+  future rebranding:
+  - **Exit 1 + CAP:** "❌ Zenzic — Suppression CAP Exceeded" with active/limit/remediation table and Playbook link.
+  - **Exit 1 generic:** "❌ Zenzic — Documentation Findings" with findings count and score.
+  - **Exit 2:** "❌ Zenzic — Security Breach" (Z201 credential detected) — non-suppressible.
+  - **Exit 3:** "❌ Zenzic — Boundary Breach" (Z202/Z203 path traversal) — non-suppressible.
+  - **Exit 4:** "❌ Zenzic — Quality Regression" with score and suppression debt.
+
 ### Changed
 
 - **ADR-037 compliance:** `release_name` in `.zenzic.toml` updated from geological

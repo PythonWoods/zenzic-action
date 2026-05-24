@@ -74,6 +74,7 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 | `config-file` | *(auto)* | Path opzionale a un file di configurazione. Auto-scopre `.zenzic.toml` → `.github/.zenzic.toml` se omesso. |
 | `audit` | `false` | Modalità sovereign audit: bypassa tutti i `zenzic:ignore` e `per_file_ignores`. Raccomandato per build notturne e workflow di security review. |
 | `diff-base` | *(snapshot)* | Path a un file di baseline JSON per `zenzic diff`. Usa un artifact dal branch `main` per bloccare PR che aumentano il debito tecnico. |
+| `guard-scan` | `false` | Esegue `zenzic guard scan` come step Defense-in-Depth **prima** del gate principale. Rileva credenziali hardcodate e pattern vietati che hanno bypassato i pre-commit hook. Il fallimento è sempre fatale — non è governato da `fail-on-error`. |
 
 ## Outputs
 
@@ -83,15 +84,17 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 | `findings-count` | Numero totale di finding. |
 | `score` | Documentation Quality Score (0–100). Disponibile con `format: json` o quando `diff-base` è impostato. |
 | `suppression-debt-pts` | Punti di Debito Tecnico detratti dal punteggio per soppressioni attive. `0` quando non ci sono soppressioni. |
+| `cap-exceeded` | `"true"` quando il CAP di soppressione è stato superato e ha bloccato la build; `"false"` altrimenti. |
 
 ## Codici di Uscita
 
 | Codice | Significato | Sopprimibile? |
 |:---:|---|:---:|
 | `0` | Tutti i check superati | — |
-| `1` | Finding di documentazione | Sì (`fail-on-error: "false"`) |
+| `1` | Finding di documentazione (link rotti, orfani, CAP soppressioni) | Sì (`fail-on-error: "false"`) |
 | **`2`** | **Credenziale rilevata (Z201)** | **Mai** |
 | **`3`** | **Path traversal rilevato (Z202/Z203)** | **Mai** |
+| **`4`** | **Regressione qualità (`zenzic diff` score drop)** | **Mai** |
 
 ---
 

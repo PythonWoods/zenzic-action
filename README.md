@@ -74,6 +74,7 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 | `config-file` | *(auto)* | Optional path to a config file. Auto-discovers `.zenzic.toml` → `.github/.zenzic.toml` when omitted. |
 | `audit` | `false` | Sovereign audit mode: bypass all `zenzic:ignore` comments and `per_file_ignores`. Reveals the true unfiltered documentation state. Recommended for nightly builds and security review workflows. |
 | `diff-base` | *(snapshot)* | Path to a JSON baseline file for `zenzic diff`. Use an artifact from the `main` branch to block PRs that increase technical debt. Falls back to `.zenzic-score.json` when omitted. |
+| `guard-scan` | `false` | Run `zenzic guard scan` as a Defense-in-Depth step **before** the main quality gate. Catches hardcoded credentials and forbidden patterns that bypassed pre-commit hooks. Failure is always fatal — not governed by `fail-on-error`. |
 
 ## Outputs
 
@@ -83,15 +84,17 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 | `findings-count` | Total number of findings. |
 | `score` | Documentation Quality Score (0–100). Available when `format: json` or when `diff-base` is set. |
 | `suppression-debt-pts` | Technical Debt points deducted from the score due to active suppressions. `0` when no suppressions are active. |
+| `cap-exceeded` | `"true"` when the suppression CAP was exceeded and blocked the build; `"false"` otherwise. |
 
 ## Exit Codes
 
 | Code | Meaning | Suppressible? |
 |:---:|---|:---:|
 | `0` | All checks passed | — |
-| `1` | Documentation findings | Yes (`fail-on-error: "false"`) |
+| `1` | Documentation findings (broken links, orphans, suppression CAP) | Yes (`fail-on-error: "false"`) |
 | **`2`** | **Credential detected (Z201)** | **Never** |
 | **`3`** | **Path traversal detected (Z202/Z203)** | **Never** |
+| **`4`** | **Quality regression (`zenzic diff` score drop)** | **Never** |
 
 ---
 
