@@ -212,23 +212,18 @@ PYEOF
   CAP_EXCEEDED="false"
   CAP_TOTAL=""
   CAP_LIMIT=""
-  if [ "${EXIT_CODE}" -eq 1 ] && [ "${FINDINGS}" -eq 1 ]; then
-    _cap_result=$(python3 -c "
-import json, os, sys
-try:
-    with open(os.environ['ZENZIC_SARIF_FILE']) as f:
-        data = json.load(f)
-    results = data['runs'][0]['results']
-    if results and results[0].get('ruleId') == 'SUPPRESSION_CAP_EXCEEDED':
-        g = results[0].get('properties', {}).get('governance', {})
-        sys.stdout.write('true ' + str(g.get('active_suppressions', '?')) + ' ' + str(g.get('configured_global_cap', '?')))
-    else:
-        sys.stdout.write('false')
-except Exception:
-    sys.stdout.write('false')
-" 2>/dev/null || echo "false")
-    read -r CAP_EXCEEDED CAP_TOTAL CAP_LIMIT <<< "${_cap_result}"
-    CAP_EXCEEDED="${CAP_EXCEEDED:-false}"
+  # Deterministic CAP detection: scan ALL results for the dedicated ruleId.
+  # Using jq with select() avoids the index-0 assumption — the CAP result may
+  # appear at any position in the results array.
+  if [ "${EXIT_CODE}" -eq 1 ]; then
+    if jq -e '.runs[].results[] | select(.ruleId == "SUPPRESSION_CAP_EXCEEDED")' \
+        "${ZENZIC_SARIF_FILE}" > /dev/null 2>&1; then
+      CAP_EXCEEDED="true"
+      CAP_TOTAL=$(jq -r '[.runs[].results[] | select(.ruleId == "SUPPRESSION_CAP_EXCEEDED") | .properties.governance.active_suppressions] | first // "?"' \
+        "${ZENZIC_SARIF_FILE}" 2>/dev/null || echo "?")
+      CAP_LIMIT=$(jq -r '[.runs[].results[] | select(.ruleId == "SUPPRESSION_CAP_EXCEEDED") | .properties.governance.configured_global_cap] | first // "?"' \
+        "${ZENZIC_SARIF_FILE}" 2>/dev/null || echo "?")
+    fi
   fi
 
 else
@@ -276,29 +271,6 @@ except Exception:
       DEBT_PTS="${DEBT_PTS:-0}"
     fi
 
-    # Exit 4 = quality regression (score dropped vs baseline)
-    if [ "${DIFF_EXIT}" -eq 4 ]; then
-      echo "score=${SCORE}" >> "${GITHUB_OUTPUT}"
-      echo "suppression-debt-pts=${DEBT_PTS}" >> "${GITHUB_OUTPUT}"
-      echo "findings-count=${FINDINGS}" >> "${GITHUB_OUTPUT}"
-      echo "cap-exceeded=false" >> "${GITHUB_OUTPUT}"
-      echo "::error title=Zenzic Quality Regression — Exit 4::Documentation quality score dropped vs baseline. The Zenzic Quality Gate blocked this PR. Check 'zenzic diff' output for details." >&2
-      cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
-## ❌ Zenzic — Quality Regression (Exit 4)
-
-The documentation quality score dropped below the baseline. This PR is blocked by the Zenzic Quality Gate.
-
-| | |
-|---|---|
-MDEOF
-      printf '| **Score** | %s |\n' "${SCORE:-n/a}" >> "${GITHUB_STEP_SUMMARY}"
-      printf '| **Suppression debt** | %s pts |\n' "${DEBT_PTS}" >> "${GITHUB_STEP_SUMMARY}"
-      cat >> "${GITHUB_STEP_SUMMARY}" <<'MDEOF'
-| **Action** | Review `zenzic diff` output in the step log |
-| **Playbook** | https://zenzic.dev/developers/how-to/release-governance-protocol |
-MDEOF
-      exit 4
-    fi
   fi
 fi
 

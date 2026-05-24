@@ -28,7 +28,6 @@ Versions follow [Semantic Versioning](https://semver.org/).
   - **Exit 1 generic:** "❌ Zenzic — Documentation Findings" with findings count and score.
   - **Exit 2:** "❌ Zenzic — Security Breach" (Z201 credential detected) — non-suppressible.
   - **Exit 3:** "❌ Zenzic — Boundary Breach" (Z202/Z203 path traversal) — non-suppressible.
-  - **Exit 4:** "❌ Zenzic — Quality Regression" with score and suppression debt.
 
 ### Changed
 

@@ -94,7 +94,6 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 | `1` | Finding di documentazione (link rotti, orfani, CAP soppressioni) | Sì (`fail-on-error: "false"`) |
 | **`2`** | **Credenziale rilevata (Z201)** | **Mai** |
 | **`3`** | **Path traversal rilevato (Z202/Z203)** | **Mai** |
-| **`4`** | **Regressione qualità (`zenzic diff` score drop)** | **Mai** |
 
 ---
 

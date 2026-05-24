@@ -94,7 +94,6 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 | `1` | Documentation findings (broken links, orphans, suppression CAP) | Yes (`fail-on-error: "false"`) |
 | **`2`** | **Credential detected (Z201)** | **Never** |
 | **`3`** | **Path traversal detected (Z202/Z203)** | **Never** |
-| **`4`** | **Quality regression (`zenzic diff` score drop)** | **Never** |
 
 ---
 
