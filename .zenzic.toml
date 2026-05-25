@@ -1,20 +1,47 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
-# zenzic.toml — Standalone configuration for the zenzic-action repository.
-#
-# "Prose-only Maintenance" config: scans root-level Markdown files.
-# The action has no docs/ tree — docs_dir = "." is the correct perimeter.
-#
-# 🏛️ LOCAL SOVEREIGNTY: keep machine-specific overrides and private
-# secrets in `.zenzic.local.toml` only. Shared `zenzic.toml` remains CI policy.
-#
-# 🌿  ZERO-CONFIG NOTE:
-#   * Universal build / cache dirs and toolchain files are excluded by
-#     SYSTEM_EXCLUDED_DIRS / SYSTEM_EXCLUDED_FILE_NAMES — no repetition needed.
 
+# Precedence: .zenzic.toml is shared baseline; .zenzic.local.toml overrides locally.
+# Keep secrets and workstation-only values in .zenzic.local.toml.
+
+# --- PROJECT IDENTITY ---
+# [project]
+# name = "zenzic-action" # Used for personalized CLI Governance headers
+
+# --- CORE SETTINGS ---
+# ---------------------------------------------------------------------------
+# docs_dir
+# ---------------------------------------------------------------------------
+# The relative path to your documentation root.
+#
+# BEHAVIOR:
+#   - If commented out (default), Zenzic uses Auto-Discovery to find your
+#     docs based on the engine (reads docusaurus.config.ts, mkdocs.yml…).
+#   - Set to "." to scan the entire repository (L1 system exclusions apply).
+#
+# DEFAULT: Auto-discovered
+#
 docs_dir = "."
 
-# Repo-specific directories that are not documentation.
+strict = true
+fail_under = 100
+# exit_zero = false
+# respect_vcs_ignore = true
+# validate_same_page_anchors = true
+
+# External URLs excluded from the broken-link check (applies only with --strict)
+excluded_external_urls = [
+    # GitHub repo URLs return 429 (rate-limited) in CI.
+    "https://github.com/PythonWoods/zenzic-action",
+    "https://github.com/PythonWoods/zenzic",
+]
+
+# Z204 Privacy Gate — terms that must never appear in published docs.
+# forbidden_patterns = []
+
+# --- EXCLUSION ZONES (Full bypass — use sparingly) ---
+# Paths listed here are INVISIBLE to Zenzic: no findings, no audit trail.
+# Prefer [governance.per_file_ignores] for targeted suppression with an audit trail.
 excluded_dirs = [
     "assets",
     "scripts",
@@ -22,45 +49,35 @@ excluded_dirs = [
     "_zenzic_core",  # CI checkout of sibling core repo — not action documentation
 ]
 
-# No repository-local excluded_assets workaround is kept here.
-# Shared family policy uses fail-closed local-core verification in nox/just/CI,
-# and core-level SYSTEM_EXCLUDED_FILE_NAMES covers infrastructure files.
-
-excluded_external_urls = [
-    # GitHub repo URLs return 429 (rate-limited) in CI.
-    "https://github.com/PythonWoods/zenzic-action",
-    "https://github.com/PythonWoods/zenzic",
-]
-
+# --- PLACEHOLDERS & CODE SNIPPETS (Optional) ---
 placeholder_patterns = []
 
+# --- ENGINE CONTEXT ---
 [build_context]
-engine = "standalone"
+engine         = "standalone" # Supported: docusaurus, mkdocs, zensical, standalone
+base_url       = "/"
+default_locale = "en"
 
-[[custom_rules]]
-id       = "ZZ-NOCLICKHERE"
-pattern  = "(?i)\\bclick here\\b|\\bclicca qui\\b"
-message  = "Avoid generic link text. Use a meaningful description for accessibility."
-severity = "error"
-
+# --- BRAND INTEGRITY ---
 [project_metadata]
 release_name = "v1.1.0"
 
 [governance]
-# Soglia di Hard-Fail per il debito tecnico. Se il numero totale di soppressioni
-# supera questo valore, la CI fallisce (Exit Code 1). Ogni singola soppressione
-# costa 1 punto di DQS (Flat-Cost Model).
+# ---------------------------------------------------------------------------
+# suppression_cap
+# ---------------------------------------------------------------------------
+# Hard-fail threshold for technical debt.
+#
+# BEHAVIOR:
+#   - If total suppressions > cap: CI fails immediately (Exit Code 1).
+#   - Scoring: Every suppression costs 1 DQS point (Flat-Cost Model).
+#
+# DEFAULT: 30
+#
 suppression_cap = 30
 suppression_cap_fail_hard = true
 
-# Per-file suppression map: silence a rule for specific file globs.
-# WARNING: Every entry increases your Technical Debt Score (1 pt each, flat-cost).
-# Use 'zenzic check --audit' to see what would be flagged without suppressions.
-# [governance.per_file_ignores]
-# "docs/legacy/**" = ["Z601"]   # intentional brand refs → -1 pt
-
-# Permanent vocabulary guardian: Z601 BRAND_OBSOLESCENCE fires if theatrical
-# brand terms reappear in documentation source. CHANGELOG*.md excluded.
+# Terms that should no longer appear in your documentation.
 brand_obsolescence = [
     "Sentinel",
     "Shield",
@@ -69,3 +86,78 @@ brand_obsolescence = [
     "Quartz",
     "Obsidian",
 ]
+# suppression_cap_scope = "all"  # Options: all, per-file
+# i18n_parity = false            # Set true when i18n is enabled
+
+# ---------------------------------------------------------------------------
+# per_file_ignores
+# ---------------------------------------------------------------------------
+# Silence a rule for specific file globs.
+#
+# BEHAVIOR: ADDITIVE — each entry adds 1 pt of Technical Debt (flat-cost).
+# IMPACT:   Use directory_policies below for zero-debt strategic exemptions.
+#
+# [governance.per_file_ignores]
+# "docs/legacy/**"      = ["Z601"]  # intentional brand refs → -1 pt
+# "docs/migration/*.md" = ["Z101"]  # known broken links → -1 pt
+
+# ---------------------------------------------------------------------------
+# directory_policies
+# ---------------------------------------------------------------------------
+# Strategic exemptions for entire directory trees or specific files.
+#
+# BEHAVIOR: Matched findings are silently dropped — ZERO debt added.
+# IMPACT:   In --audit mode, shown with [POLICY_EXEMPTION] label.
+#
+# [governance.directory_policies]
+# "blog/**"                       = ["Z601"]  # historical archive
+# "docs/explanation/registry.mdx" = ["Z601"]  # SSOT codename registry
+
+# Governance Playbook:
+# https://zenzic.dev/developers/how-to/release-governance-protocol
+
+# --- EXCLUSION ZONES (Full bypass — use sparingly) ---
+# Paths listed here are INVISIBLE to Zenzic: no findings, no audit trail.
+# Prefer [governance.per_file_ignores] for targeted suppression with an audit trail.
+# excluded_file_patterns = ["*.tmp", "*.log"]
+# excluded_assets = ["favicon.ico"]
+# excluded_asset_dirs = ["theme/"]
+# excluded_build_artifacts = ["pdf/*.pdf"]
+# included_dirs = []
+# included_file_patterns = []
+
+# --- PLUGINS (Optional) ---
+# plugins = []
+
+# --- CUSTOM RULES (Optional) ---
+# Declares project-specific regex-based lint rules applied line-by-line.
+[[custom_rules]]
+id       = "ZZ-NOCLICKHERE"
+pattern  = "(?i)\\bclick here\\b|\\bclicca qui\\b"
+message  = "Avoid generic link text. Use a meaningful description for accessibility."
+severity = "error"
+
+# --- I18N PARITY (Optional) ---
+# [i18n]
+# enabled = true
+# base_lang = "en"
+# base_source = "docs"
+# strict_parity = true
+# require_frontmatter_parity = ["title", "description"]
+# [i18n.targets]
+# it = "i18n/it/docusaurus-plugin-content-docs/current"
+
+# --- GATE 4: CI/CD (GitHub Actions, Optional) ---
+# Add this workflow snippet to .github/workflows/zenzic.yml
+#
+# name: zenzic
+# on: [pull_request, push]
+# jobs:
+#   audit:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - uses: actions/setup-python@v5
+#         with:
+#           python-version: '3.10'
+#       - run: uvx zenzic check all --strict
