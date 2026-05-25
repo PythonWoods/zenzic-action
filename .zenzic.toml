@@ -34,7 +34,7 @@ excluded_external_urls = [
     # GitHub repo URLs return 429 (rate-limited) in CI.
     "https://github.com/PythonWoods/zenzic-action",
     "https://github.com/PythonWoods/zenzic",
-    # TODO: Remove post-deploy v0.8.0 — reference pages exist in zenzic-doc, pending live deploy.
+    # TODO: Remove post-deploy v0.8.0 — pages exist in release/v0.8.0 branch, site still at v0.7.1.
     "https://zenzic.dev/docs/reference/zenzic-action",
     "https://zenzic.dev/it/docs/reference/zenzic-action",
 ]

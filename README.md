@@ -14,7 +14,7 @@
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5"></a>
   <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
-  <a href="https://zenzic.dev/developers/explanation/adr-vault"><img alt="4-Gates: Zenzic Audit Badge" src="https://img.shields.io/badge/4--Gates-Zenzic%20Audit%20Badge-10b981?style=flat-square"></a>
+  <a href="https://zenzic.dev/docs/how-to/add-badges/"><img alt="Zenzic Audit" src="https://img.shields.io/badge/zenzic-audit:_passed-success?style=flat-square"></a>
   <a href="https://reuse.software/"><img alt="REUSE 3.x compliant" src="https://img.shields.io/badge/REUSE-3.x%20compliant-0d9488?style=flat-square"></a>
 </p>
 
@@ -85,6 +85,95 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 | `score` | Documentation Quality Score (0–100). Available when `format: json` or when `diff-base` is set. |
 | `suppression-debt-pts` | Technical Debt points deducted from the score due to active suppressions. `0` when no suppressions are active. |
 | `cap-exceeded` | `"true"` when the suppression CAP was exceeded and blocked the build; `"false"` otherwise. |
+
+## Advanced Workflows
+
+### Debt Regression Blocking
+
+Block pull requests that increase documentation debt. Save a baseline from `main` as a workflow artifact; the quality-gate job downloads it and fails if `zenzic diff` reports a score drop.
+
+```yaml
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Save score baseline
+        uses: PythonWoods/zenzic-action@v1
+        with:
+          format: json
+          save: "true"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zenzic-baseline
+          path: .zenzic-score.json
+
+  quality-gate:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: zenzic-baseline
+      - name: Block debt regression
+        uses: PythonWoods/zenzic-action@v1
+        with:
+          format: json
+          diff-base: .zenzic-score.json
+```
+
+### Sovereign Nightly Audit
+
+Run a full unfiltered audit nightly to reveal the true documentation state — bypassing all `zenzic:ignore` comments and `per_file_ignores`. Findings that are suppressed in day-to-day CI are visible here.
+
+```yaml
+on:
+  schedule:
+    - cron: "0 3 * * *"   # 03:00 UTC daily
+
+jobs:
+  sovereign-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sovereign audit (no suppressions)
+        uses: PythonWoods/zenzic-action@v1
+        with:
+          audit: "true"
+          format: sarif
+          upload-sarif: "true"
+```
+
+### Using Action Outputs
+
+Capture `score`, `suppression-debt-pts`, and `cap-exceeded` from the action for conditional logic or downstream reporting.
+
+```yaml
+steps:
+  - uses: actions/checkout@v4
+
+  - name: Zenzic quality gate
+    id: zenzic
+    uses: PythonWoods/zenzic-action@v1
+    with:
+      format: json
+      fail-on-error: "false"
+
+  - name: Report score
+    run: |
+      echo "Score: ${{ steps.zenzic.outputs.score }}/100"
+      echo "Suppression debt: ${{ steps.zenzic.outputs.suppression-debt-pts }} pts"
+
+  - name: Fail if suppression CAP exceeded
+    if: steps.zenzic.outputs.cap-exceeded == 'true'
+    run: |
+      echo "::error::Suppression CAP exceeded — build blocked."
+      exit 1
+```
+
+---
 
 ## Exit Codes
 
