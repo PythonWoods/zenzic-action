@@ -112,10 +112,6 @@ reuse:
 check *args:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Permanent exclusion: contributor-covenant.org is a flaky third-party URL.
-    GUARD=(
-      --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
-    )
     CORE_PATH=""
     CHECKED=()
 
@@ -150,7 +146,7 @@ check *args:
     fi
 
     echo "🛡️  [Zenzic] Local core detected. Using: $CORE_PATH"
-    uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" ${ZENZIC_EXTRA_ARGS:-} {{args}}
+    uv run --project "$CORE_PATH" zenzic check all --strict ${ZENZIC_EXTRA_ARGS:-} {{args}}
 
 # Test suite (action-level checks via nox)
 test:
