@@ -34,6 +34,9 @@ excluded_external_urls = [
     # GitHub repo URLs return 429 (rate-limited) in CI.
     "https://github.com/PythonWoods/zenzic-action",
     "https://github.com/PythonWoods/zenzic",
+    # TODO: Remove post-deploy v0.8.0 — reference pages exist in zenzic-doc, pending live deploy.
+    "https://zenzic.dev/docs/reference/zenzic-action",
+    "https://zenzic.dev/it/docs/reference/zenzic-action",
 ]
 
 # Z204 Privacy Gate — terms that must never appear in published docs.
