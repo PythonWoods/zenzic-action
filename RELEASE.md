@@ -17,6 +17,7 @@ Before tagging, every item must be green:
 - [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version
 - [ ] `package.json` version bumped
 - [ ] `CHANGELOG.md` — `[Unreleased]` section moved to the new version heading
+- [ ] Update SECURITY.md support table (Add new release, demote previous to Critical/EOL).
 - [ ] `just verify` — exits 0
 - [ ] `zenzic check .` — zero findings
 
