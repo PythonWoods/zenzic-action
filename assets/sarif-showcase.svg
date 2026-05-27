@@ -65,7 +65,7 @@
   <!-- diff line 22 (context) -->
   <rect x="10" y="256" width="760" height="22" fill="#21262d" clip-path="url(#panel-clip)"/>
   <text x="34" y="271" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">22</text>
-  <text x="80" y="271" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">  Ensure Python 3.11+ is installed first.</text>
+  <text x="80" y="271" font-family="ui-monospace,SFMono-Regular,monospace" font-size="12" fill="#6e7681">  Ensure Python 3.10+ is installed first.</text>
 
   <!-- diff line 23 (addition, annotated) -->
   <rect x="10" y="278" width="760" height="22" fill="#1c2128" clip-path="url(#panel-clip)"/>
