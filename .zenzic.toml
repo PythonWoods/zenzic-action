@@ -64,6 +64,7 @@ default_locale = "en"
 # --- BRAND INTEGRITY ---
 [project_metadata]
 release_name = "v1.1.0"
+badge_stamp_files = ["README.md", "README.it.md"]
 
 [governance]
 # ---------------------------------------------------------------------------
