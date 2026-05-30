@@ -14,7 +14,7 @@
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5"></a>
   <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
-  <a href="https://zenzic.dev/docs/how-to/add-badges/"><img alt="Zenzic Audit" src="https://img.shields.io/badge/zenzic-audit:_passed-success?style=flat-square"></a>
+  <a href="https://github.com/PythonWoods/zenzic-action/actions/workflows/self-check.yml"><img alt="zenzic-audit" src="https://github.com/PythonWoods/zenzic-action/actions/workflows/self-check.yml/badge.svg"></a>
   <a href="https://reuse.software/"><img alt="REUSE 3.x compliant" src="https://img.shields.io/badge/REUSE-3.x%20compliant-0d9488?style=flat-square"></a>
 </p>
 
