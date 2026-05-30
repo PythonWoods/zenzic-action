@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [1.1.0] — 2026-05-30
+
 ### Added
 
 - **`guard-scan` input:** New composite step that runs `zenzic guard scan` before the

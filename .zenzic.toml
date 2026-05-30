@@ -160,7 +160,7 @@ severity = "error"
 #     runs-on: ubuntu-latest
 #     steps:
 #       - uses: actions/checkout@v4
-#       - uses: actions/setup-python@v5
-#         with:
-#           python-version: '3.10'
-#       - run: uvx zenzic check all --strict
+#       - name: Run Zenzic Action
+#         uses: pythonwoods/zenzic-action@v1
+#       - name: Verify Badge Freshness
+#         run: uvx zenzic score --check-stamp
