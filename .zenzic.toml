@@ -76,17 +76,12 @@ badge_stamp_files = ["README.md", "README.it.md"]
 #   - If total suppressions > cap: CI fails immediately (Exit Code 1).
 #   - Scoring: Every suppression costs 1 DQS point (Flat-Cost Model).
 #
-# DEFAULT: 30
-#
-suppression_cap = 30
+
+suppression_cap = 0
 suppression_cap_fail_hard = true
 
 # Terms that should no longer appear in your documentation.
 brand_obsolescence = [
-    "Sentinel",
-    "Shield",
-    "Blood",
-    "Basalt",
     "Quartz",
     "Obsidian",
 ]
