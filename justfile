@@ -139,7 +139,64 @@ lint:
     uvx pre-commit run --all-files
 
 # Full verification gate (4-Gates Standard)
-verify: _check-hooks check-pinning lint _release-contracts test check
+verify: _check-hooks check-pinning check-core-pin-local lint _release-contracts test check
+
+# Verify that the pinned core version is resolvable in the sovereign local clone.
+# Non-goal: remote/PyPI lookups (network-dependent and flaky in local hooks).
+check-core-pin-local:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    PINNED_VERSION="$(just core-version)"
+    CORE_PATH=""
+    CHECKED=()
+
+    if [[ -n "${ZENZIC_CORE_PATH:-}" ]]; then
+        CHECKED+=("ZENZIC_CORE_PATH -> ${ZENZIC_CORE_PATH}")
+        if [[ -d "${ZENZIC_CORE_PATH}/src/zenzic" ]]; then
+            CORE_PATH="${ZENZIC_CORE_PATH}"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("_zenzic_core -> _zenzic_core")
+        if [[ -d "_zenzic_core/src/zenzic" ]]; then
+            CORE_PATH="_zenzic_core"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("../zenzic -> ../zenzic")
+        if [[ -d "../zenzic/src/zenzic" ]]; then
+            CORE_PATH="../zenzic"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        echo "❌ [core-pin] Core repository not found in sovereign search order." >&2
+        echo "Required precedence: ZENZIC_CORE_PATH -> ./_zenzic_core -> ../zenzic" >&2
+        echo "Checked: ${CHECKED[*]}" >&2
+        exit 2
+    fi
+
+    CORE_CURRENT="$(python3 -c "import pathlib, tomllib; d=tomllib.loads(pathlib.Path(r'${CORE_PATH}/pyproject.toml').read_text(encoding='utf-8')); print(d.get('project', {}).get('version', ''))")"
+
+    if [[ "$CORE_CURRENT" == "$PINNED_VERSION" ]]; then
+        echo "✓ core-pin local parity: pinned $PINNED_VERSION matches $CORE_PATH/pyproject.toml"
+        exit 0
+    fi
+
+    if git -C "$CORE_PATH" rev-parse "v${PINNED_VERSION}" >/dev/null 2>&1; then
+        echo "✓ core-pin local parity: tag v$PINNED_VERSION found in $CORE_PATH"
+        exit 0
+    fi
+
+    echo "❌ [core-pin] Pinned core version '$PINNED_VERSION' is not resolvable locally." >&2
+    echo "Expected one of:" >&2
+    echo "  - $CORE_PATH/pyproject.toml project.version == $PINNED_VERSION" >&2
+    echo "  - git tag v$PINNED_VERSION exists in $CORE_PATH" >&2
+    echo "Hint: fetch tags in core clone (git -C $CORE_PATH fetch --tags) or pin an existing release." >&2
+    exit 2
 
 # ADR-089 — Immutable Infrastructure guard on local hooks (internal CI policy,
 # not a public Zenzic linter rule). Pre-commit `rev:` keys must be 40-char
@@ -184,6 +241,7 @@ _release-contracts:
     grep -qE '^pin-core version:' justfile
     grep -qE '^release part:' justfile
     grep -qE '^release-dry part' justfile
+    grep -qE '^check-core-pin-local:' justfile
     grep -q -- '--dry-run --allow-dirty --verbose' justfile
     grep -q 'ZENZIC_CORE_PATH' justfile
     grep -q '_zenzic_core' justfile
