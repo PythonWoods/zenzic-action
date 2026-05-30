@@ -2,10 +2,12 @@
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/zenzic-wordmark-action-dark.svg">
-    <img alt="Zenzic / action" src="assets/zenzic-wordmark-action.svg" width="350">
-  </picture>
+  <a href="https://github.com/PythonWoods/zenzic-action">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/zenzic-wordmark-action-dark.svg">
+      <img alt="Zenzic / action" src="assets/zenzic-wordmark-action.svg" width="350">
+    </picture>
+  </a>
 </p>
 
 <p align="center">The deterministic enforcement point for documentation integrity in CI. Exit codes are contractual — exits 2 and 3 survive <code>fail-on-error: false</code>.</p>
