@@ -13,8 +13,9 @@
 <p align="center">Il punto di enforcement deterministico per l'integrità della documentazione in CI. I codici di uscita sono contrattuali — exit 2 e 3 sopravvivono a <code>fail-on-error: false</code>.</p>
 
 <p align="center">
-  <a href="https://github.com/PythonWoods/zenzic-action/actions/workflows/self-check.yml"><img alt="CI" src="https://github.com/PythonWoods/zenzic-action/actions/workflows/self-check.yml/badge.svg"></a>
-  <!-- zenzic:badge -->
+  <!-- zenzic:audit-badge -->
+  <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--audit-passing-22c55e?style=flat-square" alt="zenzic-audit">
+  <!-- zenzic:score-badge -->
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--score-100_%2F_100-4f46e5?style=flat-square" alt="zenzic-score">
 
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5"></a>
