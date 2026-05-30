@@ -33,6 +33,7 @@
 #                        .zenzic.toml (root) → .github/.zenzic.toml (fallback).
 #   ZENZIC_AUDIT         "true" → pass --audit flag (bypasses all suppressions)
 #   ZENZIC_DIFF_BASE     Path to a JSON baseline file for zenzic diff comparison.
+#   ZENZIC_CHECK_STAMP   "true" → run 'zenzic score --check-stamp' after check all.
 
 set -euo pipefail
 
@@ -45,6 +46,7 @@ ZENZIC_FAIL_ON_ERROR="${ZENZIC_FAIL_ON_ERROR:-true}"
 ZENZIC_CONFIG_FILE="${ZENZIC_CONFIG_FILE:-}"
 ZENZIC_AUDIT="${ZENZIC_AUDIT:-false}"
 ZENZIC_DIFF_BASE="${ZENZIC_DIFF_BASE:-}"
+ZENZIC_CHECK_STAMP="${ZENZIC_CHECK_STAMP:-true}"
 
 # ── SARIF path sandbox guard (BUG-006 — Action SARIF Jailbreak) ────────────────
 # The sarif-file input is an output path. Any relative traversal (../../) or
@@ -236,6 +238,18 @@ else
   CAP_TOTAL=""
   CAP_LIMIT=""
 
+fi
+
+# ── Badge Freshness Gate: zenzic score --check-stamp ─────────────────────────
+# Verify that badge_stamp_files contain the current score URL.
+# Skipped in audit mode (badges are not relevant for suppression-bypassed runs).
+if [ "${ZENZIC_CHECK_STAMP}" = "true" ] && [ "${ZENZIC_AUDIT}" != "true" ]; then
+  STAMP_EXIT=0
+  uvx "${PKG}" score --check-stamp --no-header || STAMP_EXIT=$?
+  if [ "${STAMP_EXIT}" -ne 0 ]; then
+    echo "::error::Badge freshness check failed. Run 'zenzic score --stamp' locally and commit the result."
+    EXIT_CODE="${STAMP_EXIT}"
+  fi
 fi
 
 # ── Zenzic Quality Gate: zenzic diff ─────────────────────────────────────────

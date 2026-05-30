@@ -49,6 +49,13 @@ inputs:
     description: "Run 'zenzic guard scan' as a Defense-in-Depth step before the main quality gate. Detects hardcoded credentials and forbidden patterns committed without pre-commit hooks. Failure is always fatal — not governed by fail-on-error."
     required: false
     default: "false"
+  check-stamp:
+    description: >
+      Run 'zenzic score --check-stamp' after the main audit.
+      Fails the build if any badge_stamp_files contain a stale score.
+      Set to 'false' to opt out.
+    required: false
+    default: "true"
 
 outputs:
   sarif-file:
@@ -97,6 +104,7 @@ runs:
         ZENZIC_CONFIG_FILE: ${{ inputs.config-file }}
         ZENZIC_AUDIT: ${{ inputs.audit }}
         ZENZIC_DIFF_BASE: ${{ inputs.diff-base }}
+        ZENZIC_CHECK_STAMP: ${{ inputs.check-stamp }}
       run: bash "${{ github.action_path }}/zenzic-action-wrapper.sh"
 
     - name: Upload SARIF to GitHub Code Scanning
