@@ -47,7 +47,7 @@ Versions follow [Semantic Versioning](https://semver.org/).
 - **Governance hardening (inherited from Core):** `[governance].brand_obsolescence` in `.zenzic.local.toml` now uses additive merge semantics. Local overrides can extend but never remove globally-configured brand protection terms.
 ---
 
-## [1.0.1] — 2026-05-07 — Stable Release
+## [1.1.0] — 2026-05-07 — Stable Release
 
 > The official GitHub Action for [Zenzic](https://github.com/PythonWoods/zenzic),
 > the deterministic documentation quality gate.
