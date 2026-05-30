@@ -28,8 +28,8 @@ jobs:
           # pre-commit is skipped: Node hook (markdownlint) triggers thousands
           # of small-file I/O operations that freeze the Windows runner.
           # Linting is enforced by the Ubuntu slot.
-          - os: windows-latest
-            lint: false
+          # - os: windows-latest
+          #   lint: false
     defaults:
       run:
         shell: bash
