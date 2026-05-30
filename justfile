@@ -7,7 +7,7 @@ set shell := ["bash", "-c"]
 # Use `just --list` to see available commands.
 
 # Release orchestration: explicit, transparent, and lockfile-first.
-release part:
+release part: _release-contracts
     #!/usr/bin/env bash
     set -euo pipefail
     case "{{ part }}" in
@@ -54,15 +54,16 @@ pin-core version:
         exit 3
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
-    # Update action.yml default (anchored marker)
-    perl -i -pe 's/default: "[^"]+"\s*# x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
-    # Update YAML examples and input-table defaults in README files
-    perl -i -pe 's/    version: "[0-9]+\.[0-9]+\.[0-9]+"/    version: "{{version}}"/' README.md README.it.md
-    perl -i -pe 's/(\| `version` \| `)[0-9]+\.[0-9]+\.[0-9]+(`)/${1}{{version}}${2}/' README.md README.it.md
-    # Update core_version state tracker in .bumpversion.toml
-    perl -i -pe 's/^(current = ")[0-9]+\.[0-9]+\.[0-9]+("$)/${1}{{version}}${2}/' .bumpversion.toml
+    uv run python scripts/pin_core.py {{version}}
     git add action.yml README.md README.it.md .bumpversion.toml
     git commit -m "chore(deps): pin zenzic core to {{version}}"
+
+# Simulate a Zenzic Core pin realignment and print the diff without writing files
+# Usage: just pin-core-dry <version>
+pin-core-dry version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    uv run python scripts/pin_core.py {{version}} --dry-run
 
 # Simulate a release bump without modifying any files
 # Usage: just release-dry patch|minor|major [--short]
@@ -77,25 +78,6 @@ release-dry part *args:
     else
         uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --allow-dirty --verbose
     fi
-
-# Simulate a Zenzic Core pin realignment without modifying files
-# Usage: just core-align-dry <version>
-core-align-dry core_version:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if [[ ! "{{core_version}}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo "Invalid core version '{{core_version}}'. Use MAJOR.MINOR.PATCH"
-        exit 2
-    fi
-    current="$(just core-version)"
-    echo "Current core pin: ${current}"
-    echo "Target core pin:  {{core_version}}"
-    echo "Would update anchored line in action.yml"
-
-# Realign action files to a specific released Zenzic Core version
-# Usage: just core-align <version>
-core-align core_version:
-    just pin-core {{core_version}}
 
 # Check REUSE/SPDX licence compliance
 reuse:
@@ -157,7 +139,7 @@ lint:
     uvx pre-commit run --all-files
 
 # Full verification gate (4-Gates Standard)
-verify: _check-hooks check-pinning lint release-contracts test check
+verify: _check-hooks check-pinning lint _release-contracts test check
 
 # ADR-089 — Immutable Infrastructure guard on local hooks (internal CI policy,
 # not a public Zenzic linter rule). Pre-commit `rev:` keys must be 40-char
@@ -194,7 +176,7 @@ _check-hooks:
     fi
 
 # Enforce release contracts and core-pin anchor integrity.
-release-contracts:
+_release-contracts:
     #!/usr/bin/env bash
     set -euo pipefail
     grep -qE '^version:' justfile
