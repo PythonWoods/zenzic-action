@@ -138,7 +138,7 @@ test:
 lint:
     uvx pre-commit run --all-files
 
-# Full verification gate (4-Gates Standard)
+# Full verification gate (Final Guard lifecycle)
 verify: _check-hooks check-pinning check-core-pin-local lint _release-contracts test check
 
 # Verify that the pinned core version is resolvable in the sovereign local clone.
