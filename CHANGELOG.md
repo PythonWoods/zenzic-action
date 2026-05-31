@@ -11,7 +11,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-> zenzic-action v1.1.0 has not been released yet. These notes remain under Unreleased.
+No changes yet.
+
+## [1.1.0] - 2026-05-31
 
 ### Added
 

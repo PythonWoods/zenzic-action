@@ -1,5 +1,6 @@
 <!-- SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev> -->
 <!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- markdownlint-disable MD033 MD041 MD060 -->
 
 <p align="center">
   <a href="https://github.com/PythonWoods/zenzic-action">
@@ -13,14 +14,15 @@
 <p align="center">Il punto di enforcement deterministico per l'integrità della documentazione in CI. I codici di uscita sono contrattuali — exit 2 e 3 sopravvivono a <code>fail-on-error: false</code>.</p>
 
 <p align="center">
+  <a href="https://github.com/PythonWoods/zenzic-action/actions/workflows/self-check.yml"><img alt="ci-status" src="https://img.shields.io/github/actions/workflow/status/PythonWoods/zenzic-action/self-check.yml?branch=main&label=ci&style=flat-square"></a>
   <!-- zenzic:audit-badge -->
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--audit-passing-22c55e?style=flat-square" alt="zenzic-audit">
   <!-- zenzic:score-badge -->
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--score-100_%2F_100-4f46e5?style=flat-square" alt="zenzic-score">
 
-  <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5"></a>
-  <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7"></a>
-  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-blue"></a>
+  <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5&style=flat-square"></a>
+  <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7&style=flat-square"></a>
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-0d9488?style=flat-square"></a>
   <a href="https://reuse.software/"><img alt="REUSE 3.x compliant" src="https://img.shields.io/badge/REUSE-3.x%20compliant-0d9488?style=flat-square"></a>
 </p>
 
@@ -28,7 +30,7 @@
 
 Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Code Scanning, nelle annotation delle Pull Request e nel tab Security — senza leggere log.
 
-**Contratto exit code.** Il wrapper propagates i codici di uscita di Zenzic senza rimappatura. Exit 1 (qualità) obbedisce a `fail-on-error`. Exit 2 (credenziale) ed exit 3 (path traversal) terminano il job indipendentemente da `fail-on-error: false` o `--exit-zero` — i finding di sicurezza non vengono mai soppressi al boundary di enforcement.
+**Contratto exit code.** Il wrapper propaga i codici di uscita di Zenzic senza rimappatura. Exit 1 (qualità) obbedisce a `fail-on-error`. Exit 2 (credenziale) ed exit 3 (path traversal) terminano il job indipendentemente da `fail-on-error: false` o `--exit-zero` — i finding di sicurezza non vengono mai soppressi al boundary di enforcement.
 
 ## Funzionalità Principali
 
@@ -39,7 +41,7 @@ Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Co
 | Contratto Exit Code | Gli incidenti di sicurezza (exit 2/3) non vengono mai soppressi da `fail-on-error` |
 | Modalità Sovereign Audit | `audit: "true"` bypassa tutte le soppressioni — rivela il vero stato della documentazione |
 | Check integrità SARIF | Valida il JSON prima dell'upload; emette `::warning` se troncato da SIGKILL |
-| Annotation PR | Finding inline sul diff, color-coded per severity |
+| Annotation PR | Finding inline sul diff, codificati a colori per severità |
 | Version pinning | Pin a una release esatta per gate CI deterministici e riproducibili |
 | **Prosa pulita** | `[governance.directory_policies]` in `.zenzic.toml` concede esenzioni zero-debt a pattern di percorso |
 
@@ -78,8 +80,8 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 | `strict` | `false` | Tratta i warning come errori. |
 | `fail-on-error` | `true` | Fa fallire lo step del workflow sui finding. |
 | `config-file` | *(auto)* | Path opzionale a un file di configurazione. Auto-scopre `.zenzic.toml` → `.github/.zenzic.toml` se omesso. |
-| `audit` | `false` | Modalità sovereign audit: bypassa tutti i `zenzic:ignore` e `per_file_ignores`. Raccomandato per build notturne e workflow di security review. |
-| `diff-base` | *(snapshot)* | Path a un file di baseline JSON per `zenzic diff`. Usa un artifact dal branch `main` per bloccare PR che aumentano il debito tecnico. |
+| `audit` | `false` | Modalità sovereign audit: bypassa tutti i `zenzic:ignore` e `per_file_ignores`. Rivela il vero stato non filtrato della documentazione. Raccomandato per build notturne e workflow di security review. |
+| `diff-base` | *(snapshot)* | Path a un file di baseline JSON per `zenzic diff`. Usa un artifact dal branch `main` per bloccare PR che aumentano il debito tecnico. Se omesso, usa `.zenzic-score.json`. |
 | `guard-scan` | `false` | Esegue `zenzic guard scan` come step Defense-in-Depth **prima** del gate principale. Rileva credenziali hardcodate e pattern vietati che hanno bypassato i pre-commit hook. Il fallimento è sempre fatale — non è governato da `fail-on-error`. |
 
 ## Outputs
