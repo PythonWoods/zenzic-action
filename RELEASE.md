@@ -6,20 +6,22 @@
 
 | Field   | Value      |
 | :------ | :--------- |
-| Version | v1.0.1     |
-| Date    | 2026-05-30 |
+| Version | v1.1.0     |
+| Date    | 2026-05-31 |
 | Status  | Stable     |
 
 ## Release Checklist
 
 Before tagging, every item must be green:
 
-- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version
-- [ ] `package.json` version bumped
-- [ ] `CHANGELOG.md` — `[Unreleased]` section moved to the new version heading
-- [ ] Update SECURITY.md support table (Add new release, demote previous to Critical/EOL).
+- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.9.0`)
+- [ ] `package.json` version bumped to `1.1.0`
+- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[1.1.0] - 2026-05-31`
+- [ ] Update SECURITY.md support table (add v1.1.0, demote previous to Critical/EOL).
 - [ ] `just verify` — exits 0
 - [ ] `zenzic check .` — zero findings
+- [ ] `guard-scan` input documented in README.md
+- [ ] `cap-exceeded` output wired in wrapper and documented
 
 ## Bump & Publish
 
