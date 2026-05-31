@@ -19,13 +19,8 @@ release part: _release-contracts
         npm ci
     fi
     version="$(uvx --from "bump-my-version==1.2.6" bump-my-version show current_version)"
-    if git rev-parse "v${version}" >/dev/null 2>&1; then
-        echo "Tag v${version} already exists. Aborting."
-        exit 3
-    fi
     git add -u
     git commit -m "release: bump version to ${version}"
-    git tag -a "v${version}" -m "Release v${version}"
 
 # Show the current action version
 version:
@@ -257,6 +252,10 @@ _release-contracts:
     grep -q 'path: _zenzic_core' .github/workflows/self-check.yml
     if sed -n '/^release part:/,/^[^[:space:]].*:/p' justfile | tail -n +2 | grep -q -- '--allow-dirty'; then
         echo "release-contracts failed: release part must not use --allow-dirty"
+        exit 1
+    fi
+    if sed -n '/^release part:/,/^[^[:space:]].*:/p' justfile | tail -n +2 | grep -qE 'git[[:space:]]+tag'; then
+        echo "release-contracts failed: release part must not create tags"
         exit 1
     fi
     if grep -qE 'uvx[[:space:]]+"?zenzic@' justfile noxfile.py; then
