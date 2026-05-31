@@ -198,7 +198,7 @@ Per la governance avanzata (Scoring & Debt, Sovereign Audit, Quality Gate PR blo
 [documentazione di Zenzic Action](https://zenzic.dev/it/docs/reference/zenzic-action).
 
 Per gli internals dell'architettura di sicurezza (contratto exit code, Root-First discovery, guardia integrità SARIF),
-consulta l'[Engineering Ledger](https://zenzic.dev/it/developers/explanation/engineering-ledger).
+consulta l'[Engineering Ledger](https://zenzic.dev/it/developers/explanation/adr-vault).
 
 ## Licenza
 
