@@ -3,11 +3,11 @@
 
 set shell := ["bash", "-c"]
 
-# just — developer workflow for zenzic-action (Hardcoded Stable).
+# just — developer workflow for zenzic-action.
 # Use `just --list` to see available commands.
 
 # Release orchestration: explicit, transparent, and lockfile-first.
-release part:
+release part: _release-contracts
     #!/usr/bin/env bash
     set -euo pipefail
     case "{{ part }}" in
@@ -19,13 +19,8 @@ release part:
         npm ci
     fi
     version="$(uvx --from "bump-my-version==1.2.6" bump-my-version show current_version)"
-    if git rev-parse "v${version}" >/dev/null 2>&1; then
-        echo "Tag v${version} already exists. Aborting."
-        exit 3
-    fi
     git add -u
     git commit -m "release: bump version to ${version}"
-    git tag -a "v${version}" -m "Release v${version}"
 
 # Show the current action version
 version:
@@ -41,7 +36,7 @@ versions:
     @echo "zenzic-core: $(perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml)"
 
 # Realign the Zenzic Core pin in action.yml using the anchored marker
-# Usage: just pin-core 0.7.1
+# Usage: just pin-core <version>
 pin-core version:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -54,10 +49,16 @@ pin-core version:
         exit 3
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
-    perl -i -pe 's/default: "[^"]+"\s*# x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
-    perl -i -pe 's/zenzic\@v[0-9\.]+[a-z0-9]*/zenzic\@v{{version}}/' noxfile.py
-    git add action.yml noxfile.py
+    uv run python scripts/pin_core.py {{version}}
+    git add action.yml README.md README.it.md .bumpversion.toml
     git commit -m "chore(deps): pin zenzic core to {{version}}"
+
+# Simulate a Zenzic Core pin realignment and print the diff without writing files
+# Usage: just pin-core-dry <version>
+pin-core-dry version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    uv run python scripts/pin_core.py {{version}} --dry-run
 
 # Simulate a release bump without modifying any files
 # Usage: just release-dry patch|minor|major [--short]
@@ -73,48 +74,56 @@ release-dry part *args:
         uvx --from "bump-my-version==1.2.6" bump-my-version bump {{part}} --dry-run --allow-dirty --verbose
     fi
 
-# Simulate a Zenzic Core pin realignment without modifying files
-# Usage: just core-align-dry 0.7.1
-core-align-dry core_version:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    if [[ ! "{{core_version}}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        echo "Invalid core version '{{core_version}}'. Use MAJOR.MINOR.PATCH"
-        exit 2
-    fi
-    current="$(just core-version)"
-    echo "Current core pin: ${current}"
-    echo "Target core pin:  {{core_version}}"
-    echo "Would update anchored line in action.yml"
-
-# Realign action files to a specific released Zenzic Core version
-# Usage: just core-align 0.7.1
-core-align core_version:
-    just pin-core {{core_version}}
-
 # Check REUSE/SPDX licence compliance
 reuse:
     uvx reuse lint
 
-# Run the Zenzic Sentinel quality gate on action documentation
-# Uses the stable v0.7.0 release for maximum reliability.
+# Run the Zenzic quality gate on action documentation.
+# Shared sovereign model (family repos):
+#   1) explicit override via ZENZIC_CORE_PATH
+#   2) CI topology at ./_zenzic_core
+#   3) sibling dev topology at ../zenzic
+# Fail-closed policy is mandatory: PyPI fallback is prohibited.
 # ZRT-010 — Sovereign Parity: Pre-Launch Guard inlined; local == CI.
 # Pass extra flags directly: just check --no-external
 check *args:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Permanent exclusion: contributor-covenant.org is a flaky third-party URL.
-    GUARD=(
-      --exclude-url "https://www.contributor-covenant.org/version/2/1/code_of_conduct.html"
-    )
-    CORE_PATH="${ZENZIC_PROJECT_PATH:-../zenzic}"
-        if [ -d "$CORE_PATH" ]; then
-        echo "🛡️  [Zenzic Sentinel] Local core detected. Using: $CORE_PATH"
-        uv run --project "$CORE_PATH" zenzic check all --strict "${GUARD[@]}" {{args}}
-    else
-        echo "🛡️  [Zenzic Sentinel] Local core not found. Using published PyPI release..."
-        uvx zenzic@0.7.1 check all --strict "${GUARD[@]}" {{args}}
+    CORE_PATH=""
+    CHECKED=()
+
+    if [[ -n "${ZENZIC_CORE_PATH:-}" ]]; then
+        CHECKED+=("ZENZIC_CORE_PATH -> ${ZENZIC_CORE_PATH}")
+        if [[ -d "${ZENZIC_CORE_PATH}/src/zenzic" ]]; then
+            CORE_PATH="${ZENZIC_CORE_PATH}"
+        fi
     fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("_zenzic_core -> _zenzic_core")
+        if [[ -d "_zenzic_core/src/zenzic" ]]; then
+            CORE_PATH="_zenzic_core"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("../zenzic -> ../zenzic")
+        if [[ -d "../zenzic/src/zenzic" ]]; then
+            CORE_PATH="../zenzic"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        echo "❌ [Zenzic] Core repository not found in sovereign search order." >&2
+        echo "Required precedence: ZENZIC_CORE_PATH -> ./_zenzic_core -> ../zenzic" >&2
+        echo "Each candidate must contain src/zenzic." >&2
+        echo "Checked: ${CHECKED[*]}" >&2
+        echo "Fail-closed policy active: PyPI fallback is prohibited." >&2
+        exit 2
+    fi
+
+    echo "🛡️  [Zenzic] Local core detected. Using: $CORE_PATH"
+    uv run --project "$CORE_PATH" zenzic check all --strict ${ZENZIC_EXTRA_ARGS:-} {{args}}
 
 # Test suite (action-level checks via nox)
 test:
@@ -124,20 +133,102 @@ test:
 lint:
     uvx pre-commit run --all-files
 
-# Full verification gate (4-Gates Standard)
-verify: _check-hooks lint release-contracts test
+# Full verification gate (Final Guard lifecycle)
+verify: _check-hooks check-pinning check-core-pin-local lint _release-contracts test check
+
+# Verify that the pinned core version is resolvable in the sovereign local clone.
+# Non-goal: remote/PyPI lookups (network-dependent and flaky in local hooks).
+check-core-pin-local:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    PINNED_VERSION="$(just core-version)"
+    CORE_PATH=""
+    CHECKED=()
+
+    if [[ -n "${ZENZIC_CORE_PATH:-}" ]]; then
+        CHECKED+=("ZENZIC_CORE_PATH -> ${ZENZIC_CORE_PATH}")
+        if [[ -d "${ZENZIC_CORE_PATH}/src/zenzic" ]]; then
+            CORE_PATH="${ZENZIC_CORE_PATH}"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("_zenzic_core -> _zenzic_core")
+        if [[ -d "_zenzic_core/src/zenzic" ]]; then
+            CORE_PATH="_zenzic_core"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        CHECKED+=("../zenzic -> ../zenzic")
+        if [[ -d "../zenzic/src/zenzic" ]]; then
+            CORE_PATH="../zenzic"
+        fi
+    fi
+
+    if [[ -z "$CORE_PATH" ]]; then
+        echo "❌ [core-pin] Core repository not found in sovereign search order." >&2
+        echo "Required precedence: ZENZIC_CORE_PATH -> ./_zenzic_core -> ../zenzic" >&2
+        echo "Checked: ${CHECKED[*]}" >&2
+        exit 2
+    fi
+
+    CORE_CURRENT="$(python3 -c "import pathlib, tomllib; d=tomllib.loads(pathlib.Path(r'${CORE_PATH}/pyproject.toml').read_text(encoding='utf-8')); print(d.get('project', {}).get('version', ''))")"
+
+    if [[ "$CORE_CURRENT" == "$PINNED_VERSION" ]]; then
+        echo "✓ core-pin local parity: pinned $PINNED_VERSION matches $CORE_PATH/pyproject.toml"
+        exit 0
+    fi
+
+    if git -C "$CORE_PATH" rev-parse "v${PINNED_VERSION}" >/dev/null 2>&1; then
+        echo "✓ core-pin local parity: tag v$PINNED_VERSION found in $CORE_PATH"
+        exit 0
+    fi
+
+    echo "❌ [core-pin] Pinned core version '$PINNED_VERSION' is not resolvable locally." >&2
+    echo "Expected one of:" >&2
+    echo "  - $CORE_PATH/pyproject.toml project.version == $PINNED_VERSION" >&2
+    echo "  - git tag v$PINNED_VERSION exists in $CORE_PATH" >&2
+    echo "Hint: fetch tags in core clone (git -C $CORE_PATH fetch --tags) or pin an existing release." >&2
+    exit 2
+
+# ADR-089 — Immutable Infrastructure guard on local hooks (internal CI policy,
+# not a public Zenzic linter rule). Pre-commit `rev:` keys must be 40-char
+# commit SHAs, not mutable tags. Regex anchored to line-start so the
+# `# vX.Y.Z` annotation comment is safe.
+check-pinning:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "Validating Immutable Infrastructure (ADR-089)..."
+    if grep -E '^[[:space:]]*rev:[[:space:]]*v?[0-9]+\.[0-9]+' .pre-commit-config.yaml >/dev/null 2>&1; then
+        echo "[ADR-089] FATAL: Unpinned tag detected in pre-commit config. Zenzic internal policy requires SHA-256 pinning." >&2
+        grep -nE '^[[:space:]]*rev:[[:space:]]*v?[0-9]+\.[0-9]+' .pre-commit-config.yaml >&2
+        echo "👉 Update via: uvx pre-commit autoupdate --freeze" >&2
+        exit 1
+    fi
+    echo "✓ ADR-089: all pre-commit hooks pinned to immutable commit hashes."
 
 _check-hooks:
     #!/usr/bin/env bash
+    _missing=0
+    if [ ! -f .git/hooks/pre-commit ]; then
+        echo -e "\033[33m⚠️  WARNING: pre-commit hook is not installed.\033[0m"
+        echo "Without it, linters and type-checks will NOT run automatically on git commit."
+        echo "👉 Fix it by running: uvx pre-commit install"
+        echo ""
+        _missing=1
+    fi
     if [ ! -f .git/hooks/pre-push ]; then
-        echo -e "\033[33m⚠️  WARNING: Pre-push hook is not installed.\033[0m"
+        echo -e "\033[33m⚠️  WARNING: pre-push hook is not installed.\033[0m"
         echo "Without it, you might accidentally push broken code to GitHub and fail the remote CI."
         echo "👉 Fix it by running: uvx pre-commit install -t pre-push"
         echo ""
+        _missing=1
     fi
 
 # Enforce release contracts and core-pin anchor integrity.
-release-contracts:
+_release-contracts:
     #!/usr/bin/env bash
     set -euo pipefail
     grep -qE '^version:' justfile
@@ -145,10 +236,34 @@ release-contracts:
     grep -qE '^pin-core version:' justfile
     grep -qE '^release part:' justfile
     grep -qE '^release-dry part' justfile
+    grep -qE '^check-core-pin-local:' justfile
     grep -q -- '--dry-run --allow-dirty --verbose' justfile
+    grep -q 'ZENZIC_CORE_PATH' justfile
+    grep -q '_zenzic_core' justfile
+    grep -q '../zenzic' justfile
+    grep -q 'Fail-closed policy active: PyPI fallback is prohibited.' justfile
     grep -q 'x-zenzic-core-pin' action.yml
+    grep -q 'Determine Zenzic Core Branch (Parity or Fallback)' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_TICKET' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_REASON' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_APPROVER' .github/workflows/self-check.yml
+    grep -q 'ZENZIC_CORE_REF_EXPIRES_ON' .github/workflows/self-check.yml
+    grep -q 'path: _zenzic_core' .github/workflows/self-check.yml
     if sed -n '/^release part:/,/^[^[:space:]].*:/p' justfile | tail -n +2 | grep -q -- '--allow-dirty'; then
         echo "release-contracts failed: release part must not use --allow-dirty"
+        exit 1
+    fi
+    if sed -n '/^release part:/,/^[^[:space:]].*:/p' justfile | tail -n +2 | grep -qE 'git[[:space:]]+tag'; then
+        echo "release-contracts failed: release part must not create tags"
+        exit 1
+    fi
+    if grep -qE 'uvx[[:space:]]+"?zenzic@' justfile noxfile.py; then
+        echo "release-contracts failed: PyPI fallback command is prohibited in repository quality gates"
+        exit 1
+    fi
+    if grep -q 'published zenzic@' noxfile.py; then
+        echo "release-contracts failed: PyPI fallback is prohibited in repository quality gates"
         exit 1
     fi
 

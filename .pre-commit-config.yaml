@@ -1,9 +1,13 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
+# Segregate stage execution: linters run at commit-time only.
+# The just-verify Final Guard runs at push-time only (stages: [pre-push]).
+default_stages: [pre-commit]
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: cef0300fd0fc4d2a87a85fa2093c6b283ea36f4b  # v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -17,26 +21,26 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/fsfe/reuse-tool
-    rev: v6.2.0
+    rev: 9fabf9eb815a57aac116b435e8346c200cdb8604  # v6.2.0
     hooks:
       - id: reuse
 
   - repo: local
     hooks:
       - id: zenzic-check
-        name: Zenzic Sentinel
+        name:  🔍 Zenzic Quality Gate (action audit)
         entry: just check
         language: system
         pass_filenames: false
         always_run: true
 
-  # Pre-push Final Guard (4-Gates Standard, EPOCH 4 / v0.7.0)
+  # Pre-push Final Guard (lifecycle gate model)
   # Single entry-point: locale ≡ remote. Same `just verify` runs in GHA.
   # Install with: uvx pre-commit install -t pre-push
   - repo: local
     hooks:
       - id: just-verify
-        name: 🛡️ Action Final Guard (just verify)
+        name: 🛡️ Zenzic-Action Final Guard (just verify)
         entry: just verify
         language: system
         stages: [pre-push]

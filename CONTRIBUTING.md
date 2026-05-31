@@ -9,9 +9,29 @@ Thank you for contributing to the official GitHub Action for Zenzic.
 
 ## Core Dependency
 
-A differenza della documentazione, `zenzic-action` è vincolata alle release stabili del core. Per testare l'azione contro versioni non rilasciate del core, è necessario modificare temporaneamente il comando `uvx` nel workflow di test.
+Runtime distribution for downstream users remains pinned to published Zenzic
+releases. Repository quality gates (self-check, just, nox), however, use the
+shared sovereign local-core model.
 
-This action relies on the published Zenzic CLI on PyPI. It acts as a stable wrapper to distribute Zenzic inside GitHub Actions securely.
+Branch parity resolution in CI follows this precedence:
+
+1. Explicit override via repository variable `ZENZIC_CORE_REF`.
+2. Same-name branch parity (`github.base_ref` or `github.ref_name`).
+3. Fallback to `main` if the target branch does not exist in core.
+
+Use `ZENZIC_CORE_REF` when zenzic-action branch naming differs from core
+repositories (for example, action release branch vs core release branch).
+
+Override governance is mandatory (fail-closed): when `ZENZIC_CORE_REF` is set,
+the following repository variables are required:
+
+1. `ZENZIC_CORE_REF_TICKET` (change/audit ticket)
+2. `ZENZIC_CORE_REF_REASON` (explicit justification)
+3. `ZENZIC_CORE_REF_APPROVER` (owner who approved)
+4. `ZENZIC_CORE_REF_EXPIRES_ON` (UTC date in `YYYY-MM-DD`)
+
+If metadata is missing, malformed, expired, or the branch does not exist in
+core, CI stops with an explicit error.
 
 ## First-Time Setup
 
@@ -32,3 +52,32 @@ just verify    # full gate: pre-commit + Zenzic check + integration tests
 ```
 
 Both must pass with zero errors before you open or update a PR.
+
+## Maintainer Only: Workflow Hardening
+
+### Immutable Pre-Commit Hooks (ADR-089)
+
+All `rev:` keys in `.pre-commit-config.yaml` must point to a **40-char commit
+hash**, never to a semantic tag (`v1.2.3`). Git tags are mutable: an upstream
+maintainer (or an attacker) can move a tag silently, poisoning the local
+Gate 2 without any diff in this repository.
+
+This is an **internal CI policy for the zenzic-action project**, not a public
+Zenzic linter rule. Enforcement: `just check-pinning` (dependency of
+`just verify`); violations raise `[ADR-089] FATAL` at pre-push.
+
+The local exposure window is smaller than the GHA one because `pre-commit`
+freezes hook repos in `~/.cache/pre-commit/` until the user runs `autoupdate`
+or `clean`; GitHub Actions instead re-resolves the ref on every run. Pinning
+is still mandatory locally for new-clone safety and parity with the remote
+ADR-089 enforcement.
+
+**Updating pinned hooks.** Never run plain `pre-commit autoupdate` — it
+rewrites SHAs back to mutable tags. Always use:
+
+```bash
+uvx pre-commit autoupdate --freeze
+```
+
+This preserves the `# vX.Y.Z` annotation comment. Commit the diff and
+re-verify with `just check-pinning`.
