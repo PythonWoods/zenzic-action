@@ -240,6 +240,43 @@ else
 
 fi
 
+SCORE=""
+DEBT_PTS="0"
+
+# ── DQS Governance Gate: zenzic score ────────────────────────────────────────
+# Evaluate fail_under and suppression_cap in CI, matching local governance.
+# Run even when check all returns exit 1, so users always see the score posture.
+# Skipped in audit mode and on non-quality aborts (security exits 2/3).
+if [ "${ZENZIC_AUDIT}" != "true" ] && { [ "${EXIT_CODE}" -eq 0 ] || [ "${EXIT_CODE}" -eq 1 ]; }; then
+  SCORE_EXIT=0
+  SCORE_OUTPUT=""
+  SCORE_OUTPUT=$(uvx "${PKG}" score --format json --no-header "${CONFIG_ARGS[@]}" 2>/dev/null) || SCORE_EXIT=$?
+
+  if [ -n "${SCORE_OUTPUT}" ]; then
+    SCORE=$(echo "${SCORE_OUTPUT}" | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    print(d.get('score', ''))
+except Exception:
+    print('')
+" 2>/dev/null || true)
+    DEBT_PTS=$(echo "${SCORE_OUTPUT}" | python3 -c "
+import json, sys
+try:
+    d = json.load(sys.stdin)
+    print(d.get('suppression_debt_pts', 0))
+except Exception:
+    print(0)
+" 2>/dev/null || true)
+    DEBT_PTS="${DEBT_PTS:-0}"
+  fi
+
+  if [ "${SCORE_EXIT}" -ne 0 ]; then
+    EXIT_CODE="${SCORE_EXIT}"
+  fi
+fi
+
 # ── Badge Freshness Gate: zenzic score --check-stamp ─────────────────────────
 # Verify that badge_stamp_files contain the current score URL.
 # Skipped in audit mode (badges are not relevant for suppression-bypassed runs).
@@ -257,9 +294,7 @@ fi
 # suppression-debt-pts to GITHUB_OUTPUT for downstream steps.
 # Only runs when format is json (score snapshot is available) or when
 # diff-base is explicitly provided. Skipped in audit mode.
-SCORE=""
-DEBT_PTS="0"
-if [ "${ZENZIC_AUDIT}" != "true" ] && [ "${EXIT_CODE}" -eq 0 ] || [ "${EXIT_CODE}" -eq 1 ]; then
+if [ "${ZENZIC_AUDIT}" != "true" ] && { [ "${EXIT_CODE}" -eq 0 ] || [ "${EXIT_CODE}" -eq 1 ]; }; then
   if [ "${ZENZIC_FORMAT}" = "json" ] || [ -n "${ZENZIC_DIFF_BASE}" ]; then
     DIFF_EXIT=0
     DIFF_OUTPUT=""
