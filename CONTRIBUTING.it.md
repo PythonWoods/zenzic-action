@@ -59,7 +59,7 @@ Entrambi devono passare con zero errori prima di aprire o aggiornare una PR.
 ### Immutable Pre-Commit Hooks (ADR-089)
 
 Tutte le chiavi `rev:` in `.pre-commit-config.yaml` devono puntare a un
-**commit hash di 40 caratteri**, mai a un tag semantico (`v1.2.3`). I tag git
+**pin immutabile a commit hash**, mai a un tag semantico (`v1.2.3`). I tag git
 sono mutabili: un maintainer upstream (o un attaccante) può spostare un tag
 silenziosamente, avvelenando il Gate 2 locale senza alcun diff in questo
 repository.

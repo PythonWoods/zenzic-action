@@ -57,8 +57,8 @@ Both must pass with zero errors before you open or update a PR.
 
 ### Immutable Pre-Commit Hooks (ADR-089)
 
-All `rev:` keys in `.pre-commit-config.yaml` must point to a **40-char commit
-hash**, never to a semantic tag (`v1.2.3`). Git tags are mutable: an upstream
+All `rev:` keys in `.pre-commit-config.yaml` must point to an **immutable commit
+hash pin**, never to a semantic tag (`v1.2.3`). Git tags are mutable: an upstream
 maintainer (or an attacker) can move a tag silently, poisoning the local
 Gate 2 without any diff in this repository.
 
