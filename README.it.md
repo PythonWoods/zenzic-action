@@ -28,7 +28,7 @@
 
 ---
 
-Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Code Scanning, nelle annotation delle Pull Request e nel tab Security — senza leggere log.
+Esegui i check Zenzic in CI e fai emergere i risultati direttamente in GitHub Code Scanning — senza leggere log.
 
 **Contratto exit code.** Il wrapper propaga i codici di uscita di Zenzic senza rimappatura. Exit 1 (qualità) obbedisce a `fail-on-error`. Exit 2 (credenziale) ed exit 3 (path traversal) terminano il job indipendentemente da `fail-on-error: false` o `--exit-zero` — i finding di sicurezza non vengono mai soppressi al boundary di enforcement.
 
@@ -82,7 +82,7 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 | `config-file` | *(auto)* | Path opzionale a un file di configurazione. Auto-scopre `.zenzic.toml` → `.github/.zenzic.toml` se omesso. |
 | `audit` | `false` | Modalità sovereign audit: bypassa tutti i `zenzic:ignore` e `per_file_ignores`. Rivela il vero stato non filtrato della documentazione. Raccomandato per build notturne e workflow di security review. |
 | `diff-base` | *(snapshot)* | Path a un file di baseline JSON per `zenzic diff`. Usa un artifact dal branch `main` per bloccare PR che aumentano il debito tecnico. Se omesso, usa `.zenzic-score.json`. |
-| `guard-scan` | `false` | Esegue `zenzic guard scan` come step Defense-in-Depth **prima** del gate principale. Rileva credenziali hardcodate e pattern vietati che hanno bypassato i pre-commit hook. Il fallimento è sempre fatale — non è governato da `fail-on-error`. |
+| `guard-scan` | `false` | Esegue `zenzic guard scan` come step Defense-in-Depth **prima** del gate principale. Rileva credenziali hardcodate e pattern vietati che hanno bypassato i pre-commit hook. I finding di sicurezza falliscono con exit 2/3 e non sono governati da `fail-on-error`. |
 
 ## Outputs
 
