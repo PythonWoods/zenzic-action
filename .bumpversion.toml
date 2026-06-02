@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 [tool.bumpversion]
-current_version = "1.1.0"
+current_version = "1.2.0"
 parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
 serialize = ["{major}.{minor}.{patch}"]
 
@@ -28,4 +28,4 @@ regex = true
 # bump-my-version does NOT manage these files; they are listed here for discoverability.
 # ---------------------------------------------------------------------------
 [tool.bumpversion.custom_variables.core_version]
-current = "0.9.0"
+current = "0.9.1"
