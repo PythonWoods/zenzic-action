@@ -36,7 +36,7 @@ jobs:
     # ZRT-010 — Sovereign Parity: Pre-Launch Guard lives in justfile.
     # Local and CI run identical 'just check' invocations.
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Determine Zenzic Core Branch (Parity or Fallback)
         id: resolve-branch
@@ -105,7 +105,7 @@ jobs:
           fi
 
       - name: Checkout local zenzic (unreleased)
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: PythonWoods/zenzic
           ref: ${{ steps.resolve-branch.outputs.core_ref }}
