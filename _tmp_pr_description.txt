@@ -1,0 +1,22 @@
+## Summary
+
+Fixes the `action version` badge in `README.md`, which was rendering as `action: invalid` when using the Shields `github/v/release` endpoint.
+
+## Root Cause
+
+- GitHub releases are present and valid (`v1.2.1` exists), but the `v/release` image route intermittently returns `invalid` for this repo.
+- The issue is endpoint behavior/caching on Shields route, not release process correctness.
+
+## Change
+
+- Replace badge URL:
+  - from: `https://img.shields.io/github/v/release/PythonWoods/zenzic-action?...`
+  - to: `https://img.shields.io/github/v/tag/PythonWoods/zenzic-action?sort=semver...`
+
+`v/tag?sort=semver` renders correctly (`v1.2.1`) and remains dynamic as new tags are published.
+
+## Validation
+
+- Pre-commit hooks: passed
+- Final Guard (`just verify`): passed
+- Branch pushed: `fix/action-badge-invalid-vtag`
