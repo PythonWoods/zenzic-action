@@ -32,3 +32,4 @@ mutmut*
 
 # VS Code Copilot agent definitions (local-only)
 .github/agents/
+.zenzic_cache/
