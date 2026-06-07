@@ -9,6 +9,10 @@ branding:
   color: purple
 
 inputs:
+  working-directory:
+    description: "Relative path to the directory where Zenzic should run (useful for monorepos)"
+    required: false
+    default: "."
   version:
     description: "Zenzic version to use. Defaults to latest stable."
     required: false
@@ -105,6 +109,7 @@ runs:
         ZENZIC_AUDIT: ${{ inputs.audit }}
         ZENZIC_DIFF_BASE: ${{ inputs.diff-base }}
         ZENZIC_CHECK_STAMP: ${{ inputs.check-stamp }}
+        INPUT_WORKING_DIRECTORY: ${{ inputs.working-directory }}
       run: bash "${{ github.action_path }}/zenzic-action-wrapper.sh"
 
     - name: Upload SARIF to GitHub Code Scanning

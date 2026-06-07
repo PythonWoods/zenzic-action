@@ -118,6 +118,9 @@ EXIT_CODE=0
 FINDINGS=0
 
 # ── Execute ───────────────────────────────────────────────────────────────────
+# Navigate to the specified working directory
+cd "${INPUT_WORKING_DIRECTORY}" || exit 1
+
 if [ "${ZENZIC_FORMAT}" = "sarif" ]; then
   # SARIF path: capture stdout to file; stderr streams to the step log.
   # `|| EXIT_CODE=$?` captures the exit code without triggering set -e.
