@@ -37,7 +37,7 @@ jobs:
     # Local and CI run identical 'just check' invocations.
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Determine Zenzic Core Branch (Parity or Fallback)
         id: resolve-branch
@@ -106,7 +106,7 @@ jobs:
           fi
 
       - name: Checkout local zenzic (unreleased)
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           repository: PythonWoods/zenzic
           ref: ${{ steps.resolve-branch.outputs.core_ref }}
@@ -116,7 +116,7 @@ jobs:
         uses: taiki-e/install-action@ea85faa6acd705ad6d40586db99f1a70b09c2929 # just
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
 
       - name: Set up Python 3.12
         run: uv python install 3.12
