@@ -118,6 +118,12 @@ EXIT_CODE=0
 FINDINGS=0
 
 # ── Execute ───────────────────────────────────────────────────────────────────
+# Make SARIF file path absolute before changing directory,
+# so it's always written relative to the workspace root.
+if [ -n "${ZENZIC_SARIF_FILE}" ]; then
+  ZENZIC_SARIF_FILE="$(realpath -m "${ZENZIC_SARIF_FILE}")"
+fi
+
 # Navigate to the specified working directory
 cd "${INPUT_WORKING_DIRECTORY}" || exit 1
 
