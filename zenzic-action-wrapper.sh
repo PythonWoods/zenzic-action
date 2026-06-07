@@ -130,7 +130,7 @@ cd "${INPUT_WORKING_DIRECTORY}" || exit 1
 if [ "${ZENZIC_FORMAT}" = "sarif" ]; then
   # SARIF path: capture stdout to file; stderr streams to the step log.
   # `|| EXIT_CODE=$?` captures the exit code without triggering set -e.
-  uvx "${PKG}" check all --format sarif ${STRICT_FLAG} ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
+  uvx "${PKG}" check all --format sarif ${STRICT_FLAG} --ci ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
     > "${ZENZIC_SARIF_FILE}" \
     || EXIT_CODE=$?
 
@@ -183,7 +183,7 @@ PYEOF
 
 else
   # Non-SARIF: stream output directly to the step log; capture exit code.
-  uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" ${STRICT_FLAG} ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
+  uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" ${STRICT_FLAG} --ci ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
     || EXIT_CODE=$?
 
   # CAP detection is SARIF-only; always false for non-SARIF formats.
@@ -203,7 +203,7 @@ DEBT_PTS="0"
 if [ "${ZENZIC_AUDIT}" != "true" ] && { [ "${EXIT_CODE}" -eq 0 ] || [ "${EXIT_CODE}" -eq 1 ]; }; then
   SCORE_EXIT=0
   SCORE_OUTPUT=""
-  SCORE_OUTPUT=$(uvx "${PKG}" score --format json --no-header 2>/dev/null) || SCORE_EXIT=$?
+  SCORE_OUTPUT=$(uvx "${PKG}" score --format json --ci 2>/dev/null) || SCORE_EXIT=$?
 
   if [ -n "${SCORE_OUTPUT}" ]; then
     SCORE=$(echo "${SCORE_OUTPUT}" | python3 -c "
@@ -235,7 +235,7 @@ fi
 # Skipped in audit mode (badges are not relevant for suppression-bypassed runs).
 if [ "${ZENZIC_CHECK_STAMP}" = "true" ] && [ "${ZENZIC_AUDIT}" != "true" ]; then
   STAMP_EXIT=0
-  uvx "${PKG}" score --check-stamp --no-header || STAMP_EXIT=$?
+  uvx "${PKG}" score --check-stamp --ci || STAMP_EXIT=$?
   if [ "${STAMP_EXIT}" -ne 0 ]; then
     echo "::error::Badge freshness check failed. Run 'zenzic score --stamp' locally and commit the result."
     EXIT_CODE="${STAMP_EXIT}"
