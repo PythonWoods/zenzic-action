@@ -23,7 +23,7 @@ No changes yet.
 
 ---
 
-## [1.3.1] - 2026-05-31
+## [1.3.1] - 2026-06-07
 
 ### Deprecated
 - **Versions v1.3.0 and older are officially deprecated.** They contained a critical bug in the bash wrapper that injected an invalid `--config` flag, causing false-positive Exit 2 crashes. Users pinned to exact patch versions must upgrade to `v1.3.1` or use the major tag `@v1`.
