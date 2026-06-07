@@ -15,6 +15,14 @@ No changes yet.
 
 ---
 
+## [1.3.2] - 2026-06-07
+
+### Changed
+
+- Disabled dependency caching in `setup-uv` to prevent noisy warnings on non-Python repositories.
+
+---
+
 ## [1.3.1] - 2026-05-31
 
 ### Deprecated
