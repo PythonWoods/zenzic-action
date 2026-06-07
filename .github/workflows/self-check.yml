@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
-name: Zenzic Self-Check
+name: Zenzic Action CI
 
 on:
   push:
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   verify:
-    name: Verify — ${{ matrix.os }}
+    name: Verify
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -36,7 +36,8 @@ jobs:
     # ZRT-010 — Sovereign Parity: Pre-Launch Guard lives in justfile.
     # Local and CI run identical 'just check' invocations.
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Checkout Repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Determine Zenzic Core Branch (Parity or Fallback)
         id: resolve-branch
@@ -114,13 +115,13 @@ jobs:
       - name: Install just
         uses: taiki-e/install-action@ea85faa6acd705ad6d40586db99f1a70b09c2929 # just
 
-      - name: Install uv
+      - name: Setup uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: Set up Python 3.12
         run: uv python install 3.12
 
-      - name: Run unified verification
+      - name: Run Zenzic Quality Gate
         shell: bash
         env:
           # Shared sovereign contract: explicit override first.
@@ -137,3 +138,8 @@ jobs:
             just check
             just test
           fi
+
+      - name: Test Action Locally
+        uses: ./
+        with:
+          working-directory: tests/fixture

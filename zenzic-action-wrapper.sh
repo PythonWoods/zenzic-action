@@ -29,8 +29,7 @@
 #   ZENZIC_SARIF_FILE    Path for SARIF output file (default: zenzic-results.sarif)
 #   ZENZIC_STRICT        "true" → pass --strict flag (warnings become errors)
 #   ZENZIC_FAIL_ON_ERROR "true" → propagate exit 1 to the workflow step
-#   ZENZIC_CONFIG_FILE   Explicit config path (optional). If empty, auto-discovers
-#                        .zenzic.toml (root) → .github/.zenzic.toml (fallback).
+
 #   ZENZIC_AUDIT         "true" → pass --audit flag (bypasses all suppressions)
 #   ZENZIC_DIFF_BASE     Path to a JSON baseline file for zenzic diff comparison.
 #   ZENZIC_CHECK_STAMP   "true" → run 'zenzic score --check-stamp' after check all.
@@ -43,7 +42,7 @@ ZENZIC_FORMAT="${ZENZIC_FORMAT:-sarif}"
 ZENZIC_SARIF_FILE="${ZENZIC_SARIF_FILE:-zenzic-results.sarif}"
 ZENZIC_STRICT="${ZENZIC_STRICT:-false}"
 ZENZIC_FAIL_ON_ERROR="${ZENZIC_FAIL_ON_ERROR:-true}"
-ZENZIC_CONFIG_FILE="${ZENZIC_CONFIG_FILE:-}"
+
 ZENZIC_AUDIT="${ZENZIC_AUDIT:-false}"
 ZENZIC_DIFF_BASE="${ZENZIC_DIFF_BASE:-}"
 ZENZIC_CHECK_STAMP="${ZENZIC_CHECK_STAMP:-true}"
@@ -104,61 +103,6 @@ if [ -n "${ZENZIC_DIFF_BASE}" ]; then
   fi
 fi
 
-# ── Config file cascade (Root-First discovery) ──────────────────────────────
-# Discovery order (highest → lowest priority):
-#   1. Explicit override  — ZENZIC_CONFIG_FILE set by the caller (config-file input)
-#   2. Standard root      — .zenzic.toml in the workspace root
-#   3. Hidden fallback    — .github/.zenzic.toml
-#
-# The Sandbox Guard (path traversal / absolute path rejection) applies ONLY to
-# explicit overrides: auto-discovered paths are hardcoded in this script and
-# cannot be injected by an attacker, so guarding them is both unnecessary and
-# misleading.
-#
-# Sovereign Intent Contract: when the caller provides an explicit config-file
-# path that does not exist, auto-discovery is SUPPRESSED.  Silently falling
-# through to a different config would violate the caller's explicit intent
-# ("operational deception").  Instead:
-#   • strict mode → ::error + exit 1  (missing explicit config is fatal)
-#   • default mode → ::warning        (visible in the log; Zenzic uses its
-#                                      own internal defaults, NOT auto-discovery)
-CONFIG_ARGS=()
-CANDIDATE_CONFIG=""
-
-if [ -n "${ZENZIC_CONFIG_FILE}" ]; then
-  # ── Sandbox Guard — explicit paths only ────────────────────────────────────
-  case "${ZENZIC_CONFIG_FILE}" in
-    /*)
-      echo "::error title=Zenzic — Config Jailbreak::config-file must be a relative path inside the workspace. Absolute paths are forbidden. Got: '${ZENZIC_CONFIG_FILE}'" >&2
-      exit 1
-      ;;
-    *../*|*/..|..)
-      echo "::error title=Zenzic — Config Jailbreak::config-file must not contain path traversal sequences ('..').  Got: '${ZENZIC_CONFIG_FILE}'" >&2
-      exit 1
-      ;;
-  esac
-  if [ -f "${ZENZIC_CONFIG_FILE}" ]; then
-    CANDIDATE_CONFIG="${ZENZIC_CONFIG_FILE}"
-  else
-    # Explicit override supplied but file absent — sovereign intent must not be
-    # silently reassigned to a different config.  Auto-discovery is suppressed.
-    if [ "${ZENZIC_STRICT}" = "true" ]; then
-      echo "::error title=Zenzic — Config Not Found::config-file '${ZENZIC_CONFIG_FILE}' was specified but does not exist. In strict mode a missing explicit configuration is a fatal error." >&2
-      exit 1
-    else
-      echo "::warning title=Zenzic — Config Not Found::config-file '${ZENZIC_CONFIG_FILE}' was specified but does not exist. Auto-discovery is suppressed — Zenzic will use its internal defaults." >&2
-    fi
-    # CANDIDATE_CONFIG remains ""; CONFIG_ARGS stays empty.
-  fi
-elif [ -f ".zenzic.toml" ]; then
-  CANDIDATE_CONFIG=".zenzic.toml"
-elif [ -f ".github/.zenzic.toml" ]; then
-  CANDIDATE_CONFIG=".github/.zenzic.toml"
-fi
-
-if [ -n "${CANDIDATE_CONFIG}" ]; then
-  CONFIG_ARGS=(--config "${CANDIDATE_CONFIG}")
-fi
 
 # ── Extra args passthrough (Sovereign Override) ──────────────────────────────
 # ZENZIC_EXTRA_ARGS is set by the caller's workflow (e.g. --exclude-url …).
@@ -174,10 +118,19 @@ EXIT_CODE=0
 FINDINGS=0
 
 # ── Execute ───────────────────────────────────────────────────────────────────
+# Make SARIF file path absolute before changing directory,
+# so it's always written relative to the workspace root.
+if [ -n "${ZENZIC_SARIF_FILE}" ]; then
+  ZENZIC_SARIF_FILE="$(realpath -m "${ZENZIC_SARIF_FILE}")"
+fi
+
+# Navigate to the specified working directory
+cd "${INPUT_WORKING_DIRECTORY}" || exit 1
+
 if [ "${ZENZIC_FORMAT}" = "sarif" ]; then
   # SARIF path: capture stdout to file; stderr streams to the step log.
   # `|| EXIT_CODE=$?` captures the exit code without triggering set -e.
-  uvx "${PKG}" check all --format sarif "${CONFIG_ARGS[@]}" ${STRICT_FLAG} ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
+  uvx "${PKG}" check all --format sarif ${STRICT_FLAG} --ci ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
     > "${ZENZIC_SARIF_FILE}" \
     || EXIT_CODE=$?
 
@@ -230,7 +183,7 @@ PYEOF
 
 else
   # Non-SARIF: stream output directly to the step log; capture exit code.
-  uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" "${CONFIG_ARGS[@]}" ${STRICT_FLAG} ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
+  uvx "${PKG}" check all --format "${ZENZIC_FORMAT}" ${STRICT_FLAG} --ci ${AUDIT_FLAG} "${EXTRA_ARGS[@]}" \
     || EXIT_CODE=$?
 
   # CAP detection is SARIF-only; always false for non-SARIF formats.
@@ -250,7 +203,7 @@ DEBT_PTS="0"
 if [ "${ZENZIC_AUDIT}" != "true" ] && { [ "${EXIT_CODE}" -eq 0 ] || [ "${EXIT_CODE}" -eq 1 ]; }; then
   SCORE_EXIT=0
   SCORE_OUTPUT=""
-  SCORE_OUTPUT=$(uvx "${PKG}" score --format json --no-header "${CONFIG_ARGS[@]}" 2>/dev/null) || SCORE_EXIT=$?
+  SCORE_OUTPUT=$(uvx "${PKG}" score --format json --ci 2>/dev/null) || SCORE_EXIT=$?
 
   if [ -n "${SCORE_OUTPUT}" ]; then
     SCORE=$(echo "${SCORE_OUTPUT}" | python3 -c "
@@ -282,7 +235,7 @@ fi
 # Skipped in audit mode (badges are not relevant for suppression-bypassed runs).
 if [ "${ZENZIC_CHECK_STAMP}" = "true" ] && [ "${ZENZIC_AUDIT}" != "true" ]; then
   STAMP_EXIT=0
-  uvx "${PKG}" score --check-stamp --no-header || STAMP_EXIT=$?
+  uvx "${PKG}" score --check-stamp --ci || STAMP_EXIT=$?
   if [ "${STAMP_EXIT}" -ne 0 ]; then
     echo "::error::Badge freshness check failed. Run 'zenzic score --stamp' locally and commit the result."
     EXIT_CODE="${STAMP_EXIT}"

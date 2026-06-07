@@ -53,6 +53,11 @@ just verify    # full gate: pre-commit + Zenzic check + integration tests
 
 Both must pass with zero errors before you open or update a PR.
 
+### CI/CD & Workflow
+- **Draft PRs:** We run CI exclusively on `main` and Pull Requests to save resources. Open a **Draft PR** early to get continuous CI feedback on your branch.
+- **Hooks:** Use `pre-commit` for local mutations. Do not use `post-commit`.
+- **Full Guide:** Read the complete workflow in our [Developer Documentation](https://zenzic.dev/developers/how-to/contribute/pull-requests).
+
 ## Maintainer Only: Workflow Hardening
 
 ### Immutable Pre-Commit Hooks (ADR-089)
