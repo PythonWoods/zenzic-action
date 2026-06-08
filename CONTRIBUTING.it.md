@@ -34,6 +34,16 @@ La governance dell'override è obbligatoria (fail-closed): quando
 Se i metadati mancano, sono malformati, scaduti o il branch non esiste in
 core, la CI si arresta con un errore esplicito.
 
+## Policy di Governance Enterprise e Contributo
+
+Per garantire la sicurezza, l'integrità architetturale e la conformità legale di Zenzic, tutti i contributi devono aderire alle seguenti linee guida di Governance Enterprise:
+
+1. **Issue-First Policy (Prima le Issue)**: Nessuna Pull Request sarà presa in carico, revisionata o discussa se non preceduta da una Issue corrispondente discussa e approvata dai maintainer. Collega sempre l'Issue approvata nella descrizione della tua PR.
+2. **Firma Crittografica Obbligatoria**: Tutti i commit devono essere firmati crittograficamente tramite chiavi GPG, SSH o S/MIME (mostrati come "Verified" su GitHub). I commit non firmati verranno respinti automaticamente dal gate di merge.
+3. **Clausola "No AI Slop"**: Applichiamo una policy severa contro il codice generato da intelligenza artificiale non verificato. I contributor devono comprendere appieno, saper spiegare e giustificare dal punto di vista architetturale ogni singola riga di codice proposta nella PR. La proposta di codice non compreso porterà al rifiuto immediato del contributo.
+4. **Developer Certificate of Origin (DCO)**: Tutti i commit devono includere la riga `Signed-off-by:` (usando `git commit -s`) per certificare la conformità con la DCO.
+5. **Conventional Commits**: I messaggi di commit devono seguire rigorosamente la specifica Conventional Commits (es. `feat: add block anchor support (#123)`).
+
 ## Setup Iniziale
 
 Installa gli hook pre-commit (una sola volta dopo il clone):
