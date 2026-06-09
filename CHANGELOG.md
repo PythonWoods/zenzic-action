@@ -11,9 +11,16 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+No changes yet.
+
+---
+
+## [1.3.4] - 2026-06-09
+
 ### Changed
 
 - **Operational governance docs:** Added explicit branch-protection policy to `README.md` and `README.it.md`, including required checks for `main` (`Verify (ubuntu-latest, true)`, `Lint PR Title`, `Check DCO`) and fail-closed workflow selection rules.
+- **Core pin:** Zenzic Core pinned to `0.10.4`.
 
 ---
 
