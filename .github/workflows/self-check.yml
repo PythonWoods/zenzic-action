@@ -111,6 +111,7 @@ jobs:
           repository: PythonWoods/zenzic
           ref: ${{ steps.resolve-branch.outputs.core_ref }}
           path: _zenzic_core
+          fetch-tags: true
 
       - name: Install just
         uses: taiki-e/install-action@ea85faa6acd705ad6d40586db99f1a70b09c2929 # just
