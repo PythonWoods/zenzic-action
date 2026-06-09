@@ -53,6 +53,19 @@ uvx pre-commit install               # commit-stage: hygiene + zenzic self-check
 uvx pre-commit install -t pre-push   # pre-push: 🛡️ Final Guard runs `just verify`
 ```
 
+Configura la firma SSH dei commit (obbligatoria — tutti i commit devono apparire come **Verified** su GitHub):
+
+```bash
+# Configurazione globale una-tantum (salta se già configurata)
+git config --global gpg.format ssh
+git config --global user.signingkey ~/.ssh/id_ed25519.pub   # adatta il percorso se necessario
+git config --global commit.gpgsign true
+```
+
+Registra poi la tua chiave pubblica come **Signing Key** (non Authentication Key) su
+<https://github.com/settings/ssh>. I commit firmati con una chiave non registrata
+verranno rifiutati dal ruleset del branch.
+
 ## Verifica Locale
 
 Usa `just` per eseguire i self-test prima di aprire una PR:
