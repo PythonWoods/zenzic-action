@@ -11,7 +11,9 @@ Versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-No changes yet.
+### Changed
+
+- **Operational governance docs:** Added explicit branch-protection policy to `README.md` and `README.it.md`, including required checks for `main` (`Verify (ubuntu-latest, true)`, `Lint PR Title`, `Check DCO`) and fail-closed workflow selection rules.
 
 ---
 
@@ -26,6 +28,7 @@ No changes yet.
 ## [1.3.4] - 2026-06-07
 
 ### Deprecated
+
 - **Versions v1.3.0 and older are officially deprecated.** They contained a critical bug in the bash wrapper that injected an invalid `--config` flag, causing false-positive Exit 2 crashes. Users pinned to exact patch versions must upgrade to `v1.3.1` or use the major tag `@v1`.
 
 ### Added
