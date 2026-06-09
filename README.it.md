@@ -19,7 +19,6 @@
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--audit-passing-22c55e?style=flat-square" alt="zenzic-audit">
   <!-- zenzic:score-badge -->
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--score-100_%2F_100-4f46e5?style=flat-square" alt="zenzic-score">
-
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/release/PythonWoods/zenzic-action?label=action&color=4f46e5&style=flat-square"></a>
   <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7&style=flat-square"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-0d9488?style=flat-square"></a>
@@ -55,7 +54,7 @@ La configurazione minimale — zero setup Python, SARIF su Code Scanning in un s
 - name: Run Zenzic Documentation Quality Gate
   uses: PythonWoods/zenzic-action@v1
   with:
-    version: "0.10.3"
+    version: "0.10.4"
     format: sarif
     upload-sarif: "true"
   permissions:
@@ -69,11 +68,33 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 
 ---
 
+## Policy Branch Protection (Operativa)
+
+Per il repository `zenzic-action`, proteggi `main` e abilita **Require status checks to pass before merging**.
+
+Check obbligatori:
+
+- `Verify (ubuntu-latest, true)`
+- `Lint PR Title`
+- `Check DCO`
+
+Intento operativo:
+
+- `Verify (ubuntu-latest, true)` è il gate di integrità funzionale per runtime action e comportamento del wrapper.
+- `Lint PR Title` e `Check DCO` applicano governance e tracciabilità legale su ogni PR.
+
+Regola fail-closed:
+
+- Ogni check obbligatorio deve girare su `pull_request`.
+- Non configurare la branch protection con check obbligatori provenienti da workflow solo tag, solo release o solo schedule.
+
+---
+
 ## Inputs
 
 | Input | Default | Descrizione |
 |---|---|---|
-| `version` | `0.10.3` | Versione di Zenzic da installare. Pin a una release specifica per esecuzioni deterministiche. Imposta `latest` per valutazione continua. |
+| `version` | `0.10.4` | Versione di Zenzic da installare. Pin a una release specifica per esecuzioni deterministiche. Imposta `latest` per valutazione continua. |
 | `format` | `sarif` | Formato di output: `text`, `json`, o `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | Path di output SARIF (quando `format: sarif`). Deve essere un path **relativo** dentro il workspace. |
 | `upload-sarif` | `true` | Carica SARIF su GitHub Code Scanning. |

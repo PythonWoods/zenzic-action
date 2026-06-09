@@ -19,7 +19,6 @@
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--audit-passing-22c55e?style=flat-square" alt="zenzic-audit">
   <!-- zenzic:score-badge -->
   <img src="https://img.shields.io/badge/%F0%9F%9B%A1%EF%B8%8F_zenzic--score-100_%2F_100-4f46e5?style=flat-square" alt="zenzic-score">
-
   <a href="https://github.com/PythonWoods/zenzic-action/releases"><img alt="action version" src="https://img.shields.io/github/v/tag/PythonWoods/zenzic-action?sort=semver&label=action&color=4f46e5&style=flat-square"></a>
   <a href="https://pypi.org/project/zenzic"><img alt="zenzic on PyPI" src="https://img.shields.io/pypi/v/zenzic?label=zenzic&color=0284c7&style=flat-square"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-0d9488?style=flat-square"></a>
@@ -55,7 +54,7 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
 - name: Run Zenzic Documentation Quality Gate
   uses: PythonWoods/zenzic-action@v1
   with:
-    version: "0.10.3"
+    version: "0.10.4"
     format: sarif
     upload-sarif: "true"
   permissions:
@@ -69,11 +68,33 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 
 ---
 
+## Branch Protection Policy (Operational)
+
+For the `zenzic-action` repository, protect `main` and enable **Require status checks to pass before merging**.
+
+Required checks:
+
+- `Verify (ubuntu-latest, true)`
+- `Lint PR Title`
+- `Check DCO`
+
+Operational intent:
+
+- `Verify (ubuntu-latest, true)` is the functional integrity gate for the action runtime and wrapper behavior.
+- `Lint PR Title` and `Check DCO` enforce governance and legal traceability on every PR.
+
+Fail-closed rule:
+
+- Every required check must run on `pull_request`.
+- Do not configure branch protection with required checks that are tag-only, release-only, or schedule-only workflows.
+
+---
+
 ## Inputs
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `0.10.3` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
+| `version` | `0.10.4` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
