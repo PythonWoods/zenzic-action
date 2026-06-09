@@ -69,6 +69,28 @@ Per la configurazione avanzata (Configuration Discovery, Override Sovrano, scori
 
 ---
 
+## Policy Branch Protection (Operativa)
+
+Per il repository `zenzic-action`, proteggi `main` e abilita **Require status checks to pass before merging**.
+
+Check obbligatori:
+
+- `Verify (ubuntu-latest, true)`
+- `Lint PR Title`
+- `Check DCO`
+
+Intento operativo:
+
+- `Verify (ubuntu-latest, true)` è il gate di integrità funzionale per runtime action e comportamento del wrapper.
+- `Lint PR Title` e `Check DCO` applicano governance e tracciabilità legale su ogni PR.
+
+Regola fail-closed:
+
+- Ogni check obbligatorio deve girare su `pull_request`.
+- Non configurare la branch protection con check obbligatori provenienti da workflow solo tag, solo release o solo schedule.
+
+---
+
 ## Inputs
 
 | Input | Default | Descrizione |

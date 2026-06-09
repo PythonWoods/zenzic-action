@@ -69,6 +69,28 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 
 ---
 
+## Branch Protection Policy (Operational)
+
+For the `zenzic-action` repository, protect `main` and enable **Require status checks to pass before merging**.
+
+Required checks:
+
+- `Verify (ubuntu-latest, true)`
+- `Lint PR Title`
+- `Check DCO`
+
+Operational intent:
+
+- `Verify (ubuntu-latest, true)` is the functional integrity gate for the action runtime and wrapper behavior.
+- `Lint PR Title` and `Check DCO` enforce governance and legal traceability on every PR.
+
+Fail-closed rule:
+
+- Every required check must run on `pull_request`.
+- Do not configure branch protection with required checks that are tag-only, release-only, or schedule-only workflows.
+
+---
+
 ## Inputs
 
 | Input | Default | Description |
