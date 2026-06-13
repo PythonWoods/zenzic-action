@@ -64,7 +64,7 @@ default_locale = "en"
 # --- BRAND INTEGRITY ---
 [project_metadata]
 release_name = "Magnetite"
-badge_stamp_files = ["README.md", "README.it.md"]
+badge_stamp_files = ["README.md"]
 
 [governance]
 # ---------------------------------------------------------------------------

@@ -1,36 +1,70 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 
-# Python bytecode
+# ============================================================================
+# Zenzic Action — Git Ignore Rules
+# ============================================================================
+
+# ────────────────────────────────────────────────────────────────────────────
+# Environment Configuration
+# ────────────────────────────────────────────────────────────────────────────
+.env
+.env.local
+.zenzic.local.toml
+.zenzic.dev.toml
+
+# ────────────────────────────────────────────────────────────────────────────
+# AI Orchestration & Private Workspace (Zero-Leak Governance)
+# ────────────────────────────────────────────────────────────────────────────
+# Private Tech Lead workspace
+.architect/
+# Local AI routing rules (Trade Secret)
+.clinerules
+# Cursor AI rules (Trade Secret)
+.cursorrules
+# AI Primers and Memory ledgers
+.github/agents/
+# Legacy draft vaults
+.draft/
+
+# ────────────────────────────────────────────────────────────────────────────
+# Python, Testing & Coverage
+# ────────────────────────────────────────────────────────────────────────────
 __pycache__/
 *.pyc
-
-# nox
 .nox/
-
-# Coverage artefacts (Determinism Invariant — never tracked)
+.pytest_cache/
+.hypothesis/
 coverage.json
 coverage.xml
 htmlcov/
 .coverage
 .coverage.*
-
-# Misc
-.DS_Store
-.zenzic.local.toml
-.zenzic.dev.toml
-
-# EPOCH 4 — draft vault (git-ignored, local reference only)
-.draft/
-
-# --- Ephemeral Artifacts (Machine Silence) ---
-zenzic-results.sarif
 mutmut*
 .mutmut-cache/
-.pytest_cache/
-.hypothesis/
 
-# VS Code Copilot agent definitions (local-only)
+# ────────────────────────────────────────────────────────────────────────────
+# Zenzic Artifacts (Machine Silence)
+# ────────────────────────────────────────────────────────────────────────────
+# e.g., zenzic-results.sarif
+*.sarif
+# Zenzic local cache (external links, etc.)
+.zenzic_cache/
+# Derived local metadata
+.zenzic-score.json
+
+# ────────────────────────────────────────────────────────────────────────────
+# IDEs & Operating System
+# ────────────────────────────────────────────────────────────────────────────
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# ============================================================================
+# End of .gitignore
+# ============================================================================
+
+# AI Agent Private Memory
+.clinerules
 .github/agents/
-.zenzic_cache/
-.zenzic_cache/

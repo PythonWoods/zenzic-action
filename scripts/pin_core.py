@@ -82,18 +82,7 @@ def main() -> int:
             replacement=rf"\g<1>{version}\g<2>",
             min_matches=1,
         ),
-        FileUpdate(
-            path=repo_root / "README.it.md",
-            pattern=re.compile(r'(^\s{4}version: ")\d+\.\d+\.\d+("$)', re.MULTILINE),
-            replacement=rf"\g<1>{version}\g<2>",
-            min_matches=1,
-        ),
-        FileUpdate(
-            path=repo_root / "README.it.md",
-            pattern=re.compile(r'(\| `version` \| `)\d+\.\d+\.\d+(`)'),
-            replacement=rf"\g<1>{version}\g<2>",
-            min_matches=1,
-        ),
+
         FileUpdate(
             path=repo_root / ".bumpversion.toml",
             pattern=re.compile(
