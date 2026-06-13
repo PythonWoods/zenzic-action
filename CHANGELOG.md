@@ -7,9 +7,12 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ---
 
-## [Unreleased]
+## [2.0.0] - 2026-06-13
 
-No changes yet.
+### Changed (Breaking)
+
+- **Dropped Docusaurus Support**: Upgraded the pinned Zenzic Core to `v0.12.0`, which surgically eradicates the Docusaurus adapter due to ontological incompatibility (React-injected IDs and MDX partial merging). Projects still relying on Docusaurus MUST remain on the `v1` floating tag (`v1.3.x`).
+- **Major Version Bump**: The action major version is bumped to `v2` to prevent breaking existing Docusaurus consumers tracking `v1`.
 
 ---
 
