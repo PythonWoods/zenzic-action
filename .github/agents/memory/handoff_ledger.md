@@ -19,12 +19,9 @@
 
 ## 2. ARCHITECTURAL BOUNDARIES
 
-
-
 - **Ontological Incompatibility (Docusaurus Eradicated):** Zenzic strictly targets Pure Static Documentation Engines (e.g., MkDocs, Sphinx, Zensical). SPA/MDX frameworks that generate DOM elements at runtime via JavaScript/React (e.g., Docusaurus) are ontologically out-of-scope, as they mathematically prevent zero-false-positive static analysis. Support for Docusaurus has been completely removed in v0.12.0.
 
 ## 3. RECENT ARCHITECTURAL WINS (Do not regress)
-
 
 - **External Air-Gap Policy:** AI Agents are strictly forbidden from executing upstream contributions to third-party repositories. The AI drafts the payload; the Human Tech Lead executes the submission.
 - **Python 3.12+ RE2 Compatibility:** Custom `translate_glob_to_re2` implemented.
@@ -41,6 +38,8 @@
 The next development cycle MUST focus exclusively on the following target:
 
 - [x] Surgical Eradication of Docusaurus completed (v0.12.0).
+- [ ] Tactical Bridge: zenzic-doc will migrate to MkDocs Material to immediately restore CI linting and ADR-020 (i18n) compliance.
+- [ ] Strategic Goal: Final migration to Zensical is deferred until Zensical achieves i18n parity.
 
 ## 5. KNOWN TECHNICAL DEBT (Backlog)
 
