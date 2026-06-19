@@ -37,7 +37,7 @@ jobs:
     # Local and CI run identical 'just check' invocations.
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Determine Zenzic Core Branch (Parity or Fallback)
         id: resolve-branch
@@ -106,7 +106,7 @@ jobs:
           fi
 
       - name: Checkout local zenzic (unreleased)
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: PythonWoods/zenzic
           ref: ${{ steps.resolve-branch.outputs.core_ref }}
