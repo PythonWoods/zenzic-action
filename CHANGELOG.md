@@ -7,9 +7,16 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ---
 
-## [Unreleased]
+## [2.0.0] - Unreleased
 
-No changes yet.
+### Changed (Breaking)
+
+- **Dropped Docusaurus Support**: Upgraded the pinned Zenzic Core to `v0.13.0`, which surgically eradicates the Docusaurus adapter due to ontological incompatibility (React-injected IDs and MDX partial merging). Projects still relying on Docusaurus MUST remain on the `v1` floating tag (`v1.3.x`).
+- **Major Version Bump**: The action major version is bumped to `v2` to prevent breaking existing Docusaurus consumers tracking `v1`.
+
+### Fixed
+
+- **Config Templates**: Enforced "Root-First, Table-Last" structure in `.zenzic.toml` and `.zenzic.local.toml` templates to prevent TOML root keys from being silently swallowed by preceding table declarations.
 
 ---
 
