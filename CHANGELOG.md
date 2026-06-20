@@ -7,7 +7,7 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ---
 
-## [2.0.0] - Unreleased
+## [2.1.0] - Unreleased
 
 ### Changed (Breaking)
 
