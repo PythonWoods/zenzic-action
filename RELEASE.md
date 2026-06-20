@@ -7,7 +7,7 @@
 | Field   | Value      |
 | :------ | :--------- |
 | Version | v1.1.0     |
-| Date    | 2026-06-13 |
+| Date    | 2026-06-20 |
 | Status  | Stable     |
 
 ## Release Checklist
