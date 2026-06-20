@@ -20,7 +20,7 @@ release part: _release-contracts
     fi
     version="$(uvx --from "bump-my-version==1.2.6" bump-my-version show current_version)"
     git add -u
-    git commit -m "release: bump version to ${version}"
+    git commit -S -s -m "release: bump version to ${version}"
 
 # Show the current action version
 version:
@@ -51,7 +51,7 @@ pin-core version:
     echo "Aligning Zenzic Core pin to {{version}}..."
     uv run python scripts/pin_core.py {{version}}
     git add action.yml README.md .bumpversion.toml
-    git commit -m "chore(deps): pin zenzic core to {{version}}"
+    git commit -S -s -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a Zenzic Core pin realignment and print the diff without writing files
 # Usage: just pin-core-dry <version>
@@ -264,6 +264,10 @@ _release-contracts:
     fi
     if grep -q 'published zenzic@' noxfile.py; then
         echo "release-contracts failed: PyPI fallback is prohibited in repository quality gates"
+        exit 1
+    fi
+    if ! grep -q 'git commit -S -s' justfile; then
+        echo "release-contracts failed: all git commits must use DCO (-s) and GPG signing (-S)"
         exit 1
     fi
 
