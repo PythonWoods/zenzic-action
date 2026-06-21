@@ -13,6 +13,11 @@ replace = '"version": "{new_version}"'
 
 [[tool.bumpversion.files]]
 filename = "RELEASE.md"
+search = "v{current_version}"
+replace = "v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "RELEASE.md"
 search = '(?m)^(\| Date\s+\|\s+)\d{{4}}-\d{{2}}-\d{{2}}(\s*\|)$'
 replace = '| Date    | {now:%Y-%m-%d} |'
 regex = true
