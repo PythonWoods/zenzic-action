@@ -152,7 +152,8 @@ import json, os
 try:
     with open(os.environ["ZENZIC_SARIF_FILE"]) as f:
         data = json.load(f)
-    print(len(data["runs"][0]["results"]))
+    results = data["runs"][0].get("results", [])
+    print(len([r for r in results if r.get("level") != "note"]))
 except Exception:
     print(0)
 PYEOF
