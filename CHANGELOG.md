@@ -7,12 +7,14 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ---
 
-## [2.1.1] - Unreleased
+## [2.2.0] - Unreleased
+
+## [2.1.1] - 2026-06-21
 
 ### Fixed
 - **Core Update**: Compatibility adjustments and version bumps.
 
-## [2.1.0] - Unreleased
+## [2.1.0] - 2026-06-21
 
 ### Changed (Breaking)
 
