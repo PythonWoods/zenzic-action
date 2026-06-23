@@ -3,72 +3,25 @@
 <!-- markdownlint-disable MD041 -->
 
 ## Description
-
-<!-- Describe your changes in detail. Link the issue this PR resolves. -->
-
+<!-- Describe the architectural intent of the changes. Link the approved Issue. -->
 Closes #
 
-## Type of change
+## Type of Change
+- [ ] Bug fix (non-breaking)
+- [ ] New feature (non-breaking)
+- [ ] Breaking change (fix or feature that breaks backward compatibility)
+- [ ] Documentation / D.I.A. update
+- [ ] Technical Debt removal / Refactoring
 
-- [ ] Bug fix
-- [ ] New input / output / behaviour
-- [ ] SARIF output change
-- [ ] Shell / wrapper script change
-- [ ] action.yml contract change
-- [ ] Documentation update
+## Engineering Quality Gates
+- [ ] **TDD / Tests:** New or updated tests cover these changes. The test suite passes locally.
+- [ ] **Static Analysis:** `uv run zenzic check all --strict` passes. The DQS score has not regressed.
+- [ ] **D.I.A. (Documentation Impact Analysis):** If this PR modifies CLI, rules, or core behavior, the user documentation has been updated simultaneously.
+- [ ] **Zero Subprocess:** No unauthorized shell executions or non-Python dependencies are introduced.
 
----
-
-## The Action Contract — mandatory checklist
-
-Every PR that touches `action.yml`, `zenzic-action-wrapper.sh`, or `.github/workflows/` must
-satisfy all that apply.
-
-### 1. Exit Code Contract
-
-- [ ] Exit codes 2 (findings) and 3 (path traversal guard) are **never suppressible** via any new
-  input or flag — the action must propagate them to the runner unconditionally.
-- [ ] `continue-on-error` is **not** set to `true` in any updated workflow example.
-
-### 2. Shell Composability
-
-- [ ] The wrapper script (`zenzic-action-wrapper.sh`) uses POSIX-compatible syntax — no
-  bash-isms (`[[ ]]`, `local`, `declare -A`, process substitution) unless the shebang is `#!/usr/bin/env bash`.
-- [ ] Any new shell logic has been tested on both bash and sh.
-
-### 3. action.yml Contract
-
-- [ ] The `using: docker` / `using: composite` type is unchanged unless this PR specifically
-  changes the action type (requires a major version bump).
-- [ ] New inputs have explicit `default:` values where appropriate, and `required: true` only
-  when there is no sensible default.
-- [ ] The pinned Zenzic version in `action.yml` (if any) is independent from the action's own
-  release cycle — updating Zenzic does not force a new action tag.
-
-### 4. SARIF Output Contract
-
-- [ ] The SARIF file produced by this action is valid against the SARIF 2.1.0 schema.
-- [ ] No new finding is emitted without a stable `ruleId` that maps to a Zenzic frozen code.
-
----
-
-## Enterprise governance compliance
-
-- [ ] This PR addresses an approved Issue #___ and complies with the **Issue-First Policy**.
-- [ ] Every commit in this PR is **cryptographically signed** (GPG/SSH/S/MIME) and shows as "Verified" on GitHub.
-- [ ] Every commit has a valid **Developer Certificate of Origin (DCO)** sign-off (`Signed-off-by:` via `git commit -s`).
-- [ ] I have verified and can architecturally justify every single line of code proposed in this PR (**No AI Slop**).
-- [ ] All commit messages comply with the **Conventional Commits** specification.
-
----
-
-## Quality gates
-
-- [ ] `just verify` passes end-to-end.
-- [ ] REUSE/SPDX headers are present on every new file.
-
----
-
-## Notes for reviewers
-
-<!-- Anything unusual about this PR that reviewers should know? -->
+## Enterprise Governance
+- [ ] **Issue-First:** This PR addresses an explicitly approved Issue.
+- [ ] **Signatures:** Every commit is cryptographically signed (GPG/SSH).
+- [ ] **DCO:** Every commit contains a valid `Signed-off-by:` line.
+- [ ] **Semantics:** Commit messages follow the Conventional Commits specification.
+- [ ] **Absolute Ownership:** I have verified and can architecturally justify every single line of code. No unreviewed AI-generated code is included.
