@@ -6,7 +6,7 @@
 
 | Field   | Value      |
 | :------ | :--------- |
-| Version | v2.3.1     |
+| Version | v2.3.2 |
 | Date    | 2026-06-27 |
 | Status  | Stable     |
 
@@ -15,9 +15,9 @@
 Before tagging, every item must be green:
 
 - [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.16.0`)
-- [ ] `package.json` version bumped to `2.3.1`
-- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[2.3.1]`
-- [ ] Update SECURITY.md support table (add v2.3.1, demote previous).
+- [ ] `package.json` version bumped to `2.3.2`
+- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[2.3.2]`
+- [ ] Update SECURITY.md support table (add v2.3.2, demote previous).
 - [ ] `requirements.txt` — synchronized with core pin (`zenzic>=0.16.0`)
 - [ ] `just versions` — returns `✅ Ecosystem alignment verified.`
 - [ ] `just verify` — exits 0
