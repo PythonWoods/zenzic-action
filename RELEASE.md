@@ -6,7 +6,7 @@
 
 | Field   | Value      |
 | :------ | :--------- |
-| Version | v2.3.0     |
+| Version | v2.3.1     |
 | Date    | 2026-06-27 |
 | Status  | Stable     |
 
