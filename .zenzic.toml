@@ -51,7 +51,7 @@ excluded_dirs = [
     "LICENSES",
     "_zenzic_core",  # CI checkout of sibling core repo — not action documentation
 ]
-excluded_file_patterns = ["requirements.txt"]
+excluded_file_patterns = ["requirements.txt", "RELEASE.md"]
 # excluded_assets = ["favicon.ico"]
 # excluded_asset_dirs = ["theme/"]
 # excluded_build_artifacts = ["pdf/*.pdf"]

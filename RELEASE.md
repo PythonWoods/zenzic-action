@@ -14,26 +14,30 @@
 
 Before tagging, every item must be green:
 
-- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.9.0`)
-- [ ] `package.json` version bumped to `1.1.0`
-- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[1.1.0] - 2026-05-31`
-- [ ] Update SECURITY.md support table (add v1.1.0, demote previous to Critical/EOL).
+- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.16.0`)
+- [ ] `package.json` version bumped to `2.3.1`
+- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[2.3.1]`
+- [ ] Update SECURITY.md support table (add v2.3.1, demote previous).
+- [ ] `requirements.txt` — synchronized with core pin (`zenzic>=0.16.0`)
+- [ ] `just versions` — returns `✅ Ecosystem alignment verified.`
 - [ ] `just verify` — exits 0
-- [ ] `zenzic check .` — zero findings
-- [ ] `guard-scan` input documented in README.md
-- [ ] `cap-exceeded` output wired in wrapper and documented
+- [ ] `zenzic check .` — zero findings (DQS 100/100)
 
 ## Bump & Publish
 
 ```bash
-# Bumps package.json, CHANGELOG.md, and action.yml pin atomically:
-just bump <version>    # e.g. just bump 1.1.0
+# Bumps version and updates changelog:
+just release <patch|minor|major>
 
 git push && git push --tags
 
-# Move the floating v1 tag to the new release:
-git tag -f v1 <new-tag>
-git push origin v1 --force
+# Move the floating v2 tag to the new release:
+git tag -fa v2 <new-tag-version> -m "release: <new-tag-version>"
+git push origin v2 --force
+
+# Verification (Atomic Parity Check):
+git rev-parse v2^{} <new-tag-version>^{}
+# SUCCESS: Both hashes must be identical.
 ```
 
 Distribution target: **GitHub Actions Marketplace** — `uses: PythonWoods/zenzic-action@v1`.
