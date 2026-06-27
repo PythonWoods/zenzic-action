@@ -30,10 +30,22 @@ version:
 core-version:
     @perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml
 
-# Show both the action version and the pinned Zenzic Core version
+# Show both the action version and validate the pinned Zenzic Core version against requirements.txt
 versions:
-    @echo "action:      $(uvx --from "bump-my-version==1.2.6" bump-my-version show current_version)"
-    @echo "zenzic-core: $(perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml)"
+    #!/usr/bin/env bash
+    set -euo pipefail
+    INSTALLED=$(just core-version)
+    PINNED=$(grep -oP 'zenzic>=\K[0-9.]+' requirements.txt)
+    echo "action:      $(uvx --from 'bump-my-version==1.2.6' bump-my-version show current_version)"
+    echo "core-yml:    $INSTALLED"
+    echo "core-pinned: $PINNED"
+    if [ "$INSTALLED" != "$PINNED" ]; then
+        echo "❌ ERROR: Ecosystem misalignment detected!"
+        echo "action.yml core ($INSTALLED) does not match pinned version ($PINNED) in requirements.txt"
+        echo "Run 'just pin-core $INSTALLED' to fix."
+        exit 1
+    fi
+    echo "✅ Ecosystem alignment verified."
 
 # Realign the Zenzic Core pin in action.yml using the anchored marker
 # Usage: just pin-core <version>
@@ -135,7 +147,7 @@ lint:
     uvx pre-commit run --all-files
 
 # Full verification gate (Final Guard lifecycle)
-verify: _check-hooks check-pinning check-core-pin-local lint _release-contracts test check
+verify: versions _check-hooks check-pinning check-core-pin-local lint _release-contracts test check
 
 # Verify that the pinned core version is resolvable in the sovereign local clone.
 # Non-goal: remote/PyPI lookups (network-dependent and flaky in local hooks).
