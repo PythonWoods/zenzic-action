@@ -52,9 +52,9 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
 - uses: actions/checkout@v6
 
 - name: Run Zenzic Documentation Quality Gate
-  uses: PythonWoods/zenzic-action@v1
+  uses: PythonWoods/zenzic-action@v2
   with:
-    version: "0.15.1"
+    version: "0.16.0"
     format: sarif
     upload-sarif: "true"
   permissions:
@@ -65,6 +65,111 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
 Place a `.zenzic.toml` at the root of your repository and the action picks it up automatically — no `config-file` input required. Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
 
 For advanced configuration (Configuration Discovery, Sovereign Override, Quality Gate scoring, nightly audit), see the [Zenzic Action docs](https://zenzic.dev/docs/reference/zenzic-action).
+
+---
+
+## Integration Blueprints
+
+### 1. Baseline Check (Standard Link/Topology Validation)
+This blueprint provides standard documentation linting, link validation, and structural verification. It executes during pushes and PRs, ensuring no broken links or invalid configurations enter the repository.
+
+```yaml title=".github/workflows/docs-baseline.yml"
+name: Zenzic Baseline Audit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  baseline-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Run Zenzic Baseline
+        uses: PythonWoods/zenzic-action@v2
+        with:
+          version: "0.16.0"
+          format: text
+          fail-on-error: "true"
+```
+
+### 2. Security Hardening (SARIF + Upload Integration)
+This blueprint runs a security-hardened gate. It executes the secret scanner (`guard-scan`) to catch exposed credentials and path traversals, then uploads the SARIF report directly to the GitHub Code Scanning Security tab.
+
+```yaml title=".github/workflows/docs-security.yml"
+name: Zenzic Hardened Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Run Hardened Zenzic Audit
+        uses: PythonWoods/zenzic-action@v2
+        with:
+          version: "0.16.0"
+          format: sarif
+          upload-sarif: "true"
+          guard-scan: "true" # Triggers early fatal check for credentials/traversals
+```
+
+### 3. PR Governance (Inline Annotations & DQS Tracking)
+This blueprint implements pull-request governance. It downloads the DQS baseline from the default branch, runs the quality gate comparison, maps issues to inline annotations, and publishes a summary of the Document Quality Score (DQS) to the workflow run.
+
+```yaml title=".github/workflows/docs-governance.yml"
+name: Zenzic PR Governance & DQS Tracking
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  pr-governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v6
+
+      - name: Download DQS Baseline from Main
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: zenzic-baseline
+          path: .
+          search_artifacts: true
+        continue-on-error: true # Safe fallback if no baseline exists yet
+
+      - name: Run Zenzic PR Quality Gate
+        id: zenzic
+        uses: PythonWoods/zenzic-action@v2
+        with:
+          version: "0.16.0"
+          format: json
+          diff-base: .zenzic-score.json
+          fail-on-error: "true"
+
+      - name: Report DQS Status
+        if: always()
+        run: |
+          echo "### Zenzic Document Quality Score (DQS) Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **Current DQS:** ${{ steps.zenzic.outputs.score }}/100" >> $GITHUB_STEP_SUMMARY
+          echo "- **Suppression Debt:** ${{ steps.zenzic.outputs.suppression-debt-pts }} pts" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cap Exceeded:** ${{ steps.zenzic.outputs.cap-exceeded }}" >> $GITHUB_STEP_SUMMARY
+```
 
 ---
 
@@ -94,7 +199,7 @@ Fail-closed rule:
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `0.15.1` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
+| `version` | `0.16.0` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
@@ -129,7 +234,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Save score baseline
-        uses: PythonWoods/zenzic-action@v1
+        uses: PythonWoods/zenzic-action@v2
         with:
           format: json
           save: "true"
@@ -147,7 +252,7 @@ jobs:
         with:
           name: zenzic-baseline
       - name: Block debt regression
-        uses: PythonWoods/zenzic-action@v1
+        uses: PythonWoods/zenzic-action@v2
         with:
           format: json
           diff-base: .zenzic-score.json
@@ -168,7 +273,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Sovereign audit (no suppressions)
-        uses: PythonWoods/zenzic-action@v1
+        uses: PythonWoods/zenzic-action@v2
         with:
           audit: "true"
           format: sarif
@@ -185,7 +290,7 @@ steps:
 
   - name: Zenzic quality gate
     id: zenzic
-    uses: PythonWoods/zenzic-action@v1
+    uses: PythonWoods/zenzic-action@v2
     with:
       format: json
       fail-on-error: "false"
