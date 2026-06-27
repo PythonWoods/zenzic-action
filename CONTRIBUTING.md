@@ -109,3 +109,30 @@ uvx pre-commit autoupdate --freeze
 
 This preserves the `# vX.Y.Z` annotation comment. Commit the diff and
 re-verify with `just check-pinning`.
+
+## Maintainer Only: Release Procedure
+
+Releases are managed by the internal `just` orchestrator to ensure strict synchronization of metadata.
+
+```bash
+# 1. Ensure branch is clean and checks are green.
+# just verify is the mandatory pre-commit gate (Lint + Tests + Zenzic Check).
+just verify
+
+# 2. Update the Zenzic core pin to the target version
+just pin-core <core-version>  # e.g., just pin-core 0.16.1
+
+# 3. Check alignment between core and action dependencies
+just versions
+
+# 4. Preview version changes (dry-run)
+just release-dry patch   # or minor/major
+
+# 5. Apply the version bump, commit, and create tag.
+# just release <part> is the ONLY authorized method for version increments
+# and automatic synchronization of metadata (RELEASE.md).
+just release patch       # or minor/major
+
+# 6. Push commit and tag — this triggers the release workflow
+git push && git push --tags
+```
