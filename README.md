@@ -28,16 +28,6 @@
 
 ---
 
-## 🔍 Visual Feedback
-
-Zenzic Action surfaces findings directly where you work. No more digging through CI logs.
-
-<p align="center">
-  <img alt="GitHub Code Scanning showing Zenzic findings" src="assets/sarif-showcase.svg" width="800">
-</p>
-
----
-
 Run Zenzic checks in CI and surface results directly in GitHub Code Scanning — without reading logs.
 
 **Exit code contract.** The wrapper propagates Zenzic's exit codes without remapping. Exit 1 (quality) obeys `fail-on-error`. Exit 2 (credential) and exit 3 (path traversal) terminate the job regardless of `fail-on-error: false` or `--exit-zero` — security findings are never suppressed at the enforcement boundary.
@@ -76,6 +66,16 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
 Place a `.zenzic.toml` at the root of your repository and the action picks it up automatically — no `config-file` input required. Run `zenzic init` once to scaffold a config if your docs live outside the default `docs/` folder.
 
 For advanced configuration (Configuration Discovery, Sovereign Override, Quality Gate scoring, nightly audit), see the [Zenzic Action docs](https://zenzic.dev/docs/reference/zenzic-action).
+
+---
+
+## 🔍 Visual Feedback
+
+Zenzic Action surfaces findings directly where you work. No more digging through CI logs.
+
+<p align="center">
+  <img alt="GitHub Code Scanning showing Zenzic findings" src="assets/sarif-showcase.svg" width="800">
+</p>
 
 ---
 
