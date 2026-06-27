@@ -74,7 +74,7 @@ For advanced configuration (Configuration Discovery, Sovereign Override, Quality
 Zenzic Action surfaces findings directly where you work. No more digging through CI logs.
 
 <p align="center">
-  <img alt="GitHub Code Scanning showing Zenzic findings" src="assets/sarif-showcase.svg" width="800">
+  <img alt="GitHub Code Scanning showing Zenzic findings" src="assets/sarif-showcase.svg?v=2" width="800">
 </p>
 
 ---
