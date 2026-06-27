@@ -22,6 +22,21 @@ search = '(?m)^(\| Date\s+\|\s+)\d{{4}}-\d{{2}}-\d{{2}}(\s*\|)$'
 replace = '| Date    | {now:%Y-%m-%d} |'
 regex = true
 
+[[tool.bumpversion.files]]
+filename = "RELEASE.md"
+search = "- [ ] `package.json` version bumped to `{current_version}`"
+replace = "- [ ] `package.json` version bumped to `{new_version}`"
+
+[[tool.bumpversion.files]]
+filename = "RELEASE.md"
+search = "- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[{current_version}]`"
+replace = "- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[{new_version}]`"
+
+[[tool.bumpversion.files]]
+filename = "RELEASE.md"
+search = "- [ ] Update SECURITY.md support table (add v{current_version},"
+replace = "- [ ] Update SECURITY.md support table (add v{new_version},"
+
 # ---------------------------------------------------------------------------
 # Core pin — state tracking only.
 # Actual updates are performed by `just pin-core <version>`.
