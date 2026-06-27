@@ -7,7 +7,7 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ---
 
-## [Unreleased]
+## [2.3.1] - 2026-06-27
 
 ### Added
 - **SourceRank Visibility**: Added `requirements.txt` to expose Zenzic core dependency to ecosystem crawlers.
@@ -17,7 +17,7 @@ All notable changes to zenzic-action are documented in this file. The project ad
 - **Perimeter Hygiene**: Added `requirements.txt` to `excluded_file_patterns` in `.zenzic.toml` to prevent `Z405` violations.
 - **Automation**: Updated `just pin-core` to propagate Zenzic core pins to `requirements.txt`.
 
-## [2.3.0] - 2026-06-25
+## [2.3.0] - 2026-06-27
 
 ### Changed
 - **Governance**: Modernized pull request template for English-only python ecosystem.

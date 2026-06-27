@@ -62,8 +62,10 @@ pin-core version:
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
     uv run python scripts/pin_core.py {{version}}
+    # REUSE-IgnoreStart
     echo "# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>" > requirements.txt
     echo "# SPDX-License-Identifier: Apache-2.0" >> requirements.txt
+    # REUSE-IgnoreEnd
     echo "zenzic>={{version}}" >> requirements.txt
     git add action.yml README.md .bumpversion.toml requirements.txt
     git commit -S -s -m "chore(deps): pin zenzic core to {{version}}"
