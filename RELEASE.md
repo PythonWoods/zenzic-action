@@ -18,7 +18,7 @@ Before tagging, every item must be green:
 - [ ] `package.json` version bumped to `2.3.2`
 - [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[2.3.2]`
 - [ ] Update SECURITY.md support table (add v2.3.2, demote previous).
-- [ ] `requirements.txt` — synchronized with core pin (`zenzic>=0.16.0`)
+- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.16.0`)
 - [ ] `just versions` — returns `✅ Ecosystem alignment verified.`
 - [ ] `just verify` — exits 0
 - [ ] `zenzic check .` — zero findings (DQS 100/100)

@@ -35,13 +35,13 @@ versions:
     #!/usr/bin/env bash
     set -euo pipefail
     INSTALLED=$(just core-version)
-    PINNED=$(grep -oP 'zenzic>=\K[0-9.]+' requirements.txt)
+    PINNED=$(grep -oP 'zenzic>=\K[0-9.]+' pyproject.toml)
     echo "action:      $(uvx --from 'bump-my-version==1.2.6' bump-my-version show current_version)"
     echo "core-yml:    $INSTALLED"
     echo "core-pinned: $PINNED"
     if [ "$INSTALLED" != "$PINNED" ]; then
         echo "❌ ERROR: Ecosystem misalignment detected!"
-        echo "action.yml core ($INSTALLED) does not match pinned version ($PINNED) in requirements.txt"
+        echo "action.yml core ($INSTALLED) does not match pinned version ($PINNED) in pyproject.toml"
         echo "Run 'just pin-core $INSTALLED' to fix."
         exit 1
     fi
@@ -62,15 +62,11 @@ pin-core version:
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
     uv run python scripts/pin_core.py {{version}}
-    # REUSE-IgnoreStart
-    echo "# SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>" > requirements.txt
-    echo "# SPDX-License-Identifier: Apache-2.0" >> requirements.txt
-    # REUSE-IgnoreEnd
-    echo "zenzic>={{version}}" >> requirements.txt
+    sed -i 's/"zenzic>=.*"/"zenzic>={{version}}"/g' pyproject.toml
     sed -i 's/core version (`.*`)/core version (`{{version}}`)/g' RELEASE.md
     sed -i 's/core pin (`zenzic>=.*`)/core pin (`zenzic>={{version}}`)/g' RELEASE.md
     sed -i 's/version (`.*`)/version (`{{version}}`)/' RELEASE.md
-    git add action.yml README.md .bumpversion.toml requirements.txt RELEASE.md
+    git add action.yml README.md .bumpversion.toml pyproject.toml RELEASE.md
     git commit -S -s -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a Zenzic Core pin realignment and print the diff without writing files
