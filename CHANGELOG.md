@@ -59,5 +59,5 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## Historical Releases
 
-- v1.3.x archive: [changelogs/v1.3.md](./changelogs/v1.3.md)
+- v1.x archive: [changelogs/v1.x.md](./changelogs/v1.x.md)
 - Archive index: [changelogs/README.md](./changelogs/README.md)

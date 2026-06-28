@@ -13,9 +13,8 @@ replace = '"version": "{new_version}"'
 
 [[tool.bumpversion.files]]
 filename = "RELEASE.md"
-search = '(?m)^(\| Version\s+\|\s+)v{current_version}(\s*\|)$'
-replace = '| Version | v{new_version} |'
-regex = true
+search = "v{current_version}"
+replace = "v{new_version}"
 
 [[tool.bumpversion.files]]
 filename = "RELEASE.md"

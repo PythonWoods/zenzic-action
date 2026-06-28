@@ -7,4 +7,4 @@ This directory contains per-minor-version changelog archives for zenzic-action. 
 
 | Version | Period | Archive |
 |---------|--------|---------|
-| v1.3.x | 2026-06-06 to 2026-06-09 | [v1.3.md](./v1.3.md) |
+| v1.x | 2026-06-06 to 2026-06-09 | [v1.x.md](./v1.x.md) |
