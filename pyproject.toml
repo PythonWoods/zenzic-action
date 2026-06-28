@@ -10,10 +10,13 @@ license = {text = "Apache-2.0"}
 authors = [{name = "PythonWoods", email = "dev@pythonwoods.dev"}]
 dynamic = ["version"]
 dependencies = [
-    "zenzic>=0.16.0",
+    "zenzic>=0.18.0",
 ]
 
 [project.urls]
 Homepage = "https://zenzic.dev"
 Repository = "https://github.com/PythonWoods/zenzic-action"
 Tracker = "https://github.com/PythonWoods/zenzic-action/issues"
+
+[tool.setuptools]
+py-modules = []

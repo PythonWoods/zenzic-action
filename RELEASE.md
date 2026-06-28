@@ -6,19 +6,17 @@
 
 | Field   | Value      |
 | :------ | :--------- |
-| Version | v2.3.2 |
-| Date    | 2026-06-27 |
+| Version | v2.4.0 |
+| Date    | 2026-06-28 |
 | Status  | Stable     |
 
 ## Release Checklist
 
 Before tagging, every item must be green:
 
-- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.16.0`)
-- [ ] `package.json` version bumped to `2.3.2`
-- [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[2.3.2]`
-- [ ] Update SECURITY.md support table (add v2.3.2, demote previous).
-- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.16.0`)
+- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.18.0`)
+- [ ] `package.json` version bumped to `2.4.0`
+- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.18.0`)
 - [ ] `just versions` — returns `✅ Ecosystem alignment verified.`
 - [ ] `just verify` — exits 0
 - [ ] `zenzic check .` — zero findings (DQS 100/100)
@@ -32,15 +30,15 @@ just release <patch|minor|major>
 git push && git push --tags
 
 # Move the floating v2 tag to the new release:
-git tag -fa v2 <new-tag-version> -m "release: <new-tag-version>"
-git push origin v2 --force
+git tag -fa v2 v2.4.0^{} -m "release: v2.4.0"
+git push origin v2 --force-with-lease
 
 # Verification (Atomic Parity Check):
-git rev-parse v2^{} <new-tag-version>^{}
+git rev-parse v2^{} v2.4.0^{}
 # SUCCESS: Both hashes must be identical.
 ```
 
-Distribution target: **GitHub Actions Marketplace** — `uses: PythonWoods/zenzic-action@v1`.
+Distribution target: **GitHub Actions Marketplace** — `uses: PythonWoods/zenzic-action@v2`.
 
 ## Version Scheme
 

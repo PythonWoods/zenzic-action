@@ -55,7 +55,7 @@ The minimal configuration — zero Python setup, SARIF to Code Scanning in one s
 - name: Run Zenzic Documentation Quality Gate
   uses: PythonWoods/zenzic-action@v2
   with:
-    version: "0.16.0"
+    version: "0.18.0"
     format: sarif
     upload-sarif: "true"
   permissions:
@@ -103,7 +103,7 @@ jobs:
       - name: Run Zenzic Baseline
         uses: PythonWoods/zenzic-action@v2
         with:
-          version: "0.16.0"
+          version: "0.18.0"
           format: text
           fail-on-error: "true"
 ```
@@ -133,7 +133,7 @@ jobs:
       - name: Run Hardened Zenzic Audit
         uses: PythonWoods/zenzic-action@v2
         with:
-          version: "0.16.0"
+          version: "0.18.0"
           format: sarif
           upload-sarif: "true"
           guard-scan: "true" # Triggers early fatal check for credentials/traversals
@@ -168,7 +168,7 @@ jobs:
         id: zenzic
         uses: PythonWoods/zenzic-action@v2
         with:
-          version: "0.16.0"
+          version: "0.18.0"
           format: json
           diff-base: .zenzic-score.json
           fail-on-error: "true"
@@ -210,7 +210,7 @@ Fail-closed rule:
 
 | Input | Default | Description |
 |---|---|---|
-| `version` | `0.16.0` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
+| `version` | `0.18.0` | Zenzic version to install. Pin to a specific release for reproducible CI. Set `latest` for continuous evaluation. |
 | `format` | `sarif` | Output format: `text`, `json`, or `sarif`. |
 | `sarif-file` | `zenzic-results.sarif` | SARIF output path (when `format: sarif`). Must be a **relative** path inside the workspace. |
 | `upload-sarif` | `true` | Upload SARIF to GitHub Code Scanning. |
