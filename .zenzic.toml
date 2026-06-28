@@ -36,7 +36,6 @@ excluded_external_urls = [
     "https://github.com/PythonWoods/zenzic",
     # TODO: Remove post-deploy (Temporary exemption for unreleased pages).
     "https://zenzic.dev/docs/reference/zenzic-action",
-    "https://zenzic.dev/it/docs/reference/zenzic-action",
 ]
 
 # Z204 Privacy Gate — terms that must never appear in published docs.
@@ -46,12 +45,11 @@ excluded_external_urls = [
 # Paths listed here are INVISIBLE to Zenzic: no findings, no audit trail.
 # Prefer [governance.per_file_ignores] for targeted suppression with an audit trail.
 excluded_dirs = [
-    "assets",
     "scripts",
     "LICENSES",
     "_zenzic_core",  # CI checkout of sibling core repo — not action documentation
 ]
-excluded_file_patterns = ["pyproject.toml", "RELEASE.md"]
+excluded_file_patterns = ["RELEASE.md"]
 # excluded_assets = ["favicon.ico"]
 # excluded_asset_dirs = ["theme/"]
 # excluded_build_artifacts = ["pdf/*.pdf"]
@@ -119,9 +117,9 @@ brand_obsolescence = [
 # BEHAVIOR: Matched findings are silently dropped — ZERO debt added.
 # IMPACT:   In --audit mode, shown with [POLICY_EXEMPTION] label.
 #
-# [governance.directory_policies]
-# "blog/**"                       = ["Z601"]  # historical archive
-# "docs/explanation/registry.mdx" = ["Z601"]  # SSOT codename registry
+[governance.directory_policies]
+"README.md" = ["Z104"]
+"assets/**" = ["Z405"]
 
 # Governance Playbook:
 # https://zenzic.dev/developers/how-to/release-governance-protocol

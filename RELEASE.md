@@ -14,11 +14,11 @@
 
 Before tagging, every item must be green:
 
-- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.16.0`)
+- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.18.0`)
 - [ ] `package.json` version bumped to `2.3.2`
 - [ ] `CHANGELOG.md` — `[Unreleased]` section promoted to `[2.3.2]`
 - [ ] Update SECURITY.md support table (add v2.3.2, demote previous).
-- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.16.0`)
+- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.18.0`)
 - [ ] `just versions` — returns `✅ Ecosystem alignment verified.`
 - [ ] `just verify` — exits 0
 - [ ] `zenzic check .` — zero findings (DQS 100/100)
