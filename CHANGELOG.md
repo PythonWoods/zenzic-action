@@ -9,6 +9,12 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-06-28
+
+### Changed
+- **Core Update**: Pinned Zenzic core dependency to version `0.18.0` for full "Nuclear Static" compliance.
+- **Automation**: Fully automated the release pipeline, synchronizing `bump-my-version` across `SECURITY.md`, `RELEASE.md`, `CHANGELOG.md`, and `CONTRIBUTING.md` to eliminate manual drift.
+
 ## [2.3.1] - 2026-06-27
 
 ### Added
