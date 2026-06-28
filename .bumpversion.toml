@@ -36,9 +36,11 @@ search = "- [ ] `package.json` version bumped to `{current_version}`"
 replace = "- [ ] `package.json` version bumped to `{new_version}`"
 
 [[tool.bumpversion.files]]
-filename = "RELEASE.md"
-search = "- [ ] Update SECURITY.md support table (add v{current_version},"
-replace = "- [ ] Update SECURITY.md support table (add v{new_version},"
+filename = "SECURITY.md"
+search = '''| `{current_version}` (current) | ✅ All security fixes |
+| `< {current_version}` | ❌ End of life — no support |'''
+replace = '''| `{new_version}` (current) | ✅ All security fixes |
+| `< {new_version}` | ❌ End of life — no support |'''
 
 # ---------------------------------------------------------------------------
 # Core pin — state tracking only.
