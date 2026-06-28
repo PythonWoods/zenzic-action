@@ -24,12 +24,18 @@ Before tagging, every item must be green:
 ## Bump & Publish
 
 ```bash
-# Bumps version and updates changelog:
+# 1. Merge the PR and switch to main
+git checkout main
+git pull origin main
+
+# 2. Bump version and update changelog
 just release <patch|minor|major>
 
+# 3. Create the release tag and push
+git tag v2.4.0
 git push && git push --tags
 
-# Move the floating v2 tag to the new release:
+# 4. Move the floating v2 tag to the new release:
 git tag -fa v2 v2.4.0^{} -m "release: v2.4.0"
 git push origin v2 --force-with-lease
 
