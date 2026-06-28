@@ -66,7 +66,8 @@ pin-core version:
     sed -i 's/core version (`.*`)/core version (`{{version}}`)/g' RELEASE.md
     sed -i 's/core pin (`zenzic>=.*`)/core pin (`zenzic>={{version}}`)/g' RELEASE.md
     sed -i 's/version (`.*`)/version (`{{version}}`)/' RELEASE.md
-    git add action.yml README.md .bumpversion.toml pyproject.toml RELEASE.md
+    sed -i 's/just pin-core [0-9.]\+/just pin-core {{version}}/g' CONTRIBUTING.md
+    git add action.yml README.md .bumpversion.toml pyproject.toml RELEASE.md CONTRIBUTING.md
     git commit -S -s -m "chore(deps): pin zenzic core to {{version}}"
 
 # Simulate a Zenzic Core pin realignment and print the diff without writing files
