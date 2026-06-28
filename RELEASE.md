@@ -30,7 +30,7 @@ just release <patch|minor|major>
 git push && git push --tags
 
 # Move the floating v2 tag to the new release:
-git tag -fa v2 v2.3.2 -m "release: v2.3.2"
+git tag -fa v2 v2.3.2^{} -m "release: v2.3.2"
 git push origin v2 --force
 
 # Verification (Atomic Parity Check):
