@@ -37,7 +37,7 @@ git push && git push --tags
 
 # 4. Move the floating v2 tag to the new release:
 git tag -fa v2 v2.4.0^{} -m "release: v2.4.0"
-git push origin v2 --force-with-lease
+git push origin v2 --force
 
 # Verification (Atomic Parity Check):
 git rev-parse v2^{} v2.4.0^{}
