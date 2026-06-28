@@ -42,6 +42,8 @@ htmlcov/
 .coverage.*
 mutmut*
 .mutmut-cache/
+uv.lock
+*.egg-info/
 
 # ────────────────────────────────────────────────────────────────────────────
 # Zenzic Artifacts (Machine Silence)
@@ -68,7 +70,3 @@ mutmut*
 # AI Agent Private Memory
 .clinerules
 .github/agents/
-
-# AI Agents Configuration
-.github/agents/
-.clinerules

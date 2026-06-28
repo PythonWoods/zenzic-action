@@ -44,4 +44,4 @@ replace = "- [ ] Update SECURITY.md support table (add v{new_version},"
 # bump-my-version does NOT manage these files; they are listed here for discoverability.
 # ---------------------------------------------------------------------------
 [tool.bumpversion.custom_variables.core_version]
-current = "0.16.0"
+current = "0.18.0"
