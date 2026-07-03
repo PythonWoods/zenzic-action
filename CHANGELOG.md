@@ -9,6 +9,14 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.5.1] - 2026-07-03
+
+### 🔒 Security Advisory
+- **Core Update**: Bumped Zenzic core dependency to `>=0.19.3` to mitigate the `Z205` (Forbidden Scheme) security gate bypass vulnerability (Double Href & Encoding Evasion).
+
+### Changed
+- **Dependencies**: Pinned Zenzic core to `0.19.3` to restore the deterministic execution environment.
+
 ## [2.5.0] - 2026-07-01
 
 ## [2.4.0] - 2026-06-28
