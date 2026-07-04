@@ -9,6 +9,12 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+### Added
+- **Core Update**: Bumped Zenzic core dependency to `>=0.20.0` (introduces Custom Rules API v2, deterministic visitation sandbox, and auto-fix expansion for Z121 and Z603).
+
+### Changed
+- **Dependencies**: Pinned Zenzic core to `0.20.0`.
+
 ## [2.5.2] - 2026-07-04
 
 ### 🔒 Security Advisory
