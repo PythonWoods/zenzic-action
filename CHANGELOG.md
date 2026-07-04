@@ -9,6 +9,13 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.6.1] - 2026-07-04
+
+## [2.6.1] - 2026-07-04
+
+### Changed
+- **Dependencies**: Pinned Zenzic core dependency to version `0.20.1` (restores slate-based dark mode and resolves Z603 Dead Suppression paradox).
+
 ## [2.6.0] - 2026-07-04
 
 ### Added
