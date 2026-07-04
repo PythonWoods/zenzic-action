@@ -9,6 +9,8 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.5.2] - 2026-07-04
+
 ### 🔒 Security Advisory
 - **Core Update**: Bumped Zenzic core dependency to `>=0.19.6` to mitigate the DQS Evasion (leading space bypass), TOML Bomb crash, and duplicate suppression consumption vulnerabilities.
 
