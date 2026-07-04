@@ -9,6 +9,13 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+### 🔒 Security Advisory
+- **Core Update**: Bumped Zenzic core dependency to `>=0.19.6` to mitigate the DQS Evasion (leading space bypass), TOML Bomb crash, and duplicate suppression consumption vulnerabilities.
+
+### Changed
+- **Dependencies**: Pinned Zenzic core to `0.19.6`.
+- **Automation**: Fixed the `pin-core` recipe in the `justfile` to correctly align the core pin in `action.yml`.
+
 ## [2.5.1] - 2026-07-03
 
 ### 🔒 Security Advisory
