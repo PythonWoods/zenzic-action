@@ -120,7 +120,7 @@ Releases are managed by the internal `just` orchestrator to ensure strict synchr
 just verify
 
 # 2. Update the Zenzic core pin to the target version
-just pin-core <core-version>  # e.g., just pin-core 0.19.6
+just pin-core <core-version>  # e.g., just pin-core 0.20.0
 
 # 3. Check alignment between core and action dependencies
 just versions
