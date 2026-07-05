@@ -9,6 +9,8 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.6.2] - 2026-07-05
+
 ### Changed
 - **Dependencies**: Pinned Zenzic core dependency to version `0.20.3` (eradicates Z602 bilingual parity rules/fixtures, and aligns with English-Only documentation governance).
 
