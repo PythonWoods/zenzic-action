@@ -75,8 +75,8 @@ by the wrapper script — it is consumed exclusively by `github/codeql-action/up
 
 | Version | Support status |
 |---------|----------------|
-| `2.6.2` (current) | ✅ All security fixes |
-| `< 2.6.2` | ❌ End of life — no support |
+| `2.7.0` (current) | ✅ All security fixes |
+| `< 2.7.0` | ❌ End of life — no support |
 
 ---
 
