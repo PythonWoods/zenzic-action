@@ -144,6 +144,8 @@ jobs:
         uses: ./
         with:
           working-directory: tests/fixture
+          check-stamp: "false"
+          upload-sarif: "false"
 
       - name: Test Action Locally with Z001 Config Error Fixture
         id: test-z001
@@ -152,6 +154,8 @@ jobs:
         with:
           working-directory: _zenzic_core/examples/z001-config-error
           fail-on-error: "true"
+          check-stamp: "false"
+          upload-sarif: "false"
 
       - name: Assert Z001 Failure
         shell: bash
