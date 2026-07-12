@@ -14,9 +14,9 @@
 
 Before tagging, every item must be green:
 
-- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.21.1`)
+- [ ] `action.yml` — `default:` pin updated to the latest Zenzic core version (`0.22.0`)
 - [ ] `package.json` version bumped to `2.7.1`
-- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.21.1`)
+- [ ] `pyproject.toml` — synchronized with core pin (`zenzic>=0.22.0`)
 - [ ] `just versions` — returns `✅ Ecosystem alignment verified.`
 - [ ] `just verify` — exits 0
 - [ ] `zenzic check .` — zero findings (DQS 100/100)
