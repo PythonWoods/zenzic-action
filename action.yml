@@ -16,7 +16,7 @@ inputs:
   version:
     description: "Zenzic version to use. Defaults to latest stable."
     required: false
-    default: "0.21.1" # x-zenzic-core-pin
+    default: "0.22.0" # x-zenzic-core-pin
   format:
     description: "Output format: 'text', 'json', or 'sarif'."
     required: false
@@ -82,7 +82,7 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+      uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
       with:
         enable-cache: "false"
 

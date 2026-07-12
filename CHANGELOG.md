@@ -9,6 +9,11 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.8.0] - 2026-07-12
+
+### Added
+- **Core Update**: Pinned Zenzic core dependency to version `0.22.0` (introduces Real-Time Virtual Site Map (VSM) integration and O(1) incremental patching to the Language Server).
+
 ## [2.7.1] - 2026-07-11
 
 ## [2.7.0] - 2026-07-11
