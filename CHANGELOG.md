@@ -9,6 +9,8 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.8.2] - 2026-07-14
+
 ## [2.8.1] - 2026-07-14
 
 ## [2.8.0] - 2026-07-12
