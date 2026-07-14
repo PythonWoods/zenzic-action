@@ -9,6 +9,11 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.8.3] - 2026-07-14
+
+### Changed
+- **Dependencies**: Pinned Zenzic core dependency to version `0.22.3` (restoring 100% diagnostic parity and URP strict ordering).
+
 ## [2.8.2] - 2026-07-14
 
 ## [2.8.1] - 2026-07-14
