@@ -12,7 +12,7 @@ All notable changes to zenzic-action are documented in this file. The project ad
 ## [2.9.0] - 2026-07-18
 
 ### Changed
-- **Dependencies**: Pinned Zenzic core dependency to version `0.23.0` (introduces `ZenzicDiagnostic` strict typing, incremental VSM validation, `VirtualBufferOverlay` reverse index, and ADR-075 Radical Unawareness compliance in the Language Server).
+- **Dependencies**: Pinned Zenzic core dependency to version `0.23.0` (introduces `ZenzicDiagnostic` strict typing, incremental VSM validation via `IncrementalAnalysisEngine`, `VirtualBufferOverlay` reverse index, and ADR-075 Radical Unawareness compliance in the Language Server).
 
 ## [2.8.3] - 2026-07-14
 
