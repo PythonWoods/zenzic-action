@@ -28,14 +28,14 @@ version:
 
 # Show the pinned Zenzic Core version used by this action
 core-version:
-    @perl -ne 'if (/default: "([^"]+)" # x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml
+    @perl -ne 'if (/default: "([^"]+)"\s*# x-zenzic-core-pin/) { print "$1\n"; $found=1 } END { exit($found ? 0 : 1) }' action.yml
 
 # Show both the action version and validate the pinned Zenzic Core version against requirements.txt
 versions:
     #!/usr/bin/env bash
     set -euo pipefail
     INSTALLED=$(just core-version)
-    PINNED=$(grep -oP 'zenzic>=\K[0-9.]+' pyproject.toml)
+    PINNED=$(grep -oP 'zenzic(?:>=|==)\K[0-9.]+' pyproject.toml)
     echo "action:      $(uvx --from 'bump-my-version==1.2.6' bump-my-version show current_version)"
     echo "core-yml:    $INSTALLED"
     echo "core-pinned: $PINNED"
@@ -62,12 +62,12 @@ pin-core version:
     fi
     echo "Aligning Zenzic Core pin to {{version}}..."
     uv run python scripts/pin_core.py {{version}}
-    sed -i 's/"zenzic>=.*"/"zenzic>={{version}}"/g' pyproject.toml
+    sed -i 's/"zenzic\(>=\|==\).*"/"zenzic=={{version}}"/g' pyproject.toml
     sed -i 's/core version (`.*`)/core version (`{{version}}`)/g' RELEASE.md
-    sed -i 's/core pin (`zenzic>=.*`)/core pin (`zenzic>={{version}}`)/g' RELEASE.md
+    sed -i 's/core pin (`zenzic.*`)/core pin (`zenzic=={{version}}`)/g' RELEASE.md
     sed -i 's/version (`.*`)/version (`{{version}}`)/' RELEASE.md
     sed -i 's/just pin-core [0-9.]\+/just pin-core {{version}}/g' CONTRIBUTING.md
-    sed -i 's/default: ".*" # x-zenzic-core-pin/default: "{{version}}" # x-zenzic-core-pin/' action.yml
+    sed -i 's/default: ".*" # x-zenzic-core-pin.*/default: "{{version}}" # x-zenzic-core-pin/' action.yml
     git add action.yml README.md .bumpversion.toml pyproject.toml RELEASE.md CONTRIBUTING.md
     git commit -S -s -m "chore(deps): pin zenzic core to {{version}}"
 

@@ -67,7 +67,7 @@ def main() -> int:
     updates = [
         FileUpdate(
             path=repo_root / "action.yml",
-            pattern=re.compile(r'default: "[^\"]+"\s*# x-zenzic-core-pin'),
+            pattern=re.compile(r'default: "[^\"]+"\s*# x-zenzic-core-pin.*'),
             replacement=f'default: "{version}" # x-zenzic-core-pin',
         ),
         FileUpdate(
