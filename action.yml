@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 PythonWoods <dev@pythonwoods.dev>
 # SPDX-License-Identifier: Apache-2.0
 name: "Zenzic Documentation Quality Gate"
-description: "Run Zenzic documentation checks and upload results to GitHub Code Scanning."
+description: "Deterministic Document Integrity Engine and SAST for Markdown/MDX graphs."
 author: "PythonWoods"
 
 branding:

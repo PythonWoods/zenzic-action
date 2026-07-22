@@ -91,7 +91,7 @@ maintainer (or an attacker) can move a tag silently, poisoning the local
 Gate 2 without any diff in this repository.
 
 This is an **internal CI policy for the zenzic-action project**, not a public
-Zenzic linter rule. Enforcement: `just check-pinning` (dependency of
+Zenzic rule. Enforcement: `just check-pinning` (dependency of
 `just verify`); violations raise `[ADR-089] FATAL` at pre-push.
 
 The local exposure window is smaller than the GHA one because `pre-commit`

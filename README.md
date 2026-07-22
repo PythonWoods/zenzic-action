@@ -11,7 +11,7 @@
   </a>
 </p>
 
-<p align="center">The deterministic enforcement point for documentation integrity in CI. Exit codes are contractual — exits 2 and 3 survive <code>fail-on-error: false</code>.</p>
+<p align="center">Deterministic Document Integrity Engine and SAST for Markdown/MDX graphs.</p>
 
 <p align="center">
   <a href="https://github.com/PythonWoods/zenzic-action/actions/workflows/self-check.yml"><img alt="ci-status" src="https://img.shields.io/github/actions/workflow/status/PythonWoods/zenzic-action/self-check.yml?branch=main&label=ci&style=flat-square"></a>
@@ -28,22 +28,22 @@
 
 ---
 
-Run Zenzic checks in CI and surface results directly in GitHub Code Scanning — without reading logs.
+Run Zenzic SAST and graph integrity analysis in CI — surfacing results directly in GitHub Code Scanning without reading logs.
 
 **Exit code contract.** The wrapper propagates Zenzic's exit codes without remapping. Exit 1 (quality) obeys `fail-on-error`. Exit 2 (credential) and exit 3 (path traversal) terminate the job regardless of `fail-on-error: false` or `--exit-zero` — security findings are never suppressed at the enforcement boundary.
 
 ## Core Features
 
-| Feature | Description |
-|---|---|
-| Zero-setup install | `uvx zenzic` — no Python toolchain required on the runner |
-| SARIF output | Findings feed directly into GitHub Code Scanning |
-| Exit Code Contract | Security incidents (exit 2/3) are never suppressed by `fail-on-error` |
-| Sovereign Audit mode | `audit: "true"` bypasses all suppressions — surfaces the true documentation state |
-| SARIF integrity check | Validates JSON before upload; emits `::warning` if truncated by SIGKILL |
-| PR annotations | Inline findings on the diff, colour-coded by severity |
-| Version pinning | Pin to an exact release for deterministic, reproducible CI gates |
-| **Clean prose** | `[governance.directory_policies]` in `.zenzic.toml` grants zero-debt exemptions to path patterns |
+| Feature | Category | Description |
+|---|---|---|
+| **Security Scanning (SAST)** | Security | Detects hardcoded tokens (Z201) and path traversal (Z202/Z203); exits 2/3 survive `fail-on-error: false` |
+| **Graph Topology Analysis** | Topology | Virtual Site Map (VSM) verifies cross-file links, orphan pages, and dead navigation graph nodes |
+| **Deterministic CI/CD Enforcement** | CI/CD | Zero-DBT quality gate ensuring bit-for-bit reproducible enforcement across build environments |
+| **Zero-setup install** | Execution | `uvx zenzic` — no Python toolchain required on the runner |
+| **SARIF output** | Integration | Findings feed directly into GitHub Code Scanning |
+| **Sovereign Audit mode** | Security | `audit: "true"` bypasses suppressions to reveal unfiltered documentation graph state |
+| **PR annotations** | Feedback | Inline findings on diffs, colour-coded by severity |
+| **Version pinning** | Governance | Pin to exact release for deterministic, reproducible CI gates |
 
 ## Quick Start
 
@@ -81,8 +81,8 @@ Zenzic Action surfaces findings directly where you work. No more digging through
 
 ## Integration Blueprints
 
-### 1. Baseline Check (Standard Link/Topology Validation)
-This blueprint provides standard documentation linting, link validation, and structural verification. It executes during pushes and PRs, ensuring no broken links or invalid configurations enter the repository.
+### 1. Baseline Check (SAST & Topology Verification)
+This blueprint provides static application security testing (SAST), link validation, and graph topology verification. It executes during pushes and PRs, ensuring no broken links, credential leaks, or invalid configurations enter the repository.
 
 ```yaml title=".github/workflows/docs-baseline.yml"
 name: Zenzic Baseline Audit
