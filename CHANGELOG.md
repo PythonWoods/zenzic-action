@@ -9,6 +9,11 @@ All notable changes to zenzic-action are documented in this file. The project ad
 
 ## [Unreleased]
 
+## [2.9.1] - 2026-07-22
+
+### Changed
+- **Dependencies**: Strictly pinned Zenzic Core dependency to version `0.23.1` (`zenzic == 0.23.1` @ SHA `67b4ee3632681065b304891ef388b99010d999bf`), deploying LSP `codeDescription` links and `[{code}]` diagnostic message prefixing per ADR-089 / ADR-090.
+
 ## [2.9.0] - 2026-07-18
 
 ### Changed
